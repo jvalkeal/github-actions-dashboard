@@ -1,6 +1,4 @@
-package io.spring.githubactionsdashboard;
-
-import java.net.URI;
+package io.spring.githubactionsdashboard.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;

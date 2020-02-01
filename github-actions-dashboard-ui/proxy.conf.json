@@ -14,6 +14,11 @@
         "security": false,
         "logLevel": "debug"
     },
+    "/api/*": {
+        "target": "http://localhost:8080",
+        "security": false,
+        "logLevel": "debug"
+    },
     "/user/*": {
         "target": "http://localhost:8080",
         "security": false,

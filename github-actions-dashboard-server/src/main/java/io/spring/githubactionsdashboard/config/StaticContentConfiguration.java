@@ -1,4 +1,4 @@
-package io.spring.githubactionsdashboard;
+package io.spring.githubactionsdashboard.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

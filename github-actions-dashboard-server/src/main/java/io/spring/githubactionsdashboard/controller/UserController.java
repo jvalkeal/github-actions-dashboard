@@ -1,4 +1,4 @@
-package io.spring.githubactionsdashboard;
+package io.spring.githubactionsdashboard.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

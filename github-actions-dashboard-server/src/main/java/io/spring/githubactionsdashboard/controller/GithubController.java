@@ -1,4 +1,4 @@
-package io.spring.githubactionsdashboard;
+package io.spring.githubactionsdashboard.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,19 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 import io.spring.githubactionsdashboard.github.MyRepositoriesQuery;
 import io.spring.githubactionsdashboard.github.MyRepositoriesQuery.Data;
 import io.spring.githubactionsdashboard.github.MyRepositoriesQuery.Node;
+import io.spring.githubactionsdashboard.utils.ReactorApollo;
 import okhttp3.OkHttpClient;
 import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api")
 public class GithubController {
-
-	@RequestMapping(path = "/hi", produces = MediaType.TEXT_PLAIN_VALUE)
-	@ResponseBody
-	public Mono<String> hi(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient,
-	@AuthenticationPrincipal OAuth2User oauth2User) {
-		return Mono.just(oauth2User.getName());
-	}
 
 	@RequestMapping(path = "/repositories")
 	@ResponseBody

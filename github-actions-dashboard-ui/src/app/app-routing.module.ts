@@ -7,6 +7,7 @@ import { HomeComponent } from './home/home.component';
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'cards'},
   { path: 'cards', component: ActionCardsComponent, canActivate: [AuthGuard] },
+  { path: 'home', component: HomeComponent },
   { path: '**', component: HomeComponent }
 ];
 
