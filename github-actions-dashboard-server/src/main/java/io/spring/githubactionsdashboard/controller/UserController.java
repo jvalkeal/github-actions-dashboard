@@ -23,10 +23,23 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Controller for returning info for current logged in user.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
+	/**
+	 * Gets a current logged in user or simply return 401 if no user. Mostly used by
+	 * UI to check if user is actually logged in.
+	 *
+	 * @param oauth2User current logged in user if any
+	 * @return the current logged in user
+	 */
 	@RequestMapping("/whoami")
 	@ResponseBody
 	public OAuth2User whoami(@AuthenticationPrincipal OAuth2User oauth2User) {

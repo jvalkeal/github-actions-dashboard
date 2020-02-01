@@ -29,6 +29,12 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
 
 import org.springframework.beans.factory.annotation.Value;
 
+/**
+ * Configuration for angular static resources.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 @Configuration
 public class StaticContentConfiguration {
 

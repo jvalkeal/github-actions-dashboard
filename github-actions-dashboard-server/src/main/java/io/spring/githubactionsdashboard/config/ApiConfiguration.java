@@ -19,6 +19,12 @@ import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilde
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Generic configs for api usage.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 @Configuration
 public class ApiConfiguration {
 

@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.spring.githubactionsdashboard.domain.Repositories;
 import io.spring.githubactionsdashboard.github.MyRepositoriesQuery;
 import io.spring.githubactionsdashboard.github.MyRepositoriesQuery.Data;
 import io.spring.githubactionsdashboard.github.MyRepositoriesQuery.Node;
@@ -39,6 +40,12 @@ import io.spring.githubactionsdashboard.utils.ReactorApollo;
 import okhttp3.OkHttpClient;
 import reactor.core.publisher.Mono;
 
+/**
+ * Controller for github api methods.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 @RestController
 @RequestMapping("/api")
 public class GithubController {
@@ -63,17 +70,5 @@ public class GithubController {
 			List<String> repoNames = nodes.map(n -> n.name()).collect(Collectors.toList());
 			return new Repositories(repoNames);
 		});
-	}
-
-	public static class Repositories {
-		private List<String> repositories;
-
-		public Repositories(List<String> repositories) {
-			this.repositories = repositories;
-		}
-
-		public List<String> getRepositories() {
-			return repositories;
-		}
 	}
 }

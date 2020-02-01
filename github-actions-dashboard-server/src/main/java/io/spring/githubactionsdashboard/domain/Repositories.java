@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.spring.githubactionsdashboard;
+package io.spring.githubactionsdashboard.domain;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.util.List;
 
 /**
- * Main application bootstrap.
+ * Domain class for list or repository names.
  *
  * @author Janne Valkealahti
  *
  */
-@SpringBootApplication
-public class Application {
+public class Repositories {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+	private List<String> repositories;
+
+	public Repositories(List<String> repositories) {
+		this.repositories = repositories;
+	}
+
+	public List<String> getRepositories() {
+		return repositories;
 	}
 }

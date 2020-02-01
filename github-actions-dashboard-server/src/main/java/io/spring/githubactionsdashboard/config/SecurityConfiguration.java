@@ -22,14 +22,23 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.logout.HttpStatusReturningServerLogoutSuccessHandler;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 
+/**
+ * Security related configs.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 @EnableWebFluxSecurity
 public class SecurityConfiguration {
+
+	private final static String[] PERMIT_PATHS = { "/", "/dashboard/**", "/oauth2/**", "/login/**", "/logout/**",
+			"/user/**" };
 
 	@Bean
 	public SecurityWebFilterChain configure(ServerHttpSecurity http) {
 		return http
 			.authorizeExchange()
-				.pathMatchers("/", "/dashboard/**", "/oauth2/**", "/login/**", "/logout/**", "/user/**").permitAll()
+				.pathMatchers(PERMIT_PATHS).permitAll()
 				.anyExchange().authenticated()
 				.and()
 			.csrf()
@@ -44,6 +53,8 @@ public class SecurityConfiguration {
 
 	@Bean
 	public ServerLogoutSuccessHandler logoutSuccessHandler() {
+		// As logout is used by a simple request from an angular app,
+		// just return ok so that we don't need to handle response content.
 		return new HttpStatusReturningServerLogoutSuccessHandler();
 	}
 }
