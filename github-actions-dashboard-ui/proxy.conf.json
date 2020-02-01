@@ -1,0 +1,22 @@
+{
+    "/login/*": {
+        "target": "http://localhost:8080",
+        "security": false,
+        "logLevel": "debug"
+    },
+    "/logout/*": {
+        "target": "http://localhost:8080",
+        "security": false,
+        "logLevel": "debug"
+    },
+    "/oauth2/*": {
+        "target": "http://localhost:8080",
+        "security": false,
+        "logLevel": "debug"
+    },
+    "/user/*": {
+        "target": "http://localhost:8080",
+        "security": false,
+        "logLevel": "debug"
+    }
+}

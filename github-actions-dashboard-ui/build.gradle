@@ -9,8 +9,8 @@ node {
 	download = true
 }
 
-jar.dependsOn 'npm_run_build'
+jar.dependsOn 'npm_run_mavenbuild'
 
 jar {
-	from 'dist/github-actions-dashboard-ui' into 'static'
+	from 'dist/github-actions-dashboard-ui' into 'static/dashboard'
 }

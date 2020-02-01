@@ -5,6 +5,7 @@ bin/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**
 !**/src/test/**
+.proxy.conf.json.swp
 
 ### STS ###
 .apt_generated

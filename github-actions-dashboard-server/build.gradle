@@ -1,3 +1,12 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath("com.apollographql.apollo:apollo-gradle-plugin:1.3.0")
+  }
+}
+
 plugins {
 	id 'org.springframework.boot' version '2.2.4.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
@@ -5,9 +14,21 @@ plugins {
 }
 
 sourceCompatibility = '1.8'
+apply plugin: 'com.apollographql.apollo'
+
+apollo {
+	onCompilationUnits {
+		graphqlSourceDirectorySet.srcDirs += "src/main/graphql/io/spring/githubactionsdashboard/github"
+		schemaFile = new File("src/main/graphql/io/spring/githubactionsdashboard/github/schema.json")
+		rootPackageName = "io.spring.githubactionsdashboard.github"
+	}
+}
+
+build.dependsOn 'generateApolloSources'
 
 repositories {
 	mavenCentral()
+	jcenter()
 }
 
 dependencies {
@@ -16,6 +37,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.security:spring-security-oauth2-client'
 	implementation 'org.springframework.security:spring-security-oauth2-jose'
+	implementation 'com.apollographql.apollo:apollo-runtime:1.3.0'
+	implementation 'org.jetbrains:annotations:13.0'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}

@@ -1,0 +1,9 @@
+query MyRepositories {
+  viewer {
+    repositories(last: 10) {
+      nodes {
+        name
+      }
+    }
+  }
+}
