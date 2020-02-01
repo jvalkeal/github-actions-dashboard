@@ -1,6 +1,6 @@
 query MyRepositories {
   viewer {
-    repositories(last: 10) {
+    repositories(last: 12) {
       nodes {
         name
       }
