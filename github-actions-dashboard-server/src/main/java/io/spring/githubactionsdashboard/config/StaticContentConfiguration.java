@@ -40,6 +40,7 @@ public class StaticContentConfiguration {
 
 	@Bean
 	public RouterFunction<ServerResponse> indexRouter(@Value("classpath:/static/dashboard/index.html") Resource html) {
+		// we want to serve app from '/'' and '/dashboard'
 		return route()
 			.GET("/", request -> ok().contentType(MediaType.TEXT_HTML).bodyValue(html))
 			.GET("/dashboard", request -> ok().contentType(MediaType.TEXT_HTML).bodyValue(html))

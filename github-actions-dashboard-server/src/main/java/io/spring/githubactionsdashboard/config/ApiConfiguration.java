@@ -42,11 +42,13 @@ public class ApiConfiguration {
 	@Bean
 	WebClient webClient(ReactiveClientRegistrationRepository clientRegistrations,
 			ServerOAuth2AuthorizedClientRepository authorizedClients, ObjectMapper objectMapper) {
+		// we expect to use github and passthrough authenticated client as is
 		ServerOAuth2AuthorizedClientExchangeFilterFunction oauth = new ServerOAuth2AuthorizedClientExchangeFilterFunction(
 				clientRegistrations, authorizedClients);
 		oauth.setDefaultOAuth2AuthorizedClient(true);
 		oauth.setDefaultClientRegistrationId("github");
 
+		// as we build WebClient here, need to tweak jackson for requests
 		ExchangeStrategies strategies = ExchangeStrategies.builder().codecs(configurer -> {
 			configurer.defaultCodecs()
 					.jackson2JsonEncoder(new Jackson2JsonEncoder(objectMapper, MediaType.APPLICATION_JSON));

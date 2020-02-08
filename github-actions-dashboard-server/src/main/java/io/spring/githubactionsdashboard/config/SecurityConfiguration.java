@@ -31,7 +31,12 @@ import org.springframework.security.web.server.authentication.logout.ServerLogou
 @EnableWebFluxSecurity
 public class SecurityConfiguration {
 
-	private final static String[] PERMIT_PATHS = { "/", "/dashboard/**", "/oauth2/**", "/login/**", "/logout/**",
+	private final static String[] PERMIT_PATHS = {
+			"/",
+			"/dashboard/**",
+			"/oauth2/**",
+			"/login/**",
+			"/logout/**",
 			"/user/**" };
 
 	@Bean
@@ -41,6 +46,7 @@ public class SecurityConfiguration {
 				.pathMatchers(PERMIT_PATHS).permitAll()
 				.anyExchange().authenticated()
 				.and()
+			// TODO: figure out how to keep csrf enabled
 			.csrf()
 				.disable()
 			.oauth2Login()
