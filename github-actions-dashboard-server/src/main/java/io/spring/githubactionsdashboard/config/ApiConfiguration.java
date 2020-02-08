@@ -15,9 +15,20 @@
  */
 package io.spring.githubactionsdashboard.config;
 
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.json.Jackson2JsonDecoder;
+import org.springframework.http.codec.json.Jackson2JsonEncoder;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;
+import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import io.spring.githubactionsdashboard.github.GithubGraphqlClient;
 
 /**
  * Generic configs for api usage.
@@ -29,9 +40,26 @@ import org.springframework.context.annotation.Configuration;
 public class ApiConfiguration {
 
 	@Bean
-	public Jackson2ObjectMapperBuilderCustomizer dataflowObjectMapperBuilderCustomizer() {
-		return (builder) -> {
-			builder.failOnEmptyBeans(false);
-		};
+	WebClient webClient(ReactiveClientRegistrationRepository clientRegistrations,
+			ServerOAuth2AuthorizedClientRepository authorizedClients, ObjectMapper objectMapper) {
+		ServerOAuth2AuthorizedClientExchangeFilterFunction oauth = new ServerOAuth2AuthorizedClientExchangeFilterFunction(
+				clientRegistrations, authorizedClients);
+		oauth.setDefaultOAuth2AuthorizedClient(true);
+		oauth.setDefaultClientRegistrationId("github");
+
+		ExchangeStrategies strategies = ExchangeStrategies.builder().codecs(configurer -> {
+			configurer.defaultCodecs()
+					.jackson2JsonEncoder(new Jackson2JsonEncoder(objectMapper, MediaType.APPLICATION_JSON));
+			configurer.defaultCodecs()
+					.jackson2JsonDecoder(new Jackson2JsonDecoder(objectMapper, MediaType.APPLICATION_JSON));
+		}).build();
+
+		return WebClient.builder().exchangeStrategies(strategies).filter(oauth).build();
+	}
+
+	@Bean
+	GithubGraphqlClient githubGraphqlClient(ReactiveClientRegistrationRepository clientRegistrations,
+			ServerOAuth2AuthorizedClientRepository authorizedClients, ObjectMapper objectMapper) {
+		return new GithubGraphqlClient(clientRegistrations, authorizedClients);
 	}
 }

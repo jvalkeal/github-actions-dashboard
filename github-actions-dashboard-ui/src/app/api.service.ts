@@ -11,9 +11,8 @@ export class ApiService {
   constructor(private http: HttpClient) { }
 
   getRepositories(): Observable<string[]> {
-    const response = this.http.get<Repositories>('/api/repositories');
-    const repos = response.pipe(map(data => data.repositories));
-    return repos;
+    const response = this.http.get<string[]>('/api/github/repos');
+    return response.pipe(map(data => data));
   }
 
   getUser(): Observable<User> {
@@ -59,10 +58,6 @@ export class ApiService {
     //   'Something bad happened; please try again later.');
   }
 
-}
-
-export interface Repositories {
-  repositories: string[];
 }
 
 export interface User {

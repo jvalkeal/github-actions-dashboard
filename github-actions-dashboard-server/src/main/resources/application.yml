@@ -1,1 +1,3 @@
-# generic configs
+spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
