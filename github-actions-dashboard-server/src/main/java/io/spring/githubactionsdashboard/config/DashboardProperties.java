@@ -15,19 +15,43 @@
  */
 package io.spring.githubactionsdashboard.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "dashboard")
 public class DashboardProperties {
 
-	private String foo;
+	private List<Workflow> workflows = new ArrayList<>();
 
-	public void setFoo(String foo) {
-		this.foo = foo;
+	public List<Workflow> getWorkflows() {
+		return workflows;
 	}
 
-	public String getFoo() {
-		return foo;
+	public void setWorkflows(List<Workflow> workflows) {
+		this.workflows = workflows;
 	}
 
+	public static class Workflow {
+
+		private String owner;
+		private String name;
+
+		public String getOwner() {
+			return owner;
+		}
+
+		public void setOwner(String owner) {
+			this.owner = owner;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+	}
 }

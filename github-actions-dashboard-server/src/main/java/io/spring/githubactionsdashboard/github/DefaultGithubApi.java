@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import io.spring.githubactionsdashboard.config.DashboardProperties;
 import io.spring.githubactionsdashboard.domain.User;
 import io.spring.githubactionsdashboard.domain.WorkflowRun;
 import reactor.core.publisher.Flux;
@@ -45,10 +46,13 @@ public class DefaultGithubApi implements GithubApi {
 	private final static String V3_USER_API = BASE_V3_API + "/user";
 	private final WebClient webClient;
 	private final GithubGraphqlClient githubGraphqlClient;
+	private final DashboardProperties dashboardProperties;
 
-	public DefaultGithubApi(WebClient webClient, GithubGraphqlClient githubGraphqlClient) {
+	public DefaultGithubApi(WebClient webClient, GithubGraphqlClient githubGraphqlClient,
+			DashboardProperties dashboardProperties) {
 		this.webClient = webClient;
 		this.githubGraphqlClient = githubGraphqlClient;
+		this.dashboardProperties = dashboardProperties;
 	}
 
 	@Override
@@ -96,9 +100,10 @@ public class DefaultGithubApi implements GithubApi {
 	}
 
 	private Flux<LastCheckrunStatusQuery> workflowQueries() {
-		return Flux.just(
-			LastCheckrunStatusQuery.builder().owner("spring-cloud").name("spring-cloud-dataflow").build(),
-			LastCheckrunStatusQuery.builder().owner("spring-cloud").name("spring-cloud-deployer").build()
-		);
+		return Flux.fromIterable(this.dashboardProperties.getWorkflows())
+			.map(workflow -> LastCheckrunStatusQuery.builder()
+				.owner(workflow.getOwner())
+				.name(workflow.getName())
+				.build());
 	}
 }

@@ -3,4 +3,9 @@ spring:
     property-naming-strategy: SNAKE_CASE
 dashboard:
   workflows:
-    spring-cloud/spring-cloud-dataflow: Java CI - master
+    - owner: spring-cloud
+      name: spring-cloud-dataflow
+    - owner: spring-cloud
+      name: spring-cloud-deployer
+    - owner: spring-cloud
+      name: spring-cloud-deployer-local
