@@ -15,7 +15,9 @@
  */
 package io.spring.githubactionsdashboard.github;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,8 +25,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import io.spring.githubactionsdashboard.domain.User;
-import io.spring.githubactionsdashboard.github.MyRepositoriesQuery.Data;
-import io.spring.githubactionsdashboard.github.MyRepositoriesQuery.Node;
+import io.spring.githubactionsdashboard.domain.WorkflowRun;
+import reactor.core.publisher.Flux;
+// import io.spring.githubactionsdashboard.github.LastCheckrunStatusQuery.AsCommit;
+// import io.spring.githubactionsdashboard.github.LastCheckrunStatusQuery.Node;
+// import io.spring.githubactionsdashboard.github.LastCheckrunStatusQuery.Target;
 import reactor.core.publisher.Mono;
 
 /**
@@ -57,12 +62,43 @@ public class DefaultGithubApi implements GithubApi {
 
 	@Override
 	public Mono<List<String>> repos() {
-		MyRepositoriesQuery query = MyRepositoriesQuery.builder().build();
-		Mono<Data> data = this.githubGraphqlClient.query(query);
+		MyRepositoriesQuery query = MyRepositoriesQuery.builder()
+			.limit(12)
+			.build();
+		Mono<MyRepositoriesQuery.Data> data = this.githubGraphqlClient.query(query);
 		return data.map(r -> {
-			Stream<Node> nodes = r.viewer().repositories().nodes().stream();
+			Stream<MyRepositoriesQuery.Node> nodes = r.viewer().repositories().nodes().stream();
 			List<String> repoNames = nodes.map(n -> n.name()).collect(Collectors.toList());
 			return repoNames;
 		});
+	}
+
+	@Override
+	public Mono<Map<String, WorkflowRun>> workflows() {
+		return workflowQueries()
+			.flatMap(q -> this.githubGraphqlClient.query(q))
+			.collectMap(
+				r -> {
+					return r.repository().name();
+				},
+				r -> {
+					WorkflowRun run = new WorkflowRun();
+					LastCheckrunStatusQuery.Target target = r.repository().defaultBranchRef().target();
+					if (target instanceof LastCheckrunStatusQuery.AsCommit) {
+						LastCheckrunStatusQuery.AsCommit asCommit = (LastCheckrunStatusQuery.AsCommit)target;
+						LastCheckrunStatusQuery.Node node = asCommit.checkSuites().nodes().get(0);
+						run.setConclusion(node.conclusion().rawValue());
+						run.setStatus(node.status().rawValue());
+					}
+					return run;
+				})
+			;
+	}
+
+	private Flux<LastCheckrunStatusQuery> workflowQueries() {
+		return Flux.just(
+			LastCheckrunStatusQuery.builder().owner("spring-cloud").name("spring-cloud-dataflow").build(),
+			LastCheckrunStatusQuery.builder().owner("spring-cloud").name("spring-cloud-deployer").build()
+		);
 	}
 }

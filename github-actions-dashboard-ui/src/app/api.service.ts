@@ -8,7 +8,12 @@ import { map, catchError } from 'rxjs/operators';
 })
 export class ApiService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
+
+  getWorkflows(): Observable<WorkflowRuns> {
+    const response = this.http.get<WorkflowRuns>('/api/github/workflows');
+    return response.pipe(map(data => data));
+  }
 
   getRepositories(): Observable<string[]> {
     const response = this.http.get<string[]>('/api/github/repos');
@@ -58,6 +63,15 @@ export class ApiService {
     //   'Something bad happened; please try again later.');
   }
 
+}
+
+export interface WorkflowRuns {
+  [key: string]: WorkflowRun;
+}
+
+export interface WorkflowRun {
+  status?: string;
+  conclusion?: string;
 }
 
 export interface User {

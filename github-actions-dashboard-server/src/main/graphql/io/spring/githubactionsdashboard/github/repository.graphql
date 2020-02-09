@@ -1,6 +1,6 @@
-query MyRepositories {
+query MyRepositories ($limit: Int!){
   viewer {
-    repositories(last: 12) {
+    repositories(last: $limit) {
       nodes {
         name
       }

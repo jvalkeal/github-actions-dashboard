@@ -16,12 +16,14 @@
 package io.spring.githubactionsdashboard.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.spring.githubactionsdashboard.domain.User;
+import io.spring.githubactionsdashboard.domain.WorkflowRun;
 import io.spring.githubactionsdashboard.github.GithubApi;
 import reactor.core.publisher.Mono;
 
@@ -45,5 +47,11 @@ public class GithubApiController {
 	@ResponseBody
 	public Mono<List<String>> repos() {
 		return this.api.repos();
+	}
+
+	@RequestMapping(path = "/workflows")
+	@ResponseBody
+	public Mono<Map<String, WorkflowRun>> workflows() {
+		return this.api.workflows();
 	}
 }

@@ -90,6 +90,7 @@ public class GithubGraphqlClient {
 					.addInterceptor(chain -> {
 						Request original = chain.request();
 						Request.Builder builder = original.newBuilder().method(original.method(), original.body());
+						builder.header("Accept", "application/vnd.github.antiope-preview+json");
 						builder.header("Authorization", "Bearer " + t.getAccessToken().getTokenValue());
 						return chain.proceed(builder.build());
 					})

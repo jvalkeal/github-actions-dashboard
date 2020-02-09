@@ -43,6 +43,7 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 	testImplementation 'io.projectreactor:reactor-test'
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 }
 
 test {

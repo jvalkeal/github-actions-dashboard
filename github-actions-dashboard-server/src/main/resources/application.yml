@@ -1,3 +1,6 @@
 spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
+dashboard:
+  workflows:
+    spring-cloud/spring-cloud-dataflow: Java CI - master

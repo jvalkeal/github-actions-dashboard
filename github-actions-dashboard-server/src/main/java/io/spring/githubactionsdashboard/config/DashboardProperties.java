@@ -13,32 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.spring.githubactionsdashboard.github;
+package io.spring.githubactionsdashboard.config;
 
-import java.util.List;
-import java.util.Map;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import io.spring.githubactionsdashboard.domain.User;
-import io.spring.githubactionsdashboard.domain.WorkflowRun;
-import reactor.core.publisher.Mono;
+@ConfigurationProperties(prefix = "dashboard")
+public class DashboardProperties {
 
-/**
- * Generic interface for {@code Github}. Actual implementation will decide how
- * data is retrieved from Github's API's.
- *
- * @author Janne Valkealahti
- *
- */
-public interface GithubApi {
+	private String foo;
 
-	/**
-	 * Gets info about logged in user.
-	 *
-	 * @return the info about me
-	 */
-	Mono<User> me();
+	public void setFoo(String foo) {
+		this.foo = foo;
+	}
 
-	Mono<List<String>> repos();
+	public String getFoo() {
+		return foo;
+	}
 
-	Mono<Map<String, WorkflowRun>> workflows();
 }
