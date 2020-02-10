@@ -9,13 +9,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActionCardsComponent } from './action-cards/action-cards.component';
 import { UserHeaderActionComponent } from './user/user-header-action/user-header-action.component';
 import { HomeComponent } from './home/home.component';
+import { ActionCardComponent } from './action-card/action-card.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ActionCardsComponent,
     UserHeaderActionComponent,
-    HomeComponent
+    HomeComponent,
+    ActionCardComponent
   ],
   imports: [
     BrowserModule,

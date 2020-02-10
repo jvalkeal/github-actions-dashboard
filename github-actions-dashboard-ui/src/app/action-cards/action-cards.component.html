@@ -1,10 +1,7 @@
 <div>
   <div class="clr-row">
-    <div *ngFor="let card of cards | keyvalue" class="clr-col-xl-1 clr-col-lg-2 clr-col-md-3 clr-col-sm-4 clr-col-12">
-      <div class="card">
-        <div class="card-block">
-        <div class="card-text">{{card.key}} {{card.value.status}}</div>
-      </div>
+    <div *ngFor="let card of cards | keyvalue" class="clr-col-xl-2 clr-col-lg-3 clr-col-md-4 clr-col-sm-6 clr-col-12">
+      <app-action-card [name]="card.key" [workflow]="card.value"></app-action-card>
     </div>
   </div>
 </div>
