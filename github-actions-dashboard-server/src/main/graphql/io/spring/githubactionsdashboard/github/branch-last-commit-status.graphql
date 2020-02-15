@@ -1,6 +1,7 @@
 query BranchLastCommitStatus($owner: String!, $name: String!, $branch: String!) {
   repository(owner: $owner, name: $name) {
     name
+    url
     owner {
       login
     }

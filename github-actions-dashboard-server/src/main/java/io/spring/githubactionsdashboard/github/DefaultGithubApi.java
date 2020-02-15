@@ -128,6 +128,7 @@ public class DefaultGithubApi implements GithubApi {
 				List<Branch> branches = new ArrayList<>();
 				Branch branch = new Branch();
 				branch.setName(data.repository().ref().name());
+				branch.setUrl((String)data.repository().url() + "/tree/" + data.repository().ref().name());
 				branches.add(branch);
 				BranchLastCommitStatusQuery.Target target = data.repository().ref().target();
 				if (target instanceof BranchLastCommitStatusQuery.AsCommit) {
@@ -150,7 +151,8 @@ public class DefaultGithubApi implements GithubApi {
 						}
 					});
 				}
-				return Repository.of(data.repository().owner().login(), data.repository().name(), branches, null);
+				return Repository.of(data.repository().owner().login(), data.repository().name(),
+						(String) data.repository().url(), branches, null);
 			});
 
 		Flux<Repository> r2 = prQueries()
@@ -186,7 +188,8 @@ public class DefaultGithubApi implements GithubApi {
 				if (pr != null) {
 					pullRequests.add(pr);
 				}
-				return Repository.of(data.repository().owner().login(), data.repository().name(), null, pullRequests);
+				return Repository.of(data.repository().owner().login(), data.repository().name(),
+						(String) data.repository().url(), null, pullRequests);
 			});
 
 		Mono<Map<Repository, Repository>> reduce = Flux.concat(r1, r2)

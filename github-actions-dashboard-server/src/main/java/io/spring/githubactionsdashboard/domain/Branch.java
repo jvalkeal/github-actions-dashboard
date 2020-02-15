@@ -21,6 +21,7 @@ import java.util.List;
 public class Branch {
 
 	private String name;
+	private String url;
 	private List<CheckRun> checkRuns = new ArrayList<>();
 
 	public String getName() {
@@ -29,6 +30,14 @@ public class Branch {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	public List<CheckRun> getCheckRuns() {

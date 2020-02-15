@@ -28,20 +28,23 @@ public class Repository {
 
 	private String owner;
 	private String name;
+	private String url;
 	private List<Branch> branches = new ArrayList<>();
 	private List<PullRequest> pullRequests = new ArrayList<>();
 
 	public Repository() {
 	}
 
-	public Repository(String owner, String name) {
+	public Repository(String owner, String name, String url) {
 		this.owner = owner;
 		this.name = name;
+		this.url = url;
 	}
 
-	public Repository(String owner, String name, List<Branch> branches, List<PullRequest> pullRequests) {
+	public Repository(String owner, String name, String url, List<Branch> branches, List<PullRequest> pullRequests) {
 		this.owner = owner;
 		this.name = name;
+		this.url = url;
 		if (branches != null) {
 			this.branches = branches;
 		}
@@ -50,12 +53,12 @@ public class Repository {
 		}
 	}
 
-	public static Repository of(String owner, String name, List<Branch> branches, List<PullRequest> pullRequests) {
-		return new Repository(owner, name, branches, pullRequests);
+	public static Repository of(String owner, String name, String url, List<Branch> branches, List<PullRequest> pullRequests) {
+		return new Repository(owner, name, url, branches, pullRequests);
 	}
 
-	public static Repository of(String owner, String name) {
-		return new Repository(owner, name);
+	public static Repository of(String owner, String name, String url) {
+		return new Repository(owner, name, url);
 	}
 
 	public Repository merge(Repository repository) {
@@ -64,6 +67,9 @@ public class Repository {
 		}
 		if (repository.getName() != null) {
 			setName(repository.getName());
+		}
+		if (repository.getUrl() != null) {
+			setUrl(repository.getUrl());
 		}
 		getBranches().addAll(repository.getBranches());
 		getPullRequests().addAll(repository.getPullRequests());
@@ -84,6 +90,14 @@ public class Repository {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	public List<Branch> getBranches() {
@@ -108,6 +122,7 @@ public class Repository {
 		int result = 1;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+		result = prime * result + ((url == null) ? 0 : url.hashCode());
 		return result;
 	}
 
@@ -130,8 +145,11 @@ public class Repository {
 				return false;
 		} else if (!owner.equals(other.owner))
 			return false;
+		if (url == null) {
+			if (other.url != null)
+				return false;
+		} else if (!url.equals(other.url))
+			return false;
 		return true;
 	}
-
-
 }

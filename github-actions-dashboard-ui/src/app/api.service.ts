@@ -81,12 +81,14 @@ export interface PullRequest {
 
 export interface Branch {
   name: string;
+  url: string;
   checkRuns: CheckRun[];
 }
 
 export interface Repository {
   owner: string;
   name: string;
+  url: string;
   branches: Branch[];
   pullRequests: PullRequest[];
 }

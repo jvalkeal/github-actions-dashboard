@@ -1,7 +1,7 @@
 <div class="card">
 
   <div class="card-header">
-    {{name}}
+    <a href="{{workflow.url}}">{{workflow.name}}</a>
   </div>
 
   <div *ngIf="workflow.branches?.length > 0" class="card-block">
@@ -10,7 +10,7 @@
     </div>
     <ul class="list">
       <li *ngFor="let branch of workflow.branches">
-        {{branch.name}}
+        <a href="{{branch.url}}">{{branch.name}}</a>
         <ul *ngIf="branch.checkRuns?.length > 0" class="list">
           <li *ngFor="let checkRun of branch.checkRuns">
             <a href="{{checkRun.url}}">{{checkRun.name}}</a>
