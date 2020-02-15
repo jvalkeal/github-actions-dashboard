@@ -15,18 +15,33 @@
  */
 package io.spring.githubactionsdashboard.github;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import io.spring.githubactionsdashboard.config.DashboardProperties;
+import io.spring.githubactionsdashboard.domain.Branch;
+import io.spring.githubactionsdashboard.domain.CheckRun;
+import io.spring.githubactionsdashboard.domain.PullRequest;
+import io.spring.githubactionsdashboard.domain.Repository;
 import io.spring.githubactionsdashboard.domain.User;
-import io.spring.githubactionsdashboard.domain.WorkflowRun;
+// import io.spring.githubactionsdashboard.github.BranchLastCommitStatusQuery.AsCommit;
+// import io.spring.githubactionsdashboard.github.BranchLastCommitStatusQuery.Target;
+// import io.spring.githubactionsdashboard.github.PrLastCommitStatusQuery.Node1;
+// import io.spring.githubactionsdashboard.github.PrLastCommitStatusQuery.Node2;
+// import io.spring.githubactionsdashboard.github.PrLastCommitStatusQuery.Node3;
+// import io.spring.githubactionsdashboard.github.PrLastCommitStatusQuery.Node;
+// import io.spring.githubactionsdashboard.github.BranchLastCommitStatusQuery.Data;
 import reactor.core.publisher.Flux;
 // import io.spring.githubactionsdashboard.github.LastCheckrunStatusQuery.AsCommit;
 // import io.spring.githubactionsdashboard.github.LastCheckrunStatusQuery.Node;
@@ -42,6 +57,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class DefaultGithubApi implements GithubApi {
 
+	private final static Logger log = LoggerFactory.getLogger(DefaultGithubApi.class);
 	private final static String BASE_V3_API = "https://api.github.com";
 	private final static String V3_USER_API = BASE_V3_API + "/user";
 	private final WebClient webClient;
@@ -77,31 +93,142 @@ public class DefaultGithubApi implements GithubApi {
 		});
 	}
 
-	@Override
-	public Mono<Map<String, WorkflowRun>> workflows() {
-		return workflowQueries()
-			.flatMap(q -> this.githubGraphqlClient.query(q))
-			.collectMap(
-				r -> {
-					return r.repository().name();
-				},
-				r -> {
-					WorkflowRun run = new WorkflowRun();
-					LastCheckrunStatusQuery.Target target = r.repository().defaultBranchRef().target();
-					if (target instanceof LastCheckrunStatusQuery.AsCommit) {
-						LastCheckrunStatusQuery.AsCommit asCommit = (LastCheckrunStatusQuery.AsCommit)target;
-						LastCheckrunStatusQuery.Node node = asCommit.checkSuites().nodes().get(0);
-						run.setConclusion(node.conclusion().rawValue());
-						run.setStatus(node.status().rawValue());
+	// @Override
+	// public Mono<Map<String, WorkflowRun>> workflows() {
+	// 	return workflowQueries()
+	// 		.flatMap(q -> this.githubGraphqlClient.query(q))
+	// 		.collectMap(
+	// 			r -> {
+	// 				return r.repository().name();
+	// 			},
+	// 			r -> {
+	// 				WorkflowRun run = new WorkflowRun();
+	// 				LastCheckrunStatusQuery.Target target = r.repository().defaultBranchRef().target();
+	// 				if (target instanceof LastCheckrunStatusQuery.AsCommit) {
+	// 					LastCheckrunStatusQuery.AsCommit asCommit = (LastCheckrunStatusQuery.AsCommit)target;
+	// 					LastCheckrunStatusQuery.Node node = asCommit.checkSuites().nodes().get(0);
+	// 					run.setConclusion(node.conclusion().rawValue());
+	// 					run.setStatus(node.status().rawValue());
+	// 				}
+	// 				return run;
+	// 			})
+	// 		;
+	// }
+
+	public Flux<Repository> branchAndPrWorkflows() {
+
+		// Flux<BranchLastCommitStatusQuery.Data> bq = branchQueries()
+		// 	.flatMap(githubGraphqlClient::query);
+		// Flux<PrLastCommitStatusQuery.Data> prq = prQueries()
+		// 	.flatMap(githubGraphqlClient::query);
+
+		Flux<Repository> r1 = branchQueries()
+			.flatMap(githubGraphqlClient::query)
+			.map(data -> {
+				List<Branch> branches = new ArrayList<>();
+				Branch branch = new Branch();
+				branch.setName(data.repository().ref().name());
+				branches.add(branch);
+				BranchLastCommitStatusQuery.Target target = data.repository().ref().target();
+				if (target instanceof BranchLastCommitStatusQuery.AsCommit) {
+					BranchLastCommitStatusQuery.AsCommit asCommit = (BranchLastCommitStatusQuery.AsCommit)target;
+					asCommit.checkSuites().nodes().stream().forEach(n -> {
+						// log.info("XXX1 {}", n);
+						Optional<BranchLastCommitStatusQuery.Node1> findFirst = n.checkRuns().nodes().stream().findFirst();
+						// log.info("XXX2 {} {} {}", findFirst.isPresent(), n.app().name(), "GitHub Actions".equals(n.app().name()));
+						if (findFirst.isPresent() && "GitHub Actions".equals(n.app().name())) {
+							// log.info("XXX3 {}", n);
+							CheckRun checkRun = new CheckRun();
+							checkRun.setName(findFirst.get().name());
+							checkRun.setStatus(findFirst.get().status().rawValue());
+							// TODO: conclusion may be null
+							checkRun.setConclusion(findFirst.get().conclusion().rawValue());
+							checkRun.setUrl((String)findFirst.get().checkSuite().url());
+							List<CheckRun> checkRuns = new ArrayList<>();
+							checkRuns.add(checkRun);
+							branch.setCheckRuns(checkRuns);
+						}
+					});
+				}
+				return Repository.of(data.repository().owner().login(), data.repository().name(), branches, null);
+			});
+
+		Flux<Repository> r2 = prQueries()
+			.flatMap(githubGraphqlClient::query)
+			.map(data -> {
+				PullRequest pr = null;
+				Optional<PrLastCommitStatusQuery.Node> findFirst = data.repository().pullRequests().nodes().stream().findFirst();
+				if (findFirst.isPresent()) {
+					pr = new PullRequest();
+					pr.setName(findFirst.get().title());
+					pr.setNumber(findFirst.get().number());
+					pr.setUrl((String)findFirst.get().url());
+					Optional<PrLastCommitStatusQuery.Node1> findFirst2 = findFirst.get().commits().nodes().stream().findFirst();
+					if (findFirst2.isPresent()) {
+						Optional<PrLastCommitStatusQuery.Node2> findFirst3 = findFirst2.get().commit().checkSuites().nodes().stream().findFirst();
+						if (findFirst3.isPresent()) {
+							Optional<PrLastCommitStatusQuery.Node3> findFirst4 = findFirst3.get().checkRuns().nodes().stream().findFirst();
+							if (findFirst4.isPresent()) {
+								CheckRun checkRun = new CheckRun();
+								checkRun.setName(findFirst4.get().name());
+								checkRun.setStatus(findFirst4.get().status().rawValue());
+								checkRun.setConclusion(findFirst4.get().conclusion().rawValue());
+								checkRun.setUrl((String)findFirst4.get().checkSuite().url());
+								List<CheckRun> checkRuns = new ArrayList<>();
+								checkRuns.add(checkRun);
+								pr.setCheckRuns(checkRuns);
+							}
+						}
+
 					}
-					return run;
-				})
-			;
+				}
+				List<PullRequest> pullRequests = new ArrayList<>();
+				if (pr != null) {
+					pullRequests.add(pr);
+				}
+				return Repository.of(data.repository().owner().login(), data.repository().name(), null, pullRequests);
+			});
+
+		Mono<Map<Repository, Repository>> reduce = Flux.concat(r1, r2)
+			.reduce(new HashMap<Repository, Repository>(), (map, r) -> {
+				Repository repository = map.get(r);
+				if (repository == null) {
+					repository = r;
+				} else {
+					repository = repository.merge(r);
+				}
+				map.put(r, repository);
+				return map;
+			});
+
+		Flux<Repository> flatMap = reduce.flux()
+			.flatMap(m -> Flux.fromIterable(m.values()));
+
+
+		return flatMap;
 	}
 
 	private Flux<LastCheckrunStatusQuery> workflowQueries() {
 		return Flux.fromIterable(this.dashboardProperties.getWorkflows())
 			.map(workflow -> LastCheckrunStatusQuery.builder()
+				.owner(workflow.getOwner())
+				.name(workflow.getName())
+				.build());
+	}
+
+	private Flux<BranchLastCommitStatusQuery> branchQueries() {
+		return Flux.fromIterable(this.dashboardProperties.getWorkflows())
+			.map(workflow -> BranchLastCommitStatusQuery.builder()
+				.owner(workflow.getOwner())
+				.name(workflow.getName())
+				.branch(workflow.getBranch() != null ? workflow.getBranch() : "master")
+				.build());
+	}
+
+
+	private Flux<PrLastCommitStatusQuery> prQueries() {
+		return Flux.fromIterable(this.dashboardProperties.getWorkflows())
+			.map(workflow -> PrLastCommitStatusQuery.builder()
 				.owner(workflow.getOwner())
 				.name(workflow.getName())
 				.build());

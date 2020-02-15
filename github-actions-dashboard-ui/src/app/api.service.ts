@@ -10,8 +10,8 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  getWorkflows(): Observable<WorkflowRuns> {
-    const response = this.http.get<WorkflowRuns>('/api/github/workflows');
+  getWorkflows(): Observable<Repository[]> {
+    const response = this.http.get<Repository[]>('/api/github/workflows');
     return response.pipe(map(data => data));
   }
 
@@ -65,13 +65,30 @@ export class ApiService {
 
 }
 
-export interface WorkflowRuns {
-  [key: string]: WorkflowRun;
+export interface CheckRun {
+  name: string;
+  status: string;
+  conclusion: string;
+  url: string;
 }
 
-export interface WorkflowRun {
-  status?: string;
-  conclusion?: string;
+export interface PullRequest {
+  name: string;
+  number: number;
+  url: string;
+  checkRuns: CheckRun[];
+}
+
+export interface Branch {
+  name: string;
+  checkRuns: CheckRun[];
+}
+
+export interface Repository {
+  owner: string;
+  name: string;
+  branches: Branch[];
+  pullRequests: PullRequest[];
 }
 
 export interface User {

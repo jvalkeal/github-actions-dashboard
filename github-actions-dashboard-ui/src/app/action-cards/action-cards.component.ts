@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService, WorkflowRun, WorkflowRuns } from '../api.service';
+import { ApiService, Repository } from '../api.service';
 
 @Component({
   selector: 'app-action-cards',
@@ -8,13 +8,17 @@ import { ApiService, WorkflowRun, WorkflowRuns } from '../api.service';
 })
 export class ActionCardsComponent implements OnInit {
 
-  cards: WorkflowRuns;
+  cards: Repository[];
 
   constructor(private api: ApiService) {}
 
   ngOnInit() {
     this.api.getWorkflows().subscribe(data => {
       this.cards = data;
+      // console.log('cards', this.cards);
+      // this.cards.forEach(x => {
+      //   console.log('prs', x.pullRequests);
+      // });
     });
   }
 }

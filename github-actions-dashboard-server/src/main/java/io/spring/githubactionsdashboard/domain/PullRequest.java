@@ -15,24 +15,45 @@
  */
 package io.spring.githubactionsdashboard.domain;
 
-public class WorkflowRun {
+import java.util.ArrayList;
+import java.util.List;
 
-	private String status;
-	private String conclusion;
+public class PullRequest {
 
-	public String getStatus() {
-		return status;
+	private String name;
+	private Integer number;
+	private String url;
+	private List<CheckRun> checkRuns = new ArrayList<>();
+
+	public String getName() {
+		return name;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getConclusion() {
-		return conclusion;
+	public Integer getNumber() {
+		return number;
 	}
 
-	public void setConclusion(String conclusion) {
-		this.conclusion = conclusion;
+	public void setNumber(Integer number) {
+		this.number = number;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public List<CheckRun> getCheckRuns() {
+		return checkRuns;
+	}
+
+	public void setCheckRuns(List<CheckRun> checkRuns) {
+		this.checkRuns = checkRuns;
 	}
 }

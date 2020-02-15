@@ -37,6 +37,7 @@ public class DashboardProperties {
 
 		private String owner;
 		private String name;
+		private String branch;
 
 		public String getOwner() {
 			return owner;
@@ -52,6 +53,14 @@ public class DashboardProperties {
 
 		public void setName(String name) {
 			this.name = name;
+		}
+
+		public String getBranch() {
+			return branch;
+		}
+
+		public void setBranch(String branch) {
+			this.branch = branch;
 		}
 	}
 }

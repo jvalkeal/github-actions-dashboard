@@ -15,23 +15,27 @@
  */
 package io.spring.githubactionsdashboard.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Domain class for list or repository names.
- *
- * @author Janne Valkealahti
- *
- */
-public class Repositories {
+public class Branch {
 
-	private List<String> repositories;
+	private String name;
+	private List<CheckRun> checkRuns = new ArrayList<>();
 
-	public Repositories(List<String> repositories) {
-		this.repositories = repositories;
+	public String getName() {
+		return name;
 	}
 
-	public List<String> getRepositories() {
-		return repositories;
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public List<CheckRun> getCheckRuns() {
+		return checkRuns;
+	}
+
+	public void setCheckRuns(List<CheckRun> checkRuns) {
+		this.checkRuns = checkRuns;
 	}
 }

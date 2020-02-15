@@ -1,6 +1,53 @@
 <div class="card">
-  <div class="card-block">
-    <h4 class="card-title">{{name}}</h4>
-    <p class="card-text">{{workflow.status}}</p>
+
+  <div class="card-header">
+    {{name}}
   </div>
+
+  <div *ngIf="workflow.branches?.length > 0" class="card-block">
+    <div class="card-title">
+      Branches
+    </div>
+    <ul class="list">
+      <li *ngFor="let branch of workflow.branches">
+        {{branch.name}}
+        <ul *ngIf="branch.checkRuns?.length > 0" class="list">
+          <li *ngFor="let checkRun of branch.checkRuns">
+            <a href="{{checkRun.url}}">{{checkRun.name}}</a>
+            <div class="progress-block">
+              <div class="progress-static" [ngClass]="checkRunStyle(checkRun)" >
+                <div class="progress-meter" data-value="100"></div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div *ngIf="hasActivePrCheckRuns()" class="card-block">
+    <div class="card-title">
+      PRs
+    </div>
+
+    <ul class="list">
+      <div *ngFor="let pr of workflow.pullRequests">
+        <li *ngIf="pr.checkRuns?.length > 0">
+          <a href="{{pr.url}}">#{{pr.number}}</a>
+          <ul class="list">
+            <li *ngFor="let checkRun of pr.checkRuns">
+              <a href="{{checkRun.url}}">{{checkRun.name}}</a>
+              <div class="progress-block">
+                <div class="progress-static" [ngClass]="checkRunStyle(checkRun)" >
+                  <div class="progress-meter" data-value="100"></div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </div>
+    </ul>
+
+  </div>
+
 </div>

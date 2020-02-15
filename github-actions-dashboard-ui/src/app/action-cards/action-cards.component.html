@@ -1,7 +1,7 @@
 <div>
   <div class="clr-row">
-    <div *ngFor="let card of cards | keyvalue" class="clr-col-xl-3 clr-col-lg-4 clr-col-md-6 clr-col-sm-12 clr-col-12">
-      <app-action-card [name]="card.key" [workflow]="card.value"></app-action-card>
+    <div *ngFor="let card of cards" class="clr-col-xl-3 clr-col-lg-4 clr-col-md-6 clr-col-sm-12 clr-col-12">
+      <app-action-card [name]="card.name" [workflow]="card"></app-action-card>
     </div>
   </div>
 </div>

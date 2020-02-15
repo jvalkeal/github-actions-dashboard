@@ -1,6 +1,6 @@
-spring:
-  jackson:
-    property-naming-strategy: SNAKE_CASE
+# spring:
+#   jackson:
+#     property-naming-strategy: SNAKE_CASE
 dashboard:
   workflows:
     - owner: spring-cloud
@@ -17,5 +17,7 @@ dashboard:
       name: spring-cloud-deployer-kubernetes
     - owner: spring-cloud
       name: spring-cloud-dataflow-build
+    - owner: spring-cloud
+      name: spring-cloud-dataflow-common
     - owner: spring-cloud
       name: spring-cloud-common-security-config

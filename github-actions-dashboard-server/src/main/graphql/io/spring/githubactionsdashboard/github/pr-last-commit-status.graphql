@@ -1,0 +1,38 @@
+query PrLastCommitStatus($owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
+    name
+    owner {
+      login
+    }
+    pullRequests(last: 10, states: [OPEN]) {
+      nodes {
+        title
+        url
+        number
+        commits(last: 1) {
+          nodes {
+            commit {
+              checkSuites(last: 10) {
+                nodes {
+                  app {
+                    name
+                  }
+                  checkRuns(last: 1) {
+                    nodes {
+                      name
+                      status
+                      conclusion
+                      checkSuite {
+                        url
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
