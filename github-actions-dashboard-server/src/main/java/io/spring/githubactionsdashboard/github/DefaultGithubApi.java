@@ -134,21 +134,20 @@ public class DefaultGithubApi implements GithubApi {
 				if (target instanceof BranchLastCommitStatusQuery.AsCommit) {
 					BranchLastCommitStatusQuery.AsCommit asCommit = (BranchLastCommitStatusQuery.AsCommit)target;
 					asCommit.checkSuites().nodes().stream().forEach(n -> {
-						// log.info("XXX1 {}", n);
-						Optional<BranchLastCommitStatusQuery.Node1> findFirst = n.checkRuns().nodes().stream().findFirst();
-						// log.info("XXX2 {} {} {}", findFirst.isPresent(), n.app().name(), "GitHub Actions".equals(n.app().name()));
-						if (findFirst.isPresent() && "GitHub Actions".equals(n.app().name())) {
-							// log.info("XXX3 {}", n);
+						List<CheckRun> checkRuns = new ArrayList<>();
+						n.checkRuns().nodes().stream().forEach(node -> {
 							CheckRun checkRun = new CheckRun();
-							checkRun.setName(findFirst.get().name());
-							checkRun.setStatus(findFirst.get().status().rawValue());
-							// TODO: conclusion may be null
-							checkRun.setConclusion(findFirst.get().conclusion().rawValue());
-							checkRun.setUrl((String)findFirst.get().checkSuite().url());
-							List<CheckRun> checkRuns = new ArrayList<>();
+							checkRun.setName(node.name());
+							checkRun.setStatus(node.status().rawValue());
+							if (node.conclusion() != null) {
+								checkRun.setConclusion(node.conclusion().rawValue());
+							}
+							if (node.checkSuite() != null) {
+								checkRun.setUrl((String)node.checkSuite().url());
+							}
 							checkRuns.add(checkRun);
-							branch.setCheckRuns(checkRuns);
-						}
+						});
+						branch.setCheckRuns(checkRuns);
 					});
 				}
 				return Repository.of(data.repository().owner().login(), data.repository().name(),

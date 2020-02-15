@@ -14,7 +14,7 @@ query BranchLastCommitStatus($owner: String!, $name: String!, $branch: String!) 
               app {
                 name
               }
-              checkRuns(last: 1) {
+              checkRuns(last: 10) {
                 nodes {
                   name
                   status
