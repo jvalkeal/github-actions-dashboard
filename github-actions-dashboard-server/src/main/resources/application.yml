@@ -5,8 +5,10 @@ dashboard:
   workflows:
     - owner: spring-cloud
       name: spring-cloud-dataflow
+      branches: [master, 2.4.x]
     - owner: spring-cloud
       name: spring-cloud-skipper
+      branches: [master, 2.3.x]
     - owner: spring-cloud
       name: spring-cloud-deployer
     - owner: spring-cloud

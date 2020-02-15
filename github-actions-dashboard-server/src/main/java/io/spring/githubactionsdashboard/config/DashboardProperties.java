@@ -16,6 +16,7 @@
 package io.spring.githubactionsdashboard.config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -37,7 +38,7 @@ public class DashboardProperties {
 
 		private String owner;
 		private String name;
-		private String branch;
+		private List<String> branches = new ArrayList<>(Arrays.asList("master"));
 
 		public String getOwner() {
 			return owner;
@@ -55,12 +56,12 @@ public class DashboardProperties {
 			this.name = name;
 		}
 
-		public String getBranch() {
-			return branch;
+		public List<String> getBranches() {
+			return branches;
 		}
 
-		public void setBranch(String branch) {
-			this.branch = branch;
+		public void setBranches(List<String> branches) {
+			this.branches = branches;
 		}
 	}
 }

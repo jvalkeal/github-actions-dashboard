@@ -219,15 +219,28 @@ public class DefaultGithubApi implements GithubApi {
 				.build());
 	}
 
-	private Flux<BranchLastCommitStatusQuery> branchQueries() {
+	private Flux<BranchLastCommitStatusQuery> branchQueriesx() {
 		return Flux.fromIterable(this.dashboardProperties.getWorkflows())
 			.map(workflow -> BranchLastCommitStatusQuery.builder()
 				.owner(workflow.getOwner())
 				.name(workflow.getName())
-				.branch(workflow.getBranch() != null ? workflow.getBranch() : "master")
+				// .branch(workflow.getBranch() != null ? workflow.getBranch() : "master")
 				.build());
 	}
 
+	private Flux<BranchLastCommitStatusQuery> branchQueries() {
+		return Flux.fromIterable(this.dashboardProperties.getWorkflows())
+			.flatMap(workflow -> {
+				return Flux.fromIterable(workflow.getBranches())
+					.map(branch -> {
+						return BranchLastCommitStatusQuery.builder()
+							.owner(workflow.getOwner())
+							.name(workflow.getName())
+							.branch(branch)
+							.build();
+					});
+			});
+	}
 
 	private Flux<PrLastCommitStatusQuery> prQueries() {
 		return Flux.fromIterable(this.dashboardProperties.getWorkflows())
