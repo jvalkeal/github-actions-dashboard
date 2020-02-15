@@ -64,8 +64,25 @@ public class DefaultGithubApi implements GithubApi {
 	        .bodyToMono(User.class);
 	}
 
+	@Override
 	public Flux<Repository> branchAndPrWorkflows() {
-		Flux<Repository> r1 = branchQueries()
+		return Flux.concat(branchRepos(), prRepos())
+			.reduce(new HashMap<Repository, Repository>(), (map, r) -> {
+				Repository repository = map.get(r);
+				if (repository == null) {
+					repository = r;
+				} else {
+					repository = repository.merge(r);
+				}
+				map.put(r, repository);
+				return map;
+			})
+			.flux()
+			.flatMap(m -> Flux.fromIterable(m.values()));
+	}
+
+	private Flux<Repository> branchRepos() {
+		return branchQueries()
 			.flatMap(githubGraphqlClient::query)
 			.map(data -> {
 				List<Branch> branches = new ArrayList<>();
@@ -96,8 +113,10 @@ public class DefaultGithubApi implements GithubApi {
 				return Repository.of(data.repository().owner().login(), data.repository().name(),
 						(String) data.repository().url(), branches, null);
 			});
+	}
 
-		Flux<Repository> r2 = prQueries()
+	private Flux<Repository> prRepos() {
+		return prQueries()
 			.flatMap(githubGraphqlClient::query)
 			.map(data -> {
 				PullRequest pr = null;
@@ -133,25 +152,8 @@ public class DefaultGithubApi implements GithubApi {
 				return Repository.of(data.repository().owner().login(), data.repository().name(),
 						(String) data.repository().url(), null, pullRequests);
 			});
-
-		Mono<Map<Repository, Repository>> reduce = Flux.concat(r1, r2)
-			.reduce(new HashMap<Repository, Repository>(), (map, r) -> {
-				Repository repository = map.get(r);
-				if (repository == null) {
-					repository = r;
-				} else {
-					repository = repository.merge(r);
-				}
-				map.put(r, repository);
-				return map;
-			});
-
-		Flux<Repository> flatMap = reduce.flux()
-			.flatMap(m -> Flux.fromIterable(m.values()));
-
-
-		return flatMap;
 	}
+
 
 	private Flux<BranchLastCommitStatusQuery> branchQueries() {
 		return Flux.fromIterable(this.dashboardProperties.getWorkflows())
