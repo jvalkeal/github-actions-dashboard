@@ -20,11 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -46,7 +42,6 @@ import reactor.core.publisher.Mono;
 @Component
 public class DefaultGithubApi implements GithubApi {
 
-	private final static Logger log = LoggerFactory.getLogger(DefaultGithubApi.class);
 	private final static String BASE_V3_API = "https://api.github.com";
 	private final static String V3_USER_API = BASE_V3_API + "/user";
 	private final WebClient webClient;
@@ -67,19 +62,6 @@ public class DefaultGithubApi implements GithubApi {
 	        .uri(V3_USER_API)
 			.retrieve()
 	        .bodyToMono(User.class);
-	}
-
-	@Override
-	public Mono<List<String>> repos() {
-		MyRepositoriesQuery query = MyRepositoriesQuery.builder()
-			.limit(12)
-			.build();
-		Mono<MyRepositoriesQuery.Data> data = this.githubGraphqlClient.query(query);
-		return data.map(r -> {
-			Stream<MyRepositoriesQuery.Node> nodes = r.viewer().repositories().nodes().stream();
-			List<String> repoNames = nodes.map(n -> n.name()).collect(Collectors.toList());
-			return repoNames;
-		});
 	}
 
 	public Flux<Repository> branchAndPrWorkflows() {

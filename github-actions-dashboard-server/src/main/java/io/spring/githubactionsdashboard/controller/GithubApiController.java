@@ -15,9 +15,6 @@
  */
 package io.spring.githubactionsdashboard.controller;
 
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,12 +39,6 @@ public class GithubApiController {
 	@ResponseBody
 	public Mono<User> me() {
 		return this.api.me();
-	}
-
-	@RequestMapping(path = "/repos")
-	@ResponseBody
-	public Mono<List<String>> repos() {
-		return this.api.repos();
 	}
 
 	@RequestMapping(path = "/workflows")

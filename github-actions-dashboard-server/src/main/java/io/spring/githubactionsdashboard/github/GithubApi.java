@@ -15,12 +15,8 @@
  */
 package io.spring.githubactionsdashboard.github;
 
-import java.util.List;
-import java.util.Map;
-
 import io.spring.githubactionsdashboard.domain.Repository;
 import io.spring.githubactionsdashboard.domain.User;
-// import io.spring.githubactionsdashboard.domain.WorkflowRun;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -40,9 +36,10 @@ public interface GithubApi {
 	 */
 	Mono<User> me();
 
-	Mono<List<String>> repos();
-
-	// Mono<Map<String, WorkflowRun>> workflows();
-
+	/**
+	 * Gets info about branches and pr's workflows..
+	 *
+	 * @return the info about branches and pr's workflows.
+	 */
 	Flux<Repository> branchAndPrWorkflows();
 }
