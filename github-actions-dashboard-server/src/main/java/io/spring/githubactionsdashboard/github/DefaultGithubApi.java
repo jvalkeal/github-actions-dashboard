@@ -134,8 +134,12 @@ public class DefaultGithubApi implements GithubApi {
 								CheckRun checkRun = new CheckRun();
 								checkRun.setName(findFirst4.get().name());
 								checkRun.setStatus(findFirst4.get().status().rawValue());
-								checkRun.setConclusion(findFirst4.get().conclusion().rawValue());
-								checkRun.setUrl((String)findFirst4.get().checkSuite().url());
+								if (findFirst4.get().conclusion() != null) {
+									checkRun.setConclusion(findFirst4.get().conclusion().rawValue());
+								}
+								if (findFirst4.get().checkSuite() != null) {
+									checkRun.setUrl((String)findFirst4.get().checkSuite().url());
+								}
 								List<CheckRun> checkRuns = new ArrayList<>();
 								checkRuns.add(checkRun);
 								pr.setCheckRuns(checkRuns);
