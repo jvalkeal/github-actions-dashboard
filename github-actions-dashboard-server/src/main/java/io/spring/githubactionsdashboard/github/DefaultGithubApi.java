@@ -16,7 +16,6 @@
 package io.spring.githubactionsdashboard.github;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,17 +34,7 @@ import io.spring.githubactionsdashboard.domain.CheckRun;
 import io.spring.githubactionsdashboard.domain.PullRequest;
 import io.spring.githubactionsdashboard.domain.Repository;
 import io.spring.githubactionsdashboard.domain.User;
-// import io.spring.githubactionsdashboard.github.BranchLastCommitStatusQuery.AsCommit;
-// import io.spring.githubactionsdashboard.github.BranchLastCommitStatusQuery.Target;
-// import io.spring.githubactionsdashboard.github.PrLastCommitStatusQuery.Node1;
-// import io.spring.githubactionsdashboard.github.PrLastCommitStatusQuery.Node2;
-// import io.spring.githubactionsdashboard.github.PrLastCommitStatusQuery.Node3;
-// import io.spring.githubactionsdashboard.github.PrLastCommitStatusQuery.Node;
-// import io.spring.githubactionsdashboard.github.BranchLastCommitStatusQuery.Data;
 import reactor.core.publisher.Flux;
-// import io.spring.githubactionsdashboard.github.LastCheckrunStatusQuery.AsCommit;
-// import io.spring.githubactionsdashboard.github.LastCheckrunStatusQuery.Node;
-// import io.spring.githubactionsdashboard.github.LastCheckrunStatusQuery.Target;
 import reactor.core.publisher.Mono;
 
 /**
@@ -93,35 +82,7 @@ public class DefaultGithubApi implements GithubApi {
 		});
 	}
 
-	// @Override
-	// public Mono<Map<String, WorkflowRun>> workflows() {
-	// 	return workflowQueries()
-	// 		.flatMap(q -> this.githubGraphqlClient.query(q))
-	// 		.collectMap(
-	// 			r -> {
-	// 				return r.repository().name();
-	// 			},
-	// 			r -> {
-	// 				WorkflowRun run = new WorkflowRun();
-	// 				LastCheckrunStatusQuery.Target target = r.repository().defaultBranchRef().target();
-	// 				if (target instanceof LastCheckrunStatusQuery.AsCommit) {
-	// 					LastCheckrunStatusQuery.AsCommit asCommit = (LastCheckrunStatusQuery.AsCommit)target;
-	// 					LastCheckrunStatusQuery.Node node = asCommit.checkSuites().nodes().get(0);
-	// 					run.setConclusion(node.conclusion().rawValue());
-	// 					run.setStatus(node.status().rawValue());
-	// 				}
-	// 				return run;
-	// 			})
-	// 		;
-	// }
-
 	public Flux<Repository> branchAndPrWorkflows() {
-
-		// Flux<BranchLastCommitStatusQuery.Data> bq = branchQueries()
-		// 	.flatMap(githubGraphqlClient::query);
-		// Flux<PrLastCommitStatusQuery.Data> prq = prQueries()
-		// 	.flatMap(githubGraphqlClient::query);
-
 		Flux<Repository> r1 = branchQueries()
 			.flatMap(githubGraphqlClient::query)
 			.map(data -> {
@@ -208,23 +169,6 @@ public class DefaultGithubApi implements GithubApi {
 
 
 		return flatMap;
-	}
-
-	private Flux<LastCheckrunStatusQuery> workflowQueries() {
-		return Flux.fromIterable(this.dashboardProperties.getWorkflows())
-			.map(workflow -> LastCheckrunStatusQuery.builder()
-				.owner(workflow.getOwner())
-				.name(workflow.getName())
-				.build());
-	}
-
-	private Flux<BranchLastCommitStatusQuery> branchQueriesx() {
-		return Flux.fromIterable(this.dashboardProperties.getWorkflows())
-			.map(workflow -> BranchLastCommitStatusQuery.builder()
-				.owner(workflow.getOwner())
-				.name(workflow.getName())
-				// .branch(workflow.getBranch() != null ? workflow.getBranch() : "master")
-				.build());
 	}
 
 	private Flux<BranchLastCommitStatusQuery> branchQueries() {
