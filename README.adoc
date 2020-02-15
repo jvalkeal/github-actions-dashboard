@@ -1,0 +1,27 @@
+== Github Actions Dashboard
+Custom dashboard application aggregating information from multiple
+Github projects and their Actions.
+
+=== Building
+
+Build:
+[source, bash]
+----
+$ ./gradlew clean build
+----
+
+Build and skip all tests:
+[source, bash]
+----
+$ ./gradlew clean build -x test
+----
+
+Run:
+[source, bash]
+----
+$ java -jar github-actions-dashboard-server/build/libs/github-actions-dashboard-server-<version>.jar \
+  --spring.security.oauth2.client.registration.github.client-id=<github client id> \
+  --spring.security.oauth2.client.registration.github.client-secret=<github client secret>
+----
+
+Open: http://localhost:8080
