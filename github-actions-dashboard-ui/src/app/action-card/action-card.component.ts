@@ -20,7 +20,9 @@ export class ActionCardComponent implements OnInit {
   }
 
   public checkRunStyle(checkRun: CheckRun): string {
-    if (checkRun.conclusion === 'SUCCESS') {
+    if (checkRun.status === 'IN_PROGRESS') {
+      return '';
+    } else if (checkRun.conclusion === 'SUCCESS') {
       return 'success';
     } else {
       return 'danger';
