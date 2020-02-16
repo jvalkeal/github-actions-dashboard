@@ -18,7 +18,7 @@ package io.spring.githubactionsdashboard.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Branch {
+public class Branch implements Comparable<Branch> {
 
 	private String name;
 	private String url;
@@ -64,5 +64,14 @@ public class Branch {
 
 	public void setCheckRuns(List<CheckRun> checkRuns) {
 		this.checkRuns = checkRuns;
+	}
+
+	@Override
+	public int compareTo(Branch o) {
+		if (getName() == null || o.getName() == null) {
+			return 0;
+		} else {
+			return getName().compareTo(o.getName());
+		}
 	}
 }

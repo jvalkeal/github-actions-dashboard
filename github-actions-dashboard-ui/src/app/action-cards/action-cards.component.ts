@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription, timer } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { ApiService, Repository } from '../api.service';
 
 @Component({
@@ -6,19 +8,24 @@ import { ApiService, Repository } from '../api.service';
   templateUrl: './action-cards.component.html',
   styleUrls: ['./action-cards.component.css']
 })
-export class ActionCardsComponent implements OnInit {
+export class ActionCardsComponent implements OnInit, OnDestroy {
 
   cards: Repository[];
+  private subscription: Subscription;
 
   constructor(private api: ApiService) {}
 
   ngOnInit() {
-    this.api.getWorkflows().subscribe(data => {
-      this.cards = data;
-      // console.log('cards', this.cards);
-      // this.cards.forEach(x => {
-      //   console.log('prs', x.pullRequests);
-      // });
-    });
+    this.subscription = timer(0, 30000)
+      .pipe(switchMap(() => this.api.getWorkflows()))
+      .subscribe(repos => {
+        this.cards = repos;
+      });
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

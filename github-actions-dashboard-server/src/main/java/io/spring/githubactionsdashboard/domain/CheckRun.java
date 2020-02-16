@@ -15,7 +15,7 @@
  */
 package io.spring.githubactionsdashboard.domain;
 
-public class CheckRun {
+public class CheckRun implements Comparable<CheckRun> {
 
 	private String name;
 	private String status;
@@ -70,5 +70,14 @@ public class CheckRun {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	@Override
+	public int compareTo(CheckRun o) {
+		if (getName() == null || o.getName() == null) {
+			return 0;
+		} else {
+			return getName().compareTo(o.getName());
+		}
 	}
 }

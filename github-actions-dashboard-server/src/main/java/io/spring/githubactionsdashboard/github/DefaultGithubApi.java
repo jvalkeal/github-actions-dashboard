@@ -80,6 +80,9 @@ public class DefaultGithubApi implements GithubApi {
 			.flux()
 			.flatMap(map -> {
 				List<Repository> repos = new ArrayList<>(map.values());
+				repos.forEach(r -> {
+					Collections.sort(r.getBranches(), Collections.reverseOrder());
+				});
 				Collections.sort(repos);
 				return Flux.fromIterable(repos);
 			});
