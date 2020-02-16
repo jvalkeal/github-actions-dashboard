@@ -1,6 +1,6 @@
-# spring:
-#   jackson:
-#     property-naming-strategy: SNAKE_CASE
+logging:
+  level:
+    io.spring.githubactionsdashboard: info
 dashboard:
   workflows:
     - owner: spring-cloud

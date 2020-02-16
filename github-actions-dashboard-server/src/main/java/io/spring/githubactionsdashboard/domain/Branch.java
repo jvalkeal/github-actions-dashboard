@@ -74,4 +74,9 @@ public class Branch implements Comparable<Branch> {
 			return getName().compareTo(o.getName());
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "Branch [checkRuns=" + checkRuns + ", name=" + name + ", url=" + url + "]";
+	}
 }

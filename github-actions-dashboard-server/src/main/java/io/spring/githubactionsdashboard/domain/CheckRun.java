@@ -80,4 +80,9 @@ public class CheckRun implements Comparable<CheckRun> {
 			return getName().compareTo(o.getName());
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "CheckRun [conclusion=" + conclusion + ", name=" + name + ", status=" + status + ", url=" + url + "]";
+	}
 }

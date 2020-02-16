@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -42,6 +44,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class DefaultGithubApi implements GithubApi {
 
+	private final static Logger log = LoggerFactory.getLogger(DefaultGithubApi.class);
 	private final static String BASE_V3_API = "https://api.github.com";
 	private final static String V3_USER_API = BASE_V3_API + "/user";
 	private final WebClient webClient;
@@ -72,6 +75,7 @@ public class DefaultGithubApi implements GithubApi {
 				if (repository == null) {
 					repository = r;
 				} else {
+					log.debug("Merging repositories {} {}", repository, r);
 					repository = repository.merge(r);
 				}
 				map.put(r, repository);
@@ -92,6 +96,7 @@ public class DefaultGithubApi implements GithubApi {
 		return branchQueries()
 			.flatMap(githubGraphqlClient::query)
 			.map(data -> {
+				log.debug("Branch query returned data {}", data);
 				List<Branch> branches = new ArrayList<>();
 				Branch branch = Branch.of(data.repository().ref().name(),
 						(String) data.repository().url() + "/tree/" + data.repository().ref().name());
@@ -102,6 +107,7 @@ public class DefaultGithubApi implements GithubApi {
 					asCommit.checkSuites().nodes().stream().forEach(n -> {
 						List<CheckRun> checkRuns = new ArrayList<>();
 						n.checkRuns().nodes().stream().forEach(node -> {
+							log.debug("Checkrun node {}", node);
 							CheckRun checkRun = CheckRun.of(node.name(), node.status().rawValue());
 							if (node.conclusion() != null) {
 								checkRun.setConclusion(node.conclusion().rawValue());
@@ -111,6 +117,8 @@ public class DefaultGithubApi implements GithubApi {
 							}
 							checkRuns.add(checkRun);
 						});
+						log.debug("For branch {} setting checkruns {}", branch, checkRuns);
+						checkRuns.addAll(branch.getCheckRuns());
 						branch.setCheckRuns(checkRuns);
 					});
 				}

@@ -56,4 +56,9 @@ public class PullRequest {
 	public void setCheckRuns(List<CheckRun> checkRuns) {
 		this.checkRuns = checkRuns;
 	}
+
+	@Override
+	public String toString() {
+		return "PullRequest [checkRuns=" + checkRuns + ", name=" + name + ", number=" + number + ", url=" + url + "]";
+	}
 }

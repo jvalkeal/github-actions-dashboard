@@ -161,4 +161,10 @@ public class Repository implements Comparable<Repository> {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Repository [branches=" + branches + ", name=" + name + ", owner=" + owner + ", pullRequests="
+				+ pullRequests + ", url=" + url + "]";
+	}
 }
