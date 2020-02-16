@@ -24,7 +24,7 @@ import java.util.List;
  * @author Janne Valkealahti
  *
  */
-public class Repository {
+public class Repository implements Comparable<Repository> {
 
 	private String owner;
 	private String name;
@@ -114,6 +114,15 @@ public class Repository {
 
 	public void setPullRequests(List<PullRequest> pullRequests) {
 		this.pullRequests = pullRequests;
+	}
+
+	@Override
+	public int compareTo(Repository o) {
+		if (getName() == null || o.getName() == null) {
+			return 0;
+		} else {
+			return getName().compareTo(o.getName());
+		}
 	}
 
 	@Override

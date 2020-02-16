@@ -24,6 +24,24 @@ public class Branch {
 	private String url;
 	private List<CheckRun> checkRuns = new ArrayList<>();
 
+	public Branch() {
+	}
+
+	public Branch(String name, String url) {
+		this.name = name;
+		this.url = url;
+	}
+
+	public Branch(String name, String url, List<CheckRun> checkRuns) {
+		this.name = name;
+		this.url = url;
+		this.checkRuns = checkRuns;
+	}
+
+	public static Branch of(String name, String url) {
+		return new Branch(name, url);
+	}
+
 	public String getName() {
 		return name;
 	}

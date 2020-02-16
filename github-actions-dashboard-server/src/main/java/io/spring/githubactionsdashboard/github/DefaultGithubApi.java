@@ -16,6 +16,7 @@
 package io.spring.githubactionsdashboard.github;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -77,7 +78,11 @@ public class DefaultGithubApi implements GithubApi {
 				return map;
 			})
 			.flux()
-			.flatMap(m -> Flux.fromIterable(m.values()));
+			.flatMap(map -> {
+				List<Repository> repos = new ArrayList<>(map.values());
+				Collections.sort(repos);
+				return Flux.fromIterable(repos);
+			});
 	}
 
 	private Flux<Repository> branchRepos() {
@@ -85,9 +90,8 @@ public class DefaultGithubApi implements GithubApi {
 			.flatMap(githubGraphqlClient::query)
 			.map(data -> {
 				List<Branch> branches = new ArrayList<>();
-				Branch branch = new Branch();
-				branch.setName(data.repository().ref().name());
-				branch.setUrl((String)data.repository().url() + "/tree/" + data.repository().ref().name());
+				Branch branch = Branch.of(data.repository().ref().name(),
+						(String) data.repository().url() + "/tree/" + data.repository().ref().name());
 				branches.add(branch);
 				BranchLastCommitStatusQuery.Target target = data.repository().ref().target();
 				if (target instanceof BranchLastCommitStatusQuery.AsCommit) {
@@ -95,9 +99,7 @@ public class DefaultGithubApi implements GithubApi {
 					asCommit.checkSuites().nodes().stream().forEach(n -> {
 						List<CheckRun> checkRuns = new ArrayList<>();
 						n.checkRuns().nodes().stream().forEach(node -> {
-							CheckRun checkRun = new CheckRun();
-							checkRun.setName(node.name());
-							checkRun.setStatus(node.status().rawValue());
+							CheckRun checkRun = CheckRun.of(node.name(), node.status().rawValue());
 							if (node.conclusion() != null) {
 								checkRun.setConclusion(node.conclusion().rawValue());
 							}

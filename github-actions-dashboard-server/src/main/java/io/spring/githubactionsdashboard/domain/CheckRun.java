@@ -22,6 +22,24 @@ public class CheckRun {
 	private String conclusion;
 	private String url;
 
+	public CheckRun() {
+	}
+
+	public CheckRun(String name, String status, String conclusion, String url) {
+		this.name = name;
+		this.status = status;
+		this.conclusion = conclusion;
+		this.url = url;
+	}
+
+	public static CheckRun of(String name, String status) {
+		return new CheckRun(name, status, null, null);
+	}
+
+	public static CheckRun of(String name, String status, String conclusion, String url) {
+		return new CheckRun(name, status, conclusion, url);
+	}
+
 	public String getName() {
 		return name;
 	}
