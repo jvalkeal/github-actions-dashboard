@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse, HttpErrorResponse, HttpHeaderResponse } from '@angular/common/http';
-import { Observable, throwError, of } from 'rxjs';
+import { HttpClient, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { Observable, of, EMPTY } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -11,8 +11,7 @@ export class ApiService {
   constructor(private http: HttpClient) {}
 
   getWorkflows(): Observable<Repository[]> {
-    const response = this.http.get<Repository[]>('/api/github/workflows');
-    return response.pipe(map(data => data));
+    return this.http.get<Repository[]>('/api/github/workflows').pipe((catchError(() => EMPTY)));
   }
 
   getRepositories(): Observable<string[]> {
