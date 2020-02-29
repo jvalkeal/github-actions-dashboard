@@ -1,4 +1,10 @@
 == Github Actions Dashboard
+
+[NOTE]
+====
+This project is very much work-in-progress, it may work or not!
+====
+
 Custom dashboard application aggregating information from multiple
 Github projects and their Actions.
 
