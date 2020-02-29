@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, BehaviorSubject } from 'rxjs';
-import { tap, delay, map } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { ApiService, User } from '../api.service';
+import { login } from './auth.actions';
+import { AuthState } from './auth.reducer';
 
 @Injectable({
   providedIn: 'root'
@@ -12,22 +15,24 @@ export class AuthService {
   isLoggedIn = false;
   redirectUrl: string;
 
-  constructor(private api: ApiService) { }
+  constructor(
+    private api: ApiService,
+    private store: Store<AuthState>
+  ) { }
 
   login(): Observable<User> {
     return this.api.getUser().pipe(
       tap(val => {
         this.isLoggedIn = val.name !== undefined;
         this.userLoggedIn.next(val);
+        this.store.dispatch(login());
       }));
   }
 
   logout(): Observable<boolean> {
     return this.api.logout().pipe(tap(res => {
-      console.log('logout1()', res);
       if (res) {
         this.isLoggedIn = false;
-        console.log('logout2()', res);
         this.userLoggedIn.next({});
       }
     }));

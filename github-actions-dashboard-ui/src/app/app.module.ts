@@ -10,6 +10,8 @@ import { ActionCardsComponent } from './action-cards/action-cards.component';
 import { UserHeaderActionComponent } from './user/user-header-action/user-header-action.component';
 import { HomeComponent } from './home/home.component';
 import { ActionCardComponent } from './action-card/action-card.component';
+import { StoreModule } from '@ngrx/store';
+import { reducers, metaReducers } from './reducers';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,14 @@ import { ActionCardComponent } from './action-card/action-card.component';
     HttpClientModule,
     AppRoutingModule,
     ClarityModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    StoreModule.forRoot(reducers, {
+      metaReducers,
+      runtimeChecks: {
+        strictStateImmutability: true,
+        strictActionImmutability: true
+      }
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

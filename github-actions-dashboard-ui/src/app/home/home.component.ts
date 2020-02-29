@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Store, select } from '@ngrx/store';
+import { getLoggedIn, AuthState } from '../auth/auth.reducer';
 
 @Component({
   selector: 'app-home',
@@ -7,7 +9,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  loggedIn$ = this.store.pipe(select(getLoggedIn));
+
+  constructor(
+    private store: Store<AuthState>
+  ) { }
 
   ngOnInit() {
   }
