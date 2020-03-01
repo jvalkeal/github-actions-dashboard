@@ -1,16 +1,19 @@
 import { ActionReducer, ActionReducerMap, MetaReducer } from '@ngrx/store';
-import * as fromRouter from '@ngrx/router-store';
+// import * as fromRouter from '@ngrx/router-store';
 import { environment } from '../../environments/environment';
 import * as fromAuth from '../auth/auth.reducer';
+import * as fromSettings from '../settings/settings.reducer';
 
 export interface State {
   [fromAuth.authFeatureKey]: fromAuth.AuthState;
-  router: fromRouter.RouterReducerState<any>;
+  [fromSettings.settingsFeatureKey]: fromSettings.SettingsState;
+  // router: fromRouter.RouterReducerState<any>;
 }
 
 export const reducers: ActionReducerMap<State> = {
-  router: fromRouter.routerReducer,
-  [fromAuth.authFeatureKey]: fromAuth.reducer
+  [fromAuth.authFeatureKey]: fromAuth.reducer,
+  [fromSettings.settingsFeatureKey]: fromSettings.reducer
+  // router: fromRouter.routerReducer
 };
 
 function logger(reducer: ActionReducer<State>): ActionReducer<State> {

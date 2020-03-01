@@ -19,6 +19,11 @@ export class ApiService {
     return response.pipe(map(data => data));
   }
 
+  getSettings(): Observable<Setting[]> {
+    const response = this.http.get<Setting[]>('/user/settings');
+    return response.pipe(map(data => data));
+  }
+
   getUser(): Observable<User> {
     const response = this.http.get<OAuth2User>('/user/whoami', {observe: 'response'});
     const user = response.pipe(map(data => {
@@ -62,6 +67,11 @@ export class ApiService {
     //   'Something bad happened; please try again later.');
   }
 
+}
+
+export interface Setting {
+  name: string;
+  value: string;
 }
 
 export interface CheckRun {

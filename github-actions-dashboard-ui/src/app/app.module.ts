@@ -12,6 +12,7 @@ import { HomeComponent } from './home/home.component';
 import { ActionCardComponent } from './action-card/action-card.component';
 import { StoreModule } from '@ngrx/store';
 import { reducers, metaReducers } from './reducers';
+import { SettingsComponent } from './settings/settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { reducers, metaReducers } from './reducers';
     ActionCardsComponent,
     UserHeaderActionComponent,
     HomeComponent,
-    ActionCardComponent
+    ActionCardComponent,
+    SettingsComponent
   ],
   imports: [
     BrowserModule,

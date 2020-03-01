@@ -3,11 +3,13 @@ import { Routes, RouterModule } from '@angular/router';
 import { ActionCardsComponent } from './action-cards/action-cards.component';
 import { AuthGuard } from './auth/auth.guard';
 import { HomeComponent } from './home/home.component';
+import { SettingsComponent } from './settings/settings/settings.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'cards'},
   { path: 'cards', component: ActionCardsComponent, canActivate: [AuthGuard] },
   { path: 'home', component: HomeComponent },
+  { path: 'settings', component: SettingsComponent },
   { path: '**', component: HomeComponent }
 ];
 

@@ -1,0 +1,4 @@
+<p>settings works!</p>
+<div *ngFor="let setting of settings$ | async" >
+    {{setting.name}} : {{setting.value}}
+</div>

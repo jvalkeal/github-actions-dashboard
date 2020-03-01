@@ -15,13 +15,29 @@
  */
 package io.spring.githubactionsdashboard.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import io.spring.githubactionsdashboard.domain.Setting;
+import io.spring.githubactionsdashboard.entity.UserSetting;
+import io.spring.githubactionsdashboard.repository.SettingsRepository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Controller for returning info for current logged in user.
@@ -32,6 +48,13 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+	private final static Logger log = LoggerFactory.getLogger(UserController.class);
+	private final SettingsRepository settings;
+
+	public UserController(SettingsRepository settings) {
+		this.settings = settings;
+	}
 
 	/**
 	 * Gets a current logged in user or simply return 401 if no user. Mostly used by
@@ -47,5 +70,36 @@ public class UserController {
 			return oauth2User;
 		}
 		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+	}
+
+	@RequestMapping(path = "/settings", method = RequestMethod.GET)
+	@ResponseBody
+	public Flux<Setting> getSettings(@AuthenticationPrincipal OAuth2User oauth2User) {
+		return Flux.fromIterable(this.settings.findByUsername(oauth2User.getName()))
+			.map(userSetting -> new Setting(userSetting.getName(), userSetting.getValue()));
+	}
+
+	@RequestMapping(path = "/settings", method = RequestMethod.POST)
+	public Mono<Void> saveSettings(@AuthenticationPrincipal OAuth2User oauth2User,
+			@RequestBody List<Setting> settings) {
+		return Flux.fromIterable(settings)
+			.map(s -> new UserSetting(oauth2User.getName(), s.getName(), s.getValue()))
+			.collectList()
+			.doOnNext(l -> {
+				this.settings.saveAll(l);
+			})
+			.then();
+	}
+
+	@RequestMapping(path = "/settingsx", method = RequestMethod.GET)
+	public Mono<Void> saveSettingsx(@AuthenticationPrincipal OAuth2User oauth2User,
+			@RequestParam("key") String key, @RequestParam("value") String value) {
+		return Mono.just(new UserSetting(oauth2User.getName(), key, value))
+			.doOnNext(s -> {
+				log.info("Saving {}", s);
+				UserSetting saved = this.settings.save(s);
+				log.info("Saved {}", saved);
+			})
+			.then();
 	}
 }
