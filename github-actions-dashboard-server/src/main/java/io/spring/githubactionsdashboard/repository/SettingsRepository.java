@@ -16,12 +16,22 @@
 package io.spring.githubactionsdashboard.repository;
 
 import java.util.List;
-
 import org.springframework.data.repository.CrudRepository;
-
 import io.spring.githubactionsdashboard.entity.UserSetting;
 
+/**
+ * Repository to store user settings as a simple name/value pairs.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public interface SettingsRepository extends CrudRepository<UserSetting, Long> {
 
+    /**
+     * Gets a list of user settings.
+     *
+     * @param username the username
+     * @return list of user settings
+     */
     List<UserSetting> findByUsername(String username);
 }

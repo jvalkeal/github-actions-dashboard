@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { getSettings, SettingsState } from '../settings.reducer';
+import { getSettings, State } from '../settings.reducer';
 
 @Component({
   selector: 'app-settings',
@@ -12,7 +12,7 @@ export class SettingsComponent implements OnInit {
   settings$ = this.store.pipe(select(getSettings));
 
   constructor(
-    private store: Store<SettingsState>
+    private store: Store<State>
   ) { }
 
   ngOnInit() {

@@ -20,6 +20,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import io.spring.githubactionsdashboard.domain.Setting;
+
 @Entity
 public class UserSetting {
 
@@ -37,6 +39,10 @@ public class UserSetting {
 		this.username = username;
 		this.name = name;
 		this.value = value;
+	}
+
+	public static UserSetting of(String username, Setting setting) {
+		return new UserSetting(username, setting.getName(), setting.getValue());
 	}
 
 	public String getUsername() {

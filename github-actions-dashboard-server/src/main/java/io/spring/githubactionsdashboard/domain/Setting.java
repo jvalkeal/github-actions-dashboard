@@ -15,6 +15,12 @@
  */
 package io.spring.githubactionsdashboard.domain;
 
+/**
+ * Domain class for storing name/value pair for a user setting.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class Setting {
 
 	private String name;
@@ -26,6 +32,10 @@ public class Setting {
 	public Setting(String name, String value) {
 		this.name = name;
 		this.value = value;
+	}
+
+	public static Setting of(String name, String value) {
+		return new Setting(name, value);
 	}
 
 	public String getName() {
@@ -43,5 +53,4 @@ public class Setting {
 	public void setValue(String value) {
 		this.value = value;
 	}
-
 }
