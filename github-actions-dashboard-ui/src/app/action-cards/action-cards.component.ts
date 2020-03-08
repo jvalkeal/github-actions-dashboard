@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Store, select } from '@ngrx/store';
 import { Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ApiService, Repository } from '../api.service';
+import { State, getRefreshSetting } from '../settings/settings.reducer';
 
 @Component({
   selector: 'app-action-cards',
@@ -11,21 +13,41 @@ import { ApiService, Repository } from '../api.service';
 export class ActionCardsComponent implements OnInit, OnDestroy {
 
   cards: Repository[];
-  private subscription: Subscription;
+  private sub1: Subscription;
+  private sub2: Subscription;
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private store: Store<State>
+  ) {}
 
   ngOnInit() {
-    this.subscription = timer(0, 30000)
-      .pipe(switchMap(() => this.api.getWorkflows()))
-      .subscribe(repos => {
-        this.cards = repos;
+    this.setupWorkflowsRefresh(60);
+    this.sub2 = this.store.pipe(select(getRefreshSetting))
+      .subscribe(v => {
+        this.setupWorkflowsRefresh(+v);
       });
   }
 
   ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+    if (this.sub1) {
+      this.sub1.unsubscribe();
+    }
+    if (this.sub2) {
+      this.sub2.unsubscribe();
+    }
+  }
+
+  private setupWorkflowsRefresh(interval: number) {
+    if (this.sub1) {
+      this.sub1.unsubscribe();
+    }
+    if (interval && interval > 0) {
+      this.sub1 = timer(0, interval * 1000)
+        .pipe(switchMap(() => this.api.getWorkflows()))
+        .subscribe(repos => {
+          this.cards = repos;
+        });
     }
   }
 }
