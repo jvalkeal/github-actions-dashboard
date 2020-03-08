@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { getSettings, State } from '../settings.reducer';
+import { getSettings, State, getRefreshSetting, refreshKey } from '../settings.reducer';
+import { update } from '../settings.actions';
 
 @Component({
   selector: 'app-settings',
@@ -10,6 +11,7 @@ import { getSettings, State } from '../settings.reducer';
 export class SettingsComponent implements OnInit {
 
   settings$ = this.store.pipe(select(getSettings));
+  refreshSetting$ = this.store.pipe(select(getRefreshSetting));
 
   constructor(
     private store: Store<State>
@@ -18,4 +20,7 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
   }
 
+  refreshOnChange(val: string) {
+    this.store.dispatch(update({ setting: { name: refreshKey, value: val} }));
+  }
 }

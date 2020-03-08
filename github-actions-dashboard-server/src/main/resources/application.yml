@@ -1,6 +1,6 @@
 logging:
   level:
-    io.spring.githubactionsdashboard: info
+    io.spring.githubactionsdashboard: debug
 spring:
   jpa:
     hibernate:

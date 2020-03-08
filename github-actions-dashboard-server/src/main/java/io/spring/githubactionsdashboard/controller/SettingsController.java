@@ -15,7 +15,10 @@
  */
 package io.spring.githubactionsdashboard.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,32 +47,54 @@ import reactor.core.publisher.Mono;
 public class SettingsController {
 
 	private final static Logger log = LoggerFactory.getLogger(SettingsController.class);
-	private final SettingsRepository settings;
+	private final SettingsRepository repository;
 
 	public SettingsController(SettingsRepository settings) {
-		this.settings = settings;
+		this.repository = settings;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
 	public Flux<Setting> getSettings(@AuthenticationPrincipal OAuth2User oauth2User) {
 		return Flux
-			.fromIterable(this.settings.findByUsername(oauth2User.getName()))
+			.fromIterable(this.repository.findByUsername(oauth2User.getName()))
 			.map(userSetting -> Setting.of(userSetting.getName(), userSetting.getValue()));
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
 	public Mono<Void> saveSettings(@AuthenticationPrincipal OAuth2User oauth2User,
 			@RequestBody List<Setting> settings) {
+		log.debug("Saving settings for user={} settings={}", oauth2User, settings);
 		String username = oauth2User.getName();
-		return Flux
-			.fromIterable(settings)
-			.map(s -> UserSetting.of(username, s))
-			.collectList()
+
+		Mono<Map<String, UserSetting>> left = Mono.fromSupplier(() -> this.repository.findByUsername(username))
+			.map(list -> list.stream().collect(Collectors.toMap(i -> i.getName(), i -> i)));
+
+		Mono<Map<String, UserSetting>> right = Flux.fromIterable(settings)
+			.map(setting -> UserSetting.of(username, setting))
+			.collectMap(s -> s.getName(), s -> s);
+
+		return Mono.zip(left, right)
+			.map(tuple -> merge(tuple.getT1(), tuple.getT2()))
 			.doOnNext(userSettings -> {
 				log.debug("Saving user={} settings={}", username, userSettings);
-				this.settings.saveAll(userSettings);
+				this.repository.saveAll(userSettings);
 			})
 			.then();
+	}
+
+	private List<UserSetting> merge(Map<String, UserSetting> left, Map<String, UserSetting> right) {
+		ArrayList<UserSetting> out = new ArrayList<>();
+		out.addAll(left.values());
+		right.forEach((k, v) -> {
+			UserSetting us = left.get(k);
+			if (us != null) {
+				us.setValue(v.getValue());
+			} else {
+				us = UserSetting.of(v.getUsername(), Setting.of(v.getName(), v.getValue()));
+				out.add(us);
+			}
+		});
+		return out;
 	}
 }

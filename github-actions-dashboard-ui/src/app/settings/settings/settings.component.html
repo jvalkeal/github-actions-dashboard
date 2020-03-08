@@ -1,4 +1,24 @@
-<p>settings works!</p>
-<div *ngFor="let setting of settings$ | async" >
-    {{setting.name}} : {{setting.value}}
+<h1>Settings</h1>
+<!-- <div *ngFor="let setting of settings$ | async" >
+    <form clrForm>
+        <clr-input-container>
+          <label>My name</label>
+          <input clrInput placeholder="Fill me in, scotty!" name="setting.name"   />
+        </clr-input-container>
+      </form>
+</div> -->
+
+<div>
+  <form clrForm>
+
+    <clr-select-container>
+      <label>Refresh time</label>
+      <select clrSelect name="refresh" [value]="refreshSetting$ | async" (change)="refreshOnChange($event.target.value)" >
+        <option value="30">30s</option>
+        <option value="60">1m</option>
+        <option value="0">Disabled</option>
+      </select>
+    </clr-select-container>
+
+  </form>
 </div>

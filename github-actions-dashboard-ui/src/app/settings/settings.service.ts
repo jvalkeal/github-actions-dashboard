@@ -23,4 +23,8 @@ export class SettingsService {
       }));
   }
 
+  update(setting: Setting): Observable<void> {
+    return this.api.updateSetting(setting);
+  }
+
 }

@@ -24,6 +24,10 @@ export class ApiService {
     return response.pipe(map(data => data));
   }
 
+  updateSetting(setting: Setting): Observable<void> {
+    return this.http.post<void>('/user/settings', [setting]);
+  }
+
   getUser(): Observable<User> {
     const response = this.http.get<OAuth2User>('/user/whoami', {observe: 'response'});
     const user = response.pipe(map(data => {
