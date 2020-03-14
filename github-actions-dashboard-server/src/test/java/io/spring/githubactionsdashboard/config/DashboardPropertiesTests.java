@@ -31,60 +31,26 @@ public class DashboardPropertiesTests {
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner();
 
 	@Test
-	public void defaultNoPropertiesSet() {
-		this.contextRunner
-			.withUserConfiguration(Config1.class)
-			.run((context) -> {
-				DashboardProperties properties = context.getBean(DashboardProperties.class);
-				assertThat(properties.getWorkflows()).isNotNull();
-				assertThat(properties.getWorkflows().size()).isEqualTo(0);
-			});
-	}
-
-	@Test
-	public void oneWorkflowNoBranchesSet() {
+	public void oneViewOneWorkflowNoBranchesSet() {
 		this.contextRunner
 			.withInitializer(context -> {
 				Map<String, Object> map = new HashMap<>();
-				map.put("dashboard.workflows[0].owner", "owner0");
-				map.put("dashboard.workflows[0].name", "name0");
+				map.put("dashboard.views[0].workflows[0].owner", "owner0");
+				map.put("dashboard.views[0].workflows[0].name", "name0");
 				context.getEnvironment().getPropertySources().addLast(new SystemEnvironmentPropertySource(
 					StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, map));
 			})
 			.withUserConfiguration(Config1.class)
 			.run((context) -> {
 				DashboardProperties properties = context.getBean(DashboardProperties.class);
-				assertThat(properties.getWorkflows()).isNotNull();
-				assertThat(properties.getWorkflows()).hasSize(1);
-				assertThat(properties.getWorkflows().get(0).getOwner()).isEqualTo("owner0");
-				assertThat(properties.getWorkflows().get(0).getName()).isEqualTo("name0");
-				assertThat(properties.getWorkflows().get(0).getBranches()).hasSize(1);
-				assertThat(properties.getWorkflows().get(0).getBranches().get(0)).isEqualTo("master");
-			});
-	}
-
-	@Test
-	public void oneWorkflowBranchesSet() {
-		this.contextRunner
-			.withInitializer(context -> {
-				Map<String, Object> map = new HashMap<>();
-				map.put("dashboard.workflows[0].owner", "owner0");
-				map.put("dashboard.workflows[0].name", "name0");
-				map.put("dashboard.workflows[0].branches[0]", "branch1");
-				map.put("dashboard.workflows[0].branches[1]", "branch2");
-				context.getEnvironment().getPropertySources().addLast(new SystemEnvironmentPropertySource(
-					StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, map));
-			})
-			.withUserConfiguration(Config1.class)
-			.run((context) -> {
-				DashboardProperties properties = context.getBean(DashboardProperties.class);
-				assertThat(properties.getWorkflows()).isNotNull();
-				assertThat(properties.getWorkflows()).hasSize(1);
-				assertThat(properties.getWorkflows().get(0).getOwner()).isEqualTo("owner0");
-				assertThat(properties.getWorkflows().get(0).getName()).isEqualTo("name0");
-				assertThat(properties.getWorkflows().get(0).getBranches()).hasSize(2);
-				assertThat(properties.getWorkflows().get(0).getBranches().get(0)).isEqualTo("branch1");
-				assertThat(properties.getWorkflows().get(0).getBranches().get(1)).isEqualTo("branch2");
+				assertThat(properties.getViews()).isNotNull();
+				assertThat(properties.getViews()).hasSize(1);
+				assertThat(properties.getViews().get(0).getWorkflows()).isNotNull();
+				assertThat(properties.getViews().get(0).getWorkflows()).hasSize(1);
+				assertThat(properties.getViews().get(0).getWorkflows().get(0).getOwner()).isEqualTo("owner0");
+				assertThat(properties.getViews().get(0).getWorkflows().get(0).getName()).isEqualTo("name0");
+				assertThat(properties.getViews().get(0).getWorkflows().get(0).getBranches()).hasSize(1);
+				assertThat(properties.getViews().get(0).getWorkflows().get(0).getBranches().get(0)).isEqualTo("master");
 			});
 	}
 

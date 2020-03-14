@@ -21,17 +21,53 @@ import java.util.List;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/**
+ * Application properies under {@code dashboard} key.
+ *
+ * @author Janne Valkealahti
+ */
 @ConfigurationProperties(prefix = "dashboard")
 public class DashboardProperties {
 
-	private List<Workflow> workflows = new ArrayList<>();
+	private List<View> views = new ArrayList<>();
 
-	public List<Workflow> getWorkflows() {
-		return workflows;
+	public List<View> getViews() {
+		return views;
 	}
 
-	public void setWorkflows(List<Workflow> workflows) {
-		this.workflows = workflows;
+	public void setViews(List<View> views) {
+		this.views = views;
+	}
+
+	public static class View {
+
+		private String name;
+		private String description;
+		private List<Workflow> workflows = new ArrayList<>();
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public List<Workflow> getWorkflows() {
+			return workflows;
+		}
+
+		public void setWorkflows(List<Workflow> workflows) {
+			this.workflows = workflows;
+		}
 	}
 
 	public static class Workflow {

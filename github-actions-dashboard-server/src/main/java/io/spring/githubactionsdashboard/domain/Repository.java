@@ -18,11 +18,12 @@ package io.spring.githubactionsdashboard.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.spring.githubactionsdashboard.entity.RepositoryEntity;
+
 /**
  * Domain class for repository.
  *
  * @author Janne Valkealahti
- *
  */
 public class Repository implements Comparable<Repository> {
 
@@ -59,6 +60,10 @@ public class Repository implements Comparable<Repository> {
 
 	public static Repository of(String owner, String name, String url) {
 		return new Repository(owner, name, url);
+	}
+
+	public static Repository of(RepositoryEntity entity) {
+		return new Repository(entity.getOwner(), entity.getRepository(), null);
 	}
 
 	public Repository merge(Repository repository) {

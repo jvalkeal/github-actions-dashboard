@@ -16,6 +16,7 @@ import { SettingsComponent } from './settings/settings/settings.component';
 import { FormsModule } from '@angular/forms';
 import { EffectsModule } from '@ngrx/effects';
 import { SettingsEffects } from './settings/settings.effects';
+import { LeftNaviComponent } from './layout/left-navi/left-navi.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { SettingsEffects } from './settings/settings.effects';
     UserHeaderActionComponent,
     HomeComponent,
     ActionCardComponent,
-    SettingsComponent
+    SettingsComponent,
+    LeftNaviComponent
   ],
   imports: [
     BrowserModule,

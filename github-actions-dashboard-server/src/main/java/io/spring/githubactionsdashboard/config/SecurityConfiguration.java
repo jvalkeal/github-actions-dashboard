@@ -37,7 +37,7 @@ public class SecurityConfiguration {
 			"/oauth2/**",
 			"/login/**",
 			"/logout/**",
-			"/user/**" };
+			"/user/whoami" };
 
 	@Bean
 	public SecurityWebFilterChain configure(ServerHttpSecurity http) {

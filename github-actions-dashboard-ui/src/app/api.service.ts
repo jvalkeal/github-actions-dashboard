@@ -10,6 +10,18 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
+  getDashboards(): Observable<Dashboard[]> {
+    return this.http.get<Dashboard[]>('/user/dashboards/global').pipe((catchError(() => EMPTY)));
+  }
+
+  getGlobalWorkflow(name: string): Observable<Repository[]> {
+    return this.http.get<Repository[]>('/api/github/dashboard/global/' + name).pipe((catchError(() => EMPTY)));
+  }
+
+  getUserWorkflow(id: number): Observable<Repository[]> {
+    return this.http.get<Repository[]>('/api/github/dashboard/user/' + id).pipe((catchError(() => EMPTY)));
+  }
+
   getWorkflows(): Observable<Repository[]> {
     return this.http.get<Repository[]>('/api/github/workflows').pipe((catchError(() => EMPTY)));
   }
@@ -104,6 +116,12 @@ export interface Repository {
   url: string;
   branches: Branch[];
   pullRequests: PullRequest[];
+}
+
+export interface Dashboard {
+  name: string;
+  description: string;
+  repositories: Repository[];
 }
 
 export interface User {

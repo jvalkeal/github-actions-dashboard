@@ -15,6 +15,9 @@
  */
 package io.spring.githubactionsdashboard.github;
 
+import java.util.List;
+
+import io.spring.githubactionsdashboard.config.DashboardProperties.Workflow;
 import io.spring.githubactionsdashboard.domain.Repository;
 import io.spring.githubactionsdashboard.domain.User;
 import reactor.core.publisher.Flux;
@@ -39,7 +42,8 @@ public interface GithubApi {
 	/**
 	 * Gets info about branches and pr's workflows..
 	 *
+	 * @param workflows a workflows
 	 * @return the info about branches and pr's workflows.
 	 */
-	Flux<Repository> branchAndPrWorkflows();
+	Flux<Repository> branchAndPrWorkflows(List<Workflow> workflows);
 }

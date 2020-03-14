@@ -15,10 +15,16 @@
  */
 package io.spring.githubactionsdashboard.controller;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.spring.githubactionsdashboard.config.DashboardProperties;
+import io.spring.githubactionsdashboard.config.DashboardProperties.Workflow;
 import io.spring.githubactionsdashboard.domain.Repository;
 import io.spring.githubactionsdashboard.domain.User;
 import io.spring.githubactionsdashboard.github.GithubApi;
@@ -30,9 +36,11 @@ import reactor.core.publisher.Mono;
 public class GithubApiController {
 
 	private final GithubApi api;
+	private final DashboardProperties dashboardProperties;
 
-	public GithubApiController(GithubApi api) {
+	public GithubApiController(GithubApi api, DashboardProperties dashboardProperties) {
 		this.api = api;
+		this.dashboardProperties = dashboardProperties;
 	}
 
 	@RequestMapping(path = "/me")
@@ -41,9 +49,22 @@ public class GithubApiController {
 		return this.api.me();
 	}
 
-	@RequestMapping(path = "/workflows")
+	@RequestMapping(path = "/dashboard/global/{name}")
 	@ResponseBody
-	public Flux<Repository> workflows() {
-		return this.api.branchAndPrWorkflows();
+	public Flux<Repository> dashboardGlobal(@PathVariable("name") String name) {
+		return Flux.defer(() -> {
+			List<Workflow> workflows = dashboardProperties.getViews().stream()
+				.filter(v -> v.getName().equals(name))
+				.map(v -> v.getWorkflows())
+				.findFirst()
+				.orElse(Collections.emptyList());
+			return this.api.branchAndPrWorkflows(workflows);
+		});
+	}
+
+	@RequestMapping(path = "/dashboard/user/{id}")
+	@ResponseBody
+	public Flux<Repository> dashboardUser(@PathVariable("id") Long id) {
+		return Flux.empty();
 	}
 }

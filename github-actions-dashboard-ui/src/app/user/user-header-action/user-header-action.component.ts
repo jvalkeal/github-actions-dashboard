@@ -4,6 +4,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { SettingsService } from 'src/app/settings/settings.service';
+import { DashboardService } from 'src/app/dashboard/dashboard.service';
 
 @Component({
   selector: 'app-user-header-action',
@@ -20,6 +21,7 @@ export class UserHeaderActionComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private settingsService: SettingsService,
+    private dashboardService: DashboardService,
     private router: Router
   ) { }
 
@@ -42,6 +44,9 @@ export class UserHeaderActionComponent implements OnInit, OnDestroy {
       this.router.navigate(['/cards']);
       this.settingsService.load().subscribe(d => {
         console.log('settings', d);
+      });
+      this.dashboardService.load().subscribe(d => {
+        console.log('dashboards', d);
       });
     });
   }

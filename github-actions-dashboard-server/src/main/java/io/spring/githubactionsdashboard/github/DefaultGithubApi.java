@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import io.spring.githubactionsdashboard.config.DashboardProperties;
+import io.spring.githubactionsdashboard.config.DashboardProperties.Workflow;
 import io.spring.githubactionsdashboard.domain.Branch;
 import io.spring.githubactionsdashboard.domain.CheckRun;
 import io.spring.githubactionsdashboard.domain.PullRequest;
@@ -49,13 +49,10 @@ public class DefaultGithubApi implements GithubApi {
 	private final static String V3_USER_API = BASE_V3_API + "/user";
 	private final WebClient webClient;
 	private final GithubGraphqlClient githubGraphqlClient;
-	private final DashboardProperties dashboardProperties;
 
-	public DefaultGithubApi(WebClient webClient, GithubGraphqlClient githubGraphqlClient,
-			DashboardProperties dashboardProperties) {
+	public DefaultGithubApi(WebClient webClient, GithubGraphqlClient githubGraphqlClient) {
 		this.webClient = webClient;
 		this.githubGraphqlClient = githubGraphqlClient;
-		this.dashboardProperties = dashboardProperties;
 	}
 
 	@Override
@@ -68,8 +65,8 @@ public class DefaultGithubApi implements GithubApi {
 	}
 
 	@Override
-	public Flux<Repository> branchAndPrWorkflows() {
-		return Flux.concat(branchRepos(), prRepos())
+	public Flux<Repository> branchAndPrWorkflows(List<Workflow> workflows) {
+		return Flux.concat(branchRepos(workflows), prRepos(workflows))
 			.reduce(new HashMap<Repository, Repository>(), (map, r) -> {
 				Repository repository = map.get(r);
 				if (repository == null) {
@@ -92,8 +89,8 @@ public class DefaultGithubApi implements GithubApi {
 			});
 	}
 
-	private Flux<Repository> branchRepos() {
-		return branchQueries()
+	private Flux<Repository> branchRepos(List<Workflow> workflows) {
+		return branchQueries(workflows)
 			.flatMap(githubGraphqlClient::query)
 			.map(data -> {
 				log.debug("Branch query returned data {}", data);
@@ -127,8 +124,8 @@ public class DefaultGithubApi implements GithubApi {
 			});
 	}
 
-	private Flux<Repository> prRepos() {
-		return prQueries()
+	private Flux<Repository> prRepos(List<Workflow> workflows) {
+		return prQueries(workflows)
 			.flatMap(githubGraphqlClient::query)
 			.map(data -> {
 				PullRequest pr = null;
@@ -170,9 +167,8 @@ public class DefaultGithubApi implements GithubApi {
 			});
 	}
 
-
-	private Flux<BranchLastCommitStatusQuery> branchQueries() {
-		return Flux.fromIterable(this.dashboardProperties.getWorkflows())
+	private Flux<BranchLastCommitStatusQuery> branchQueries(List<Workflow> workflows) {
+		return Flux.fromIterable(workflows)
 			.flatMap(workflow -> {
 				return Flux.fromIterable(workflow.getBranches())
 					.map(branch -> {
@@ -185,8 +181,8 @@ public class DefaultGithubApi implements GithubApi {
 			});
 	}
 
-	private Flux<PrLastCommitStatusQuery> prQueries() {
-		return Flux.fromIterable(this.dashboardProperties.getWorkflows())
+	private Flux<PrLastCommitStatusQuery> prQueries(List<Workflow> workflows) {
+		return Flux.fromIterable(workflows)
 			.map(workflow -> PrLastCommitStatusQuery.builder()
 				.owner(workflow.getOwner())
 				.name(workflow.getName())
