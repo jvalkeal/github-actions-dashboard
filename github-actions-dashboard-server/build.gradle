@@ -49,6 +49,7 @@ dependencies {
 	implementation 'org.jetbrains:annotations:13.0'
 	implementation 'com.h2database:h2'
 	implementation 'org.mariadb.jdbc:mariadb-java-client'
+	implementation 'org.postgresql:postgresql'
 	implementation 'org.flywaydb:flyway-core'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
