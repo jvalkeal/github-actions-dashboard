@@ -38,3 +38,15 @@ $ java -jar github-actions-dashboard-server/build/libs/github-actions-dashboard-
 ----
 
 Open: http://localhost:8080
+
+If you have started to an instance with a demo profile:
+[source, bash]
+----
+$ java -jar github-actions-dashboard-server/build/libs/github-actions-dashboard-server-<version>.jar \
+  --spring.security.oauth2.client.registration.github.client-id=<github client id> \
+  --spring.security.oauth2.client.registration.github.client-secret=<github client secret>
+  --spring.profiles.active=demo
+----
+You may see thigs like:
+
+image::docs/images/gh-actions-dashboard-1.png[gh-actions-dashboard-1]
