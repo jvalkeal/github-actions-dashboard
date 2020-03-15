@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService, User } from '../api.service';
-import { login } from './auth.actions';
+import { login, logout } from './auth.actions';
 import { AuthState } from './auth.reducer';
 
 @Injectable({
@@ -34,6 +34,7 @@ export class AuthService {
       if (res) {
         this.isLoggedIn = false;
         this.userLoggedIn.next({});
+        this.store.dispatch(logout());
       }
     }));
   }

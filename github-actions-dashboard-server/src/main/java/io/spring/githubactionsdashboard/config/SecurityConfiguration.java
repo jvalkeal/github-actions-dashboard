@@ -16,11 +16,14 @@
 package io.spring.githubactionsdashboard.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.logout.HttpStatusReturningServerLogoutSuccessHandler;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
+
+import reactor.core.publisher.Mono;
 
 /**
  * Security related configs.
@@ -50,6 +53,13 @@ public class SecurityConfiguration {
 			.csrf()
 				.disable()
 			.oauth2Login()
+				.and()
+			.exceptionHandling()
+				.authenticationEntryPoint((exchange, e) -> {
+					return Mono.fromRunnable(() -> {
+						exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+					});
+				})
 				.and()
 			.logout()
 				.logoutSuccessHandler(logoutSuccessHandler())

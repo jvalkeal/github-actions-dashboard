@@ -17,6 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { EffectsModule } from '@ngrx/effects';
 import { SettingsEffects } from './settings/settings.effects';
 import { LeftNaviComponent } from './layout/left-navi/left-navi.component';
+import { AuthEffects } from './auth/auth.effects';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { LeftNaviComponent } from './layout/left-navi/left-navi.component';
     ClarityModule,
     BrowserAnimationsModule,
     EffectsModule.forRoot([
-      SettingsEffects
+      SettingsEffects,
+      AuthEffects
     ]),
     StoreModule.forRoot(reducers, {
       metaReducers,

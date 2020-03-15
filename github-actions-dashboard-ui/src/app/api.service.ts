@@ -1,21 +1,33 @@
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { HttpClient, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, EMPTY } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
+import { State } from './reducers';
+import { unauthorised } from './auth/auth.actions';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private store: Store<State>
+  ) {}
 
   getDashboards(): Observable<Dashboard[]> {
     return this.http.get<Dashboard[]>('/user/dashboards/global').pipe((catchError(() => EMPTY)));
   }
 
   getGlobalWorkflow(name: string): Observable<Repository[]> {
-    return this.http.get<Repository[]>('/api/github/dashboard/global/' + name).pipe((catchError(() => EMPTY)));
+    return this.http.get<Repository[]>('/api/github/dashboard/global/' + name)
+      .pipe(
+        (catchError(() => {
+          this.store.dispatch(unauthorised());
+          return EMPTY;
+        }))
+      );
   }
 
   getUserWorkflow(id: number): Observable<Repository[]> {
