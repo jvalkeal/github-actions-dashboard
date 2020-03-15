@@ -1,0 +1,31 @@
+{
+    "sqltools.connections": [
+        {
+            "database": "dataflow",
+            "dialect": "MySQL",
+            "name": "test-mysql",
+            "password": "spring",
+            "port": 3306,
+            "server": "localhost",
+            "username": "spring"
+        },
+        {
+            "database": "dataflow",
+            "dialect": "PostgreSQL",
+            "name": "test-postgres",
+            "password": "spring",
+            "port": 5432,
+            "server": "localhost",
+            "username": "spring"
+        },
+        {
+            "database": "dashboard",
+            "dialect": "MariaDB",
+            "name": "gh-dashboard-mariadb",
+            "password": "spring",
+            "port": 3308,
+            "server": "localhost",
+            "username": "spring"
+        }
+    ]
+}

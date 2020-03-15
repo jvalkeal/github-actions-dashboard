@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug Dashboard",
+            "request": "launch",
+            "mainClass": "io.spring.githubactionsdashboard.Application",
+            "projectName": "github-actions-dashboard-server",
+            "cwd": "${workspaceFolder}/github-actions-dashboard-server",
+            "args": "--spring.profiles.active=demo --spring.security.oauth2.client.registration.github.client-id=${env:GH_ACTIONS_DASHBOARD_CLIENT_ID} --spring.security.oauth2.client.registration.github.client-secret=${env:GH_ACTIONS_DASHBOARD_CLIENT_SECRET}"
+        }
+    ]
+}
