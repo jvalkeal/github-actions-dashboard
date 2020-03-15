@@ -8,6 +8,13 @@ This project is very much work-in-progress, it may work or not!
 Custom dashboard application aggregating information from multiple
 Github projects and their Actions.
 
+Some notes about purpose and idea of this project:
+
+- It's difficult to know a states of your actions if you have
+  multiple projects, thus a need to get an aggregated view.
+- Potentially we might want to do some calls against actions
+  via Github api's what you currently can't do via Github's UI.
+
 === Building
 
 Build:
