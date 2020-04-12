@@ -14,7 +14,7 @@
   </clr-vertical-nav-group>
 
   <clr-vertical-nav-group routerLinkActive="active">
-    <clr-icon shape="dashboard" clrVerticalNavIcon></clr-icon>
+    <clr-icon shape="user" clrVerticalNavIcon></clr-icon>
     User Dashboards
     <clr-vertical-nav-group-children>
       <a *ngFor="let d of userDashboards|async"
@@ -37,7 +37,7 @@
     New Dashboard...
   </a>
   <a clrVerticalNavLink (click)="showModelAddWorkflow()" style="cursor: pointer;">
-    <clr-icon shape="new" clrVerticalNavIcon></clr-icon>
+    <clr-icon shape="add-text" clrVerticalNavIcon></clr-icon>
     Add Workflow...
   </a>
 </clr-vertical-nav>
