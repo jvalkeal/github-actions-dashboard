@@ -44,6 +44,12 @@ function mergeDashboards(left: Dashboard[], right: Dashboard[]): Dashboard[] {
 
 export const reducer = createReducer(
   initialState,
+  on(DashboardActions.ok, (state, dashboard) => {
+    return {
+      global: state.global,
+      user: mergeDashboards(state.user, [dashboard.dashboard])
+    };
+  }),
   on(DashboardActions.loadGlobal, (state, dashboards) => {
     return {
       global: mergeDashboards(state.global, dashboards.dashboards),

@@ -8,7 +8,7 @@ import * as DashboardActions from './dashboard.actions';
 @Injectable()
 export class DashboardEffects {
 
-  updateSetting$ = createEffect(() =>
+  saveDashboards$ = createEffect(() =>
     this.actions$.pipe(
       ofType(DashboardActions.update),
       exhaustMap((dashboard) => this.dashboardService.save(dashboard.dashboard)
