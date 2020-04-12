@@ -3,7 +3,7 @@
     <clr-icon shape="dashboard" clrVerticalNavIcon></clr-icon>
     Global Dashboards
     <clr-vertical-nav-group-children>
-      <a *ngFor="let d of dashboards$|async"
+      <a *ngFor="let d of globalDashboards|async"
         clrVerticalNavLink
         routerLinkActive="active"
         routerLink="/cards/global/{{d.name}}">
@@ -17,7 +17,7 @@
     <clr-icon shape="dashboard" clrVerticalNavIcon></clr-icon>
     User Dashboards
     <clr-vertical-nav-group-children>
-      <a *ngFor="let d of userDashboards$|async"
+      <a *ngFor="let d of userDashboards|async"
         clrVerticalNavLink
         routerLinkActive="active"
         routerLink="/cards/user/{{d.name}}">

@@ -16,7 +16,7 @@ export class ApiService {
     private store: Store<State>
   ) {}
 
-  getDashboards(): Observable<Dashboard[]> {
+  getGlobalDashboards(): Observable<Dashboard[]> {
     return this.http.get<Dashboard[]>('/user/dashboards/global')
       .pipe(
         (catchError(() => EMPTY))

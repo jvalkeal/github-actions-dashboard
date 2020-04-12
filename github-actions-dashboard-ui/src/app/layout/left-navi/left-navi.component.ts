@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { State, getDashboards, getUserDashboards } from '../../dashboard/dashboard.reducer';
+import { State, getGlobalDashboards, getUserDashboards } from '../../dashboard/dashboard.reducer';
 import { ModalNewDashboardComponent } from '../modal-new-dashboard/modal-new-dashboard.component';
 import { ModalAddWorkflowComponent } from '../modal-add-workflow/modal-add-workflow.component';
 
@@ -11,9 +11,8 @@ import { ModalAddWorkflowComponent } from '../modal-add-workflow/modal-add-workf
 })
 export class LeftNaviComponent implements OnInit {
 
-  dashboards$ = this.store.pipe(select(getDashboards));
-  userDashboards$ = this.store.pipe(select(getUserDashboards));
-
+  globalDashboards = this.store.pipe(select(getGlobalDashboards));
+  userDashboards = this.store.pipe(select(getUserDashboards));
   collapsible = true;
 
   @ViewChild(ModalNewDashboardComponent)

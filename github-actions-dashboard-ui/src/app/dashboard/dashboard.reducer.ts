@@ -6,7 +6,7 @@ import { Dashboard } from '../api.service';
 export const dashboardsFeatureKey = 'dashboards';
 
 export interface DashboardState {
-  dashboards: Dashboard[];
+  global: Dashboard[];
   user: Dashboard[];
 }
 
@@ -14,8 +14,8 @@ export interface State extends fromRoot.State {
   [dashboardsFeatureKey]: DashboardState;
 }
 
-export const getDashboards = (state: State) => {
-  return state[dashboardsFeatureKey].dashboards;
+export const getGlobalDashboards = (state: State) => {
+  return state[dashboardsFeatureKey].global;
 };
 
 export const getUserDashboards = (state: State) => {
@@ -23,7 +23,7 @@ export const getUserDashboards = (state: State) => {
 };
 
 const initialState: DashboardState = {
-  dashboards: [],
+  global: [],
   user: []
 };
 
@@ -44,15 +44,15 @@ function mergeDashboards(left: Dashboard[], right: Dashboard[]): Dashboard[] {
 
 export const reducer = createReducer(
   initialState,
-  on(DashboardActions.load, (state, dashboards) => {
+  on(DashboardActions.loadGlobal, (state, dashboards) => {
     return {
-      dashboards: mergeDashboards(state.dashboards, dashboards.dashboards),
+      global: mergeDashboards(state.global, dashboards.dashboards),
       user: state.user
     };
   }),
   on(DashboardActions.loadUser, (state, dashboards) => {
     return {
-      dashboards: state.dashboards,
+      global: state.global,
       user: mergeDashboards(state.user, dashboards.dashboards)
     };
   })

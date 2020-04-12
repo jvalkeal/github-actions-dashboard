@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService, Dashboard } from '../api.service';
 import { DashboardState } from './dashboard.reducer';
-import { load, loadUser } from './dashboard.actions';
+import { loadGlobal, loadUser } from './dashboard.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -16,10 +16,10 @@ export class DashboardService {
     private store: Store<DashboardState>
   ) { }
 
-  load(): Observable<Dashboard[]> {
-    return this.api.getDashboards().pipe(
+  loadGlobal(): Observable<Dashboard[]> {
+    return this.api.getGlobalDashboards().pipe(
       tap(val => {
-        this.store.dispatch(load({ dashboards: val }));
+        this.store.dispatch(loadGlobal({ dashboards: val }));
       }));
   }
 

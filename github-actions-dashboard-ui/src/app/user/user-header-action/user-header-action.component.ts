@@ -51,7 +51,7 @@ export class UserHeaderActionComponent implements OnInit, OnDestroy {
       this.settingsService.load().subscribe(d => {
         console.log('settings', d);
       });
-      this.dashboardService.load().subscribe(d => {
+      this.dashboardService.loadGlobal().subscribe(d => {
         console.log('dashboards', d);
       });
       this.dashboardService.loadUser().subscribe(d => {

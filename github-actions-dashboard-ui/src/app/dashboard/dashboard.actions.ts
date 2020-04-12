@@ -1,8 +1,8 @@
 import { createAction, props } from '@ngrx/store';
 import { Dashboard } from '../api.service';
 
-export const load = createAction(
-  '[Dashboard] load',
+export const loadGlobal = createAction(
+  '[Dashboard] load global',
   props<{ dashboards: Dashboard[] }>()
 );
 
