@@ -67,8 +67,4 @@ export class UserHeaderActionComponent implements OnInit, OnDestroy {
       this.router.navigate(['/home']);
     });
   }
-
-  settings(): void {
-    this.router.navigate(['/settings']);
-  }
 }
