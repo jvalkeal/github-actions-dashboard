@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ApiService, User } from 'src/app/api.service';
-import { AuthService } from 'src/app/auth/auth.service';
-import { BehaviorSubject, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { SettingsService } from 'src/app/settings/settings.service';
-import { DashboardService } from 'src/app/dashboard/dashboard.service';
+import { Subscription } from 'rxjs';
+import { User } from '../../../app/api.service';
+import { AuthService } from '../../../app/auth/auth.service';
+import { SettingsService } from '../../../app/settings/settings.service';
+import { DashboardService } from '../../../app/dashboard/dashboard.service';
 
 @Component({
   selector: 'app-user-header-action',
@@ -37,6 +37,12 @@ export class UserHeaderActionComponent implements OnInit, OnDestroy {
     if (this.sub1) {
       this.sub1.unsubscribe();
     }
+    if (this.sub2) {
+      this.sub2.unsubscribe();
+    }
+    if (this.sub3) {
+      this.sub3.unsubscribe();
+    }
   }
 
   login(): void {
@@ -47,6 +53,9 @@ export class UserHeaderActionComponent implements OnInit, OnDestroy {
       });
       this.dashboardService.load().subscribe(d => {
         console.log('dashboards', d);
+      });
+      this.dashboardService.loadUser().subscribe(d => {
+        console.log('dashboards users', d);
       });
     });
   }

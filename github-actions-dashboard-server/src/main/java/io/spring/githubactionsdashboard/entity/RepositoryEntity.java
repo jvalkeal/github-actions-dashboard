@@ -16,6 +16,7 @@
 package io.spring.githubactionsdashboard.entity;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -24,6 +25,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.Table;
+
+import io.spring.githubactionsdashboard.domain.Repository;
 
 @Entity
 @Table(name = "repository")
@@ -47,6 +50,11 @@ public class RepositoryEntity extends AbstractEntity {
         this.owner = owner;
         this.repository = repository;
         this.branches = branches;
+    }
+
+    public static RepositoryEntity from(Repository repository) {
+        return new RepositoryEntity(repository.getOwner(), repository.getName(),
+                repository.getBranches().stream().map(b -> b.getName()).collect(Collectors.toSet()));
     }
 
     public String getOwner() {

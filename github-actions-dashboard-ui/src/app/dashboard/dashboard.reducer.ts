@@ -7,6 +7,7 @@ export const dashboardsFeatureKey = 'dashboards';
 
 export interface DashboardState {
   dashboards: Dashboard[];
+  user: Dashboard[];
 }
 
 export interface State extends fromRoot.State {
@@ -17,8 +18,13 @@ export const getDashboards = (state: State) => {
   return state[dashboardsFeatureKey].dashboards;
 };
 
+export const getUserDashboards = (state: State) => {
+  return state[dashboardsFeatureKey].user;
+};
+
 const initialState: DashboardState = {
-  dashboards: []
+  dashboards: [],
+  user: []
 };
 
 function mergeDashboards(left: Dashboard[], right: Dashboard[]): Dashboard[] {
@@ -39,6 +45,15 @@ function mergeDashboards(left: Dashboard[], right: Dashboard[]): Dashboard[] {
 export const reducer = createReducer(
   initialState,
   on(DashboardActions.load, (state, dashboards) => {
-    return { dashboards: mergeDashboards(state.dashboards, dashboards.dashboards) };
+    return {
+      dashboards: mergeDashboards(state.dashboards, dashboards.dashboards),
+      user: state.user
+    };
+  }),
+  on(DashboardActions.loadUser, (state, dashboards) => {
+    return {
+      dashboards: state.dashboards,
+      user: mergeDashboards(state.user, dashboards.dashboards)
+    };
   })
 );

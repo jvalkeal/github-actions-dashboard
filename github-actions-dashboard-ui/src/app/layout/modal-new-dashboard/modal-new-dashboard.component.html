@@ -1,0 +1,17 @@
+<clr-modal [(clrModalOpen)]="show">
+  <h3 class="modal-title">New Dashboard</h3>
+  <div class="modal-body">
+    <form clrForm [formGroup]="form">
+      <clr-input-container>
+        <label>Name</label>
+        <input clrInput placeholder="Fill new name" formControlName="name" [(ngModel)]="name" required/>
+        <clr-control-helper>Valid name</clr-control-helper>
+        <clr-control-error>Missing or duplicate name</clr-control-error>
+      </clr-input-container>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="cancel()">Cancel</button>
+    <button type="button" class="btn btn-primary" [disabled]="!form.valid" (click)="submit()">Ok</button>
+  </div>
+</clr-modal>

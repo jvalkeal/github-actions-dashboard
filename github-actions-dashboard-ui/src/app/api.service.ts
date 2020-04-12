@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpResponse, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Store } from '@ngrx/store';
-import { HttpClient, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, EMPTY } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import { State } from './reducers';
 import { unauthorised } from './auth/auth.actions';
 
@@ -17,7 +17,36 @@ export class ApiService {
   ) {}
 
   getDashboards(): Observable<Dashboard[]> {
-    return this.http.get<Dashboard[]>('/user/dashboards/global').pipe((catchError(() => EMPTY)));
+    return this.http.get<Dashboard[]>('/user/dashboards/global')
+      .pipe(
+        (catchError(() => EMPTY))
+      );
+  }
+
+  getUserDashboards(): Observable<Dashboard[]> {
+    return this.http.get<Dashboard[]>('/user/dashboards/user')
+      .pipe(
+        (catchError(() => EMPTY))
+      );
+  }
+
+  saveDashboard(dashboard: Dashboard): Observable<void> {
+    return this.http.post<HttpResponse<string>>('/user/dashboards/user', dashboard)
+      .pipe(
+        map(r => undefined),
+        (catchError(() => EMPTY))
+      );
+  }
+
+  searchRepositories(query: string): Observable<Repository[]> {
+    const params = new HttpParams().set('query', query);
+    return this.http.get<Repository[]>('/api/github/search/repository', { params })
+      .pipe(
+        (catchError(() => {
+          this.store.dispatch(unauthorised());
+          return EMPTY;
+        }))
+      );
   }
 
   getGlobalWorkflow(name: string): Observable<Repository[]> {
@@ -30,8 +59,14 @@ export class ApiService {
       );
   }
 
-  getUserWorkflow(id: number): Observable<Repository[]> {
-    return this.http.get<Repository[]>('/api/github/dashboard/user/' + id).pipe((catchError(() => EMPTY)));
+  getUserWorkflow(name: string): Observable<Repository[]> {
+    return this.http.get<Repository[]>('/api/github/dashboard/user/' + name)
+      .pipe(
+        (catchError(() => {
+          this.store.dispatch(unauthorised());
+          return EMPTY;
+        }))
+      );
   }
 
   getWorkflows(): Observable<Repository[]> {

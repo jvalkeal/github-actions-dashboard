@@ -35,26 +35,32 @@ import io.spring.githubactionsdashboard.entity.RepositoryEntity;
 public class DashboardRepositoryTests {
 
 	@Autowired
-	private DashboardRepository dashboardRepository;
+	private DashboardRepository repository;
 
 	@Test
 	public void testDashboards() {
-		RepositoryEntity repository = new RepositoryEntity("owner1", "repository1", new HashSet<>(Arrays.asList("master")));
-		Set<RepositoryEntity> repositories = new HashSet<>(Arrays.asList(repository));
-		DashboardEntity dashboard = new DashboardEntity("name1", "description1", repositories);
-		dashboardRepository.save(dashboard);
+		RepositoryEntity repositoryEntity = new RepositoryEntity("owner1", "repository1", new HashSet<>(Arrays.asList("master")));
+		Set<RepositoryEntity> repositoryEntities = new HashSet<>(Arrays.asList(repositoryEntity));
+		DashboardEntity dashboardEntity = new DashboardEntity("name1", "description1", repositoryEntities);
+		dashboardEntity.setUsername("user1");
+		repository.save(dashboardEntity);
 
-
-		List<DashboardEntity> dashboards = StreamSupport.stream(dashboardRepository.findAll().spliterator(), false)
+		List<DashboardEntity> dashboardEntities = StreamSupport.stream(repository.findAll().spliterator(), false)
 				.collect(Collectors.toList());
-		assertThat(dashboards).hasSize(1);
+		assertThat(dashboardEntities).hasSize(1);
 
-		repository = new RepositoryEntity("owner2", "repository2", new HashSet<>(Arrays.asList("dev")));
-		repositories = new HashSet<>(Arrays.asList(repository));
-		dashboard = new DashboardEntity("name2", "description2", repositories);
-		dashboardRepository.save(dashboard);
+		repositoryEntity = new RepositoryEntity("owner2", "repository2", new HashSet<>(Arrays.asList("dev")));
+		repositoryEntities = new HashSet<>(Arrays.asList(repositoryEntity));
+		dashboardEntity = new DashboardEntity("name2", "description2", repositoryEntities);
+		dashboardEntity.setUsername("user1");
+		repository.save(dashboardEntity);
 
-		dashboards = StreamSupport.stream(dashboardRepository.findAll().spliterator(), false).collect(Collectors.toList());
-		assertThat(dashboards).hasSize(2);
+		dashboardEntities = StreamSupport.stream(repository.findAll().spliterator(), false).collect(Collectors.toList());
+		assertThat(dashboardEntities).hasSize(2);
+
+		assertThat(repository.findByUsername("user1")).hasSize(2);
+		assertThat(repository.findByUsernameAndName("user1", "name1")).isNotNull();
+		assertThat(repository.findByUsernameAndName("user1", "name2")).isNotNull();
+		assertThat(repository.findByUsernameAndName("user1", "name3")).isNull();
 	}
 }

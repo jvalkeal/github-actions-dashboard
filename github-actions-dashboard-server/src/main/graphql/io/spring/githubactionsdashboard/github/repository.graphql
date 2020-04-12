@@ -1,9 +1,0 @@
-query MyRepositories ($limit: Int!){
-  viewer {
-    repositories(last: $limit) {
-      nodes {
-        name
-      }
-    }
-  }
-}

@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ApiService, Repository } from '../api.service';
 import { State, getRefreshSetting } from '../settings/settings.reducer';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-action-cards',
@@ -43,7 +43,7 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
 
   private getCards(type: string, id: string): void {
     console.log('cards', type, id);
-    if (type === 'global') {
+    if (type === 'global' || type === 'user') {
       this.setupWorkflowsRefresh(type, id);
     }
   }
@@ -57,6 +57,8 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
         .pipe(switchMap(() => {
           if (type === 'global') {
             return this.api.getGlobalWorkflow(id);
+          } else if (type === 'user') {
+            return this.api.getUserWorkflow(id);
           }
         }))
         .subscribe(repos => {

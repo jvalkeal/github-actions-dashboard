@@ -24,10 +24,19 @@ import io.spring.githubactionsdashboard.entity.DashboardEntity;
 public interface DashboardRepository extends CrudRepository<DashboardEntity, Long> {
 
 	/**
-	 * Gets a list of user dashboards.
+	 * Gets all user dashboards.
 	 *
 	 * @param username the username
 	 * @return list of user dashboards
 	 */
 	List<DashboardEntity> findByUsername(String username);
+
+	/**
+	 * Get a user dashboard by its name.
+	 *
+	 * @param username the username
+	 * @param name the name
+	 * @return user dashboard
+	 */
+	DashboardEntity findByUsernameAndName(String username, String name);
 }

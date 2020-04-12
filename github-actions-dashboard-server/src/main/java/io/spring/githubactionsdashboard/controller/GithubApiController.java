@@ -17,9 +17,15 @@ package io.spring.githubactionsdashboard.controller;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +34,7 @@ import io.spring.githubactionsdashboard.config.DashboardProperties.Workflow;
 import io.spring.githubactionsdashboard.domain.Repository;
 import io.spring.githubactionsdashboard.domain.User;
 import io.spring.githubactionsdashboard.github.GithubApi;
+import io.spring.githubactionsdashboard.repository.DashboardRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -35,11 +42,15 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/github")
 public class GithubApiController {
 
+	private final static Logger log = LoggerFactory.getLogger(GithubApiController.class);
 	private final GithubApi api;
+	private final DashboardRepository dashboardRepository;
 	private final DashboardProperties dashboardProperties;
 
-	public GithubApiController(GithubApi api, DashboardProperties dashboardProperties) {
+	public GithubApiController(GithubApi api, DashboardRepository dashboardRepository,
+			DashboardProperties dashboardProperties) {
 		this.api = api;
+		this.dashboardRepository = dashboardRepository;
 		this.dashboardProperties = dashboardProperties;
 	}
 
@@ -47,6 +58,12 @@ public class GithubApiController {
 	@ResponseBody
 	public Mono<User> me() {
 		return this.api.me();
+	}
+
+	@RequestMapping(path = "/search/repository")
+	@ResponseBody
+	public Flux<Repository> searchRepository(@RequestParam("query") String query) {
+		return this.api.repositories(query);
 	}
 
 	@RequestMapping(path = "/dashboard/global/{name}")
@@ -62,9 +79,23 @@ public class GithubApiController {
 		});
 	}
 
-	@RequestMapping(path = "/dashboard/user/{id}")
+	@RequestMapping(path = "/dashboard/user/{name}")
 	@ResponseBody
-	public Flux<Repository> dashboardUser(@PathVariable("id") Long id) {
-		return Flux.empty();
+	public Flux<Repository> dashboardUser(@PathVariable("name") String name, @AuthenticationPrincipal OAuth2User oauth2User) {
+		String username = oauth2User.getName();
+		log.debug("Getting repositories for name {} and user {}", name, username);
+
+		return Mono.fromSupplier(() -> dashboardRepository.findByUsernameAndName(username, name))
+			.flatMap(e -> {
+				List<Workflow> workflows = e.getRepositories().stream().map(re -> {
+					Workflow workflow = new Workflow();
+					workflow.setOwner(re.getOwner());
+					workflow.setName(re.getRepository());
+					return workflow;
+				}).collect(Collectors.toList());
+				return Mono.just(workflows);
+			})
+			.flatMapMany(workflows -> this.api.branchAndPrWorkflows(workflows))
+			;
 	}
 }

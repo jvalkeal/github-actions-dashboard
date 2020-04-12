@@ -65,6 +65,26 @@ public class DefaultGithubApi implements GithubApi {
 	}
 
 	@Override
+	public Flux<Repository> repositories(String query) {
+		return Mono.justOrEmpty(query)
+			.map(q -> RepositoriesQuery.builder()
+				.query(q)
+				.build())
+			.flatMap(githubGraphqlClient::query)
+			.map(data -> {
+				List<Repository> repositories = new ArrayList<>();
+				data.search().nodes().stream().forEach(n -> {
+					if (n instanceof RepositoriesQuery.AsRepository) {
+						RepositoriesQuery.AsRepository r = ((RepositoriesQuery.AsRepository) n);
+						repositories.add(new Repository(r.owner().login(), r.name, null));
+					}
+				});
+				return repositories;
+			})
+			.flatMapMany(repositories -> Flux.fromIterable(repositories));
+	}
+
+	@Override
 	public Flux<Repository> branchAndPrWorkflows(List<Workflow> workflows) {
 		return Flux.concat(branchRepos(workflows), prRepos(workflows))
 			.reduce(new HashMap<Repository, Repository>(), (map, r) -> {

@@ -1,5 +1,5 @@
-import { ActionReducer, ActionReducerMap, MetaReducer } from '@ngrx/store';
-// import * as fromRouter from '@ngrx/router-store';
+import { ActionReducer, ActionReducerMap, MetaReducer, createFeatureSelector } from '@ngrx/store';
+import * as fromRouter from '@ngrx/router-store';
 import { environment } from '../../environments/environment';
 import * as fromAuth from '../auth/auth.reducer';
 import * as fromSettings from '../settings/settings.reducer';
@@ -9,15 +9,26 @@ export interface State {
   [fromAuth.authFeatureKey]: fromAuth.AuthState;
   [fromSettings.settingsFeatureKey]: fromSettings.SettingsState;
   [fromDashboard.dashboardsFeatureKey]: fromDashboard.DashboardState;
-  // router: fromRouter.RouterReducerState<any>;
+  router: fromRouter.RouterReducerState<any>;
 }
 
 export const reducers: ActionReducerMap<State> = {
   [fromAuth.authFeatureKey]: fromAuth.reducer,
   [fromSettings.settingsFeatureKey]: fromSettings.reducer,
-  [fromDashboard.dashboardsFeatureKey]: fromDashboard.reducer
-  // router: fromRouter.routerReducer
+  [fromDashboard.dashboardsFeatureKey]: fromDashboard.reducer,
+  router: fromRouter.routerReducer
 };
+
+export const selectRouter = createFeatureSelector<
+  State,
+  fromRouter.RouterReducerState<any>
+>('router');
+
+export const {
+  selectCurrentRoute,
+  selectRouteParam,
+  selectRouteParams
+} = fromRouter.getSelectors(selectRouter);
 
 function logger(reducer: ActionReducer<State>): ActionReducer<State> {
   return (state, action) => {

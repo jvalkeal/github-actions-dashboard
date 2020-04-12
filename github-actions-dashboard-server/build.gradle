@@ -8,7 +8,7 @@ buildscript {
 }
 
 plugins {
-	id 'org.springframework.boot' version '2.2.4.RELEASE'
+	id 'org.springframework.boot' version '2.3.0.M4'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
 }
@@ -29,6 +29,7 @@ build.dependsOn 'generateApolloSources'
 repositories {
 	mavenCentral()
 	jcenter()
+	maven { url 'https://repo.spring.io/milestone' }
 }
 
 configurations {
@@ -55,6 +56,7 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 	testImplementation 'io.projectreactor:reactor-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 }
 

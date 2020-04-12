@@ -20,8 +20,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,8 +32,11 @@ import io.spring.githubactionsdashboard.config.DashboardProperties.Workflow;
 import io.spring.githubactionsdashboard.domain.Branch;
 import io.spring.githubactionsdashboard.domain.Dashboard;
 import io.spring.githubactionsdashboard.domain.Repository;
+import io.spring.githubactionsdashboard.entity.DashboardEntity;
+import io.spring.githubactionsdashboard.entity.RepositoryEntity;
 import io.spring.githubactionsdashboard.repository.DashboardRepository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/user/dashboards")
@@ -68,6 +73,44 @@ public class DashboardController {
 		return Flux
 		 	.fromIterable(this.repository.findByUsername(oauth2User.getName()))
 			.map(Dashboard::of);
+	}
+
+	/**
+	 * Save a given {@link Dashboard}.
+	 *
+	 * @param oauth2User the user
+	 * @param dashboard the dashboard
+	 * @return Mono for completion
+	 */
+	@RequestMapping(path = "/user", method = RequestMethod.POST)
+	public Mono<Void> saveUserDashboard(@AuthenticationPrincipal OAuth2User oauth2User, @RequestBody Dashboard dashboard) {
+		return Mono.just(dashboard)
+			.map(d -> {
+				DashboardEntity entity = this.repository.findByUsernameAndName(oauth2User.getName(), dashboard.getName());
+				if (entity == null) {
+					entity = DashboardEntity.from(dashboard);
+				} else {
+					entity.setRepositories(dashboard.getRepositories().stream().map(RepositoryEntity::from).collect(Collectors.toSet()));
+				}
+				return entity;
+			})
+			.doOnNext(e -> {
+				e.setUsername(oauth2User.getName());
+				this.repository.save(e);
+			})
+			.then();
+	}
+
+	@RequestMapping(path = "/user", method = RequestMethod.DELETE)
+	public Mono<Void> deleteUserDashboard(@AuthenticationPrincipal OAuth2User oauth2User, @RequestParam("name") String name) {
+		return Mono.just(name)
+			.doOnNext(e -> {
+				DashboardEntity entity = this.repository.findByUsernameAndName(oauth2User.getName(), name);
+				if (entity != null) {
+					this.repository.delete(entity);
+				}
+			})
+			.then();
 	}
 
 	private Flux<Dashboard> globals() {

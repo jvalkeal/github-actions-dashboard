@@ -16,6 +16,7 @@
 package io.spring.githubactionsdashboard.entity;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -25,6 +26,8 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import io.spring.githubactionsdashboard.domain.Dashboard;
 
 @Entity
 @Table(name = "dashboard")
@@ -49,6 +52,11 @@ public class DashboardEntity extends AbstractUserEntity {
 		this.name = name;
 		this.description = description;
 		this.repositories = repositories;
+	}
+
+	public static DashboardEntity from(Dashboard dashboard) {
+		return new DashboardEntity(dashboard.getName(), dashboard.getDescription(),
+				dashboard.getRepositories().stream().map(RepositoryEntity::from).collect(Collectors.toSet()));
 	}
 
 	public String getName() {

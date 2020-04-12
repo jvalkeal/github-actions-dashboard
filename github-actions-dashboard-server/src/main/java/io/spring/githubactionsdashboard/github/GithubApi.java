@@ -46,4 +46,12 @@ public interface GithubApi {
 	 * @return the info about branches and pr's workflows.
 	 */
 	Flux<Repository> branchAndPrWorkflows(List<Workflow> workflows);
+
+	/**
+	 * Gets info about repositories based on a query.
+	 *
+	 * @param query the repository query
+	 * @return the info about repositories
+	 */
+	Flux<Repository> repositories(String query);
 }
