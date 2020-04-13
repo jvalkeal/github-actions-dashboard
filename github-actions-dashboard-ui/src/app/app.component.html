@@ -11,7 +11,7 @@
   </header>
 
   <div class="content-container">
-    <app-left-navi></app-left-navi>
+    <app-left-navi *ngIf="loggedIn$|async"></app-left-navi>
     <div class="content-area">
       <router-outlet></router-outlet>
     </div>

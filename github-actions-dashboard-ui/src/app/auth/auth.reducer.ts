@@ -12,7 +12,7 @@ export interface State extends fromRoot.State {
   [authFeatureKey]: AuthState;
 }
 
-export const getLoggedIn = (state: AuthState) => {
+export const getLoggedIn = (state: State) => {
   return state[authFeatureKey].loggedIn;
 };
 
