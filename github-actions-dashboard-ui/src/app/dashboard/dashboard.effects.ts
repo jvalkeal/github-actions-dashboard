@@ -20,6 +20,18 @@ export class DashboardEffects {
     )
   );
 
+  removeDashboards$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DashboardActions.remove),
+      exhaustMap((dashboard) => this.dashboardService.remove(dashboard.dashboard)
+        .pipe(
+          map(aVoid => DashboardActions.removeOk({dashboard: dashboard.dashboard})),
+          catchError(() => of(DashboardActions.removeError({dashboard: dashboard.dashboard})))
+        )
+      )
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private dashboardService: DashboardService

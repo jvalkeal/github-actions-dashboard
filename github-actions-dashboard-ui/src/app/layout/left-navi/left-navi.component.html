@@ -32,14 +32,19 @@
     <clr-icon shape="cog" clrVerticalNavIcon></clr-icon>
     Settings
   </a>
-  <a clrVerticalNavLink (click)="showModelNewDashboard()" style="cursor: pointer;">
+  <a clrVerticalNavLink (click)="showNewDashboard()" style="cursor: pointer;">
     <clr-icon shape="new" clrVerticalNavIcon></clr-icon>
     New Dashboard...
   </a>
-  <a clrVerticalNavLink (click)="showModelAddWorkflow()" style="cursor: pointer;">
+  <a clrVerticalNavLink (click)="showDeleteDashboard()" style="cursor: pointer;">
+    <clr-icon shape="times" clrVerticalNavIcon></clr-icon>
+    Delete Dashboard...
+  </a>
+  <a clrVerticalNavLink (click)="showAddWorkflow()" style="cursor: pointer;">
     <clr-icon shape="add-text" clrVerticalNavIcon></clr-icon>
     Add Workflow...
   </a>
 </clr-vertical-nav>
 <app-modal-new-dashboard></app-modal-new-dashboard>
 <app-modal-add-workflow></app-modal-add-workflow>
+<app-modal-delete-dashboard></app-modal-delete-dashboard>

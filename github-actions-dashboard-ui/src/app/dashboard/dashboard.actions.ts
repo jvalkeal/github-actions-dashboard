@@ -11,6 +11,21 @@ export const loadUser = createAction(
   props<{ dashboards: Dashboard[] }>()
 );
 
+export const remove = createAction(
+  '[Dashboard] remove',
+  props<{ dashboard: Dashboard }>()
+);
+
+export const removeOk = createAction(
+  '[Dashboard] remove ok',
+  props<{ dashboard: Dashboard }>()
+);
+
+export const removeError = createAction(
+  '[Dashboard] remove error',
+  props<{ dashboard: Dashboard }>()
+);
+
 export const update = createAction(
   '[Dashboard] update',
   props<{ dashboard: Dashboard }>()

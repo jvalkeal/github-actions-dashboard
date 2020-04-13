@@ -21,6 +21,7 @@ import { AuthEffects } from './auth/auth.effects';
 import { ModalNewDashboardComponent } from './layout/modal-new-dashboard/modal-new-dashboard.component';
 import { DashboardEffects } from './dashboard/dashboard.effects';
 import { ModalAddWorkflowComponent } from './layout/modal-add-workflow/modal-add-workflow.component';
+import { ModalDeleteDashboardComponent } from './layout/modal-delete-dashboard/modal-delete-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { ModalAddWorkflowComponent } from './layout/modal-add-workflow/modal-add
     SettingsComponent,
     LeftNaviComponent,
     ModalNewDashboardComponent,
-    ModalAddWorkflowComponent
+    ModalAddWorkflowComponent,
+    ModalDeleteDashboardComponent
   ],
   imports: [
     BrowserModule,

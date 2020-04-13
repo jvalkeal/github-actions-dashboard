@@ -38,6 +38,16 @@ export class ApiService {
       );
   }
 
+  removeDashboard(dashboard: Dashboard): Observable<void> {
+    console.log('asdf', dashboard);
+    const params = new HttpParams().set('name', dashboard.name);
+    return this.http.delete<HttpResponse<string>>('/user/dashboards/user', { params })
+      .pipe(
+        map(r => undefined),
+        (catchError(() => EMPTY))
+      );
+  }
+
   searchRepositories(query: string): Observable<Repository[]> {
     const params = new HttpParams().set('query', query);
     return this.http.get<Repository[]>('/api/github/search/repository', { params })

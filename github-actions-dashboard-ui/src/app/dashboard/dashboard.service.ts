@@ -33,4 +33,8 @@ export class DashboardService {
   save(dashboard: Dashboard): Observable<void> {
     return this.api.saveDashboard(dashboard);
   }
+
+  remove(dashboard: Dashboard): Observable<void> {
+    return this.api.removeDashboard(dashboard);
+  }
 }

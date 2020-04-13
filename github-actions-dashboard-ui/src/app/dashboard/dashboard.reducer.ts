@@ -42,12 +42,28 @@ function mergeDashboards(left: Dashboard[], right: Dashboard[]): Dashboard[] {
   return to;
 }
 
+function removeDashboard(dashboards: Dashboard[], dashboard: Dashboard): Dashboard[] {
+  const to = [];
+  dashboards.forEach( (item, index) => {
+    if (item.name !== dashboard.name) {
+      to.push(item);
+    }
+  });
+  return to;
+}
+
 export const reducer = createReducer(
   initialState,
   on(DashboardActions.ok, (state, dashboard) => {
     return {
       global: state.global,
       user: mergeDashboards(state.user, [dashboard.dashboard])
+    };
+  }),
+  on(DashboardActions.removeOk, (state, dashboard) => {
+    return {
+      global: state.global,
+      user: removeDashboard(state.user, dashboard.dashboard)
     };
   }),
   on(DashboardActions.loadGlobal, (state, dashboards) => {
