@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Store, select } from '@ngrx/store';
 import { tap, map } from 'rxjs/operators';
@@ -34,6 +34,7 @@ export class ModalDeleteDashboardComponent implements OnInit {
   );
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private store: Store<State>
   ) { }
 
@@ -44,6 +45,7 @@ export class ModalDeleteDashboardComponent implements OnInit {
     this.currentUserCardName.pipe(
       tap(name => {
         this.options = name;
+        this.cdr.detectChanges();
       })
     ).subscribe();
   }
