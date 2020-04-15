@@ -1,14 +1,19 @@
-<div class="main-container">
-
-  <header class="header header-6">
+<clr-main-container>
+  <clr-header class="header header-6">
     <div class="branding">
       <a href="" (click)="goHome()" class="nav-link">
         <clr-icon shape="vm-bug"></clr-icon>
         <span class="title">Github Actions Dashboard</span>
       </a>
     </div>
+    <div class="header-nav">
+      <a href="javascript://" class="nav-link nav-icon-text" style="display: flex;">
+        <input type="checkbox" clrToggle (click)="toggleDarkTheme()" />
+        <label>Dark</label>
+      </a>
+    </div>
     <app-user-header-action class="header-actions"></app-user-header-action>
-  </header>
+  </clr-header>
 
   <div class="content-container">
     <app-left-navi *ngIf="loggedIn$|async"></app-left-navi>
@@ -17,4 +22,4 @@
     </div>
   </div>
 
-</div>
+</clr-main-container>
