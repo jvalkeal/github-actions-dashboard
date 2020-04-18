@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { Dashboard } from '../api.service';
+import { Dashboard, Card } from '../api.service';
 
 export const loadGlobal = createAction(
   '[Dashboard] load global',
@@ -14,6 +14,26 @@ export const loadUser = createAction(
 export const remove = createAction(
   '[Dashboard] remove',
   props<{ dashboard: Dashboard }>()
+);
+
+export const removeCard = createAction(
+  '[Dashboard] remove card',
+  props<{ dashboard: Dashboard, card: Card }>()
+);
+
+export const removeCardOk = createAction(
+  '[Dashboard] remove card ok',
+  props<{ dashboard: Dashboard, card: Card }>()
+);
+
+export const removeCardError = createAction(
+  '[Dashboard] remove card error',
+  props<{ dashboard: Dashboard, card: Card }>()
+);
+
+export const setCards = createAction(
+  '[Dashboard] set cards',
+  props<{ dashboard: Dashboard, cards: Card[] }>()
 );
 
 export const removeOk = createAction(

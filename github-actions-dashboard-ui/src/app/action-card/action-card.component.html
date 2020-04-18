@@ -50,4 +50,15 @@
 
   </div>
 
+  <div *ngIf="type=='user'" class="card-footer">
+    <clr-dropdown [clrCloseMenuOnItemClick]="false">
+      <button clrDropdownTrigger aria-label="Actions">
+          <clr-icon shape="cog"></clr-icon>
+      </button>
+      <clr-dropdown-menu *clrIfOpen>
+          <div clrDropdownItem (click)="remove()">Remove</div>
+      </clr-dropdown-menu>
+    </clr-dropdown>
+  </div>
+
 </div>

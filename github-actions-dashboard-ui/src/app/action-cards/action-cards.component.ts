@@ -2,9 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { Subscription, timer, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { ApiService, Repository } from '../api.service';
+import { switchMap, map } from 'rxjs/operators';
+import { ApiService, Repository, Card } from '../api.service';
 import { State, getRefreshSetting } from '../settings/settings.reducer';
+import { getCards } from '../dashboard/dashboard.reducer';
+import { setCards } from '../dashboard/dashboard.actions';
 
 @Component({
   selector: 'app-action-cards',
@@ -13,7 +15,7 @@ import { State, getRefreshSetting } from '../settings/settings.reducer';
 })
 export class ActionCardsComponent implements OnInit, OnDestroy {
 
-  cards: Repository[];
+  cards = this.store.pipe(select(getCards));
   private timerSub: Subscription;
   private refreshSub: Subscription;
   private refreshSetting = this.store.pipe(select(getRefreshSetting));
@@ -55,15 +57,31 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
       }
     }
     this.timerSub = timer(0, refresh)
-      .pipe(switchMap(() => {
-        if (type === 'global') {
-          return this.api.getGlobalWorkflow(id);
-        } else if (type === 'user') {
-          return this.api.getUserWorkflow(id);
-        }
-      }))
-      .subscribe(repos => {
-        this.cards = repos;
+      .pipe(
+        switchMap(() => {
+          if (type === 'global') {
+            return this.api.getGlobalWorkflow(id);
+          } else if (type === 'user') {
+            return this.api.getUserWorkflow(id);
+          }
+        }),
+        map<Repository[], Card[]>(repositories => {
+          const cards: Card[] = [];
+          repositories.forEach(repository => cards.push({ name: id, type, repository }));
+          return cards;
+        })
+      )
+      .subscribe(cards => {
+        this.store.dispatch(setCards(
+          {
+            dashboard: {
+              name: id,
+              description: '',
+              repositories: []
+            },
+            cards
+          }));
+
       });
   }
 }

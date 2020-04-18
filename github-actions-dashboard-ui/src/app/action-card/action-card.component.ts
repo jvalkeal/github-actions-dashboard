@@ -1,5 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Repository, CheckRun } from '../api.service';
+import { Store } from '@ngrx/store';
+import { Repository, CheckRun, Card } from '../api.service';
+import { State } from '../dashboard/dashboard.reducer';
+import { removeCard } from '../dashboard/dashboard.actions';
 
 @Component({
   selector: 'app-action-card',
@@ -12,9 +15,18 @@ export class ActionCardComponent implements OnInit {
   workflow: Repository;
 
   @Input()
+  type: string;
+
+  @Input()
   name: string;
 
-  constructor() { }
+  @Input()
+  card: Card;
+
+
+  constructor(
+    private store: Store<State>
+  ) { }
 
   ngOnInit() {
   }
@@ -39,5 +51,15 @@ export class ActionCardComponent implements OnInit {
       });
     }
     return active;
+  }
+
+  remove(): void {
+    console.log('Remove card', this.type, this.name, this.card);
+    this.store.dispatch(
+      removeCard({
+        dashboard:
+          { name: this.name,
+            description: '',
+            repositories: []}, card: this.card }));
   }
 }

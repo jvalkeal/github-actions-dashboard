@@ -39,7 +39,6 @@ export class ApiService {
   }
 
   removeDashboard(dashboard: Dashboard): Observable<void> {
-    console.log('asdf', dashboard);
     const params = new HttpParams().set('name', dashboard.name);
     return this.http.delete<HttpResponse<string>>('/user/dashboards/user', { params })
       .pipe(
@@ -100,7 +99,6 @@ export class ApiService {
   getUser(): Observable<User> {
     const response = this.http.get<OAuth2User>('/user/whoami', {observe: 'response'});
     const user = response.pipe(map(data => {
-      console.log('response', data);
       if (data.status === 401) {
         return {};
       } else {
@@ -173,6 +171,12 @@ export interface Repository {
   url: string;
   branches: Branch[];
   pullRequests: PullRequest[];
+}
+
+export interface Card {
+  name: string;
+  type: string;
+  repository: Repository;
 }
 
 export interface Dashboard {

@@ -1,13 +1,14 @@
-import { createReducer, on } from '@ngrx/store';
+import { createReducer, createSelector, on } from '@ngrx/store';
 import * as DashboardActions from './dashboard.actions';
 import * as fromRoot from '../reducers';
-import { Dashboard } from '../api.service';
+import { Dashboard, Card } from '../api.service';
 
 export const dashboardsFeatureKey = 'dashboards';
 
 export interface DashboardState {
   global: Dashboard[];
   user: Dashboard[];
+  cards: Card[];
 }
 
 export interface State extends fromRoot.State {
@@ -22,9 +23,19 @@ export const getUserDashboards = (state: State) => {
   return state[dashboardsFeatureKey].user;
 };
 
+export const getUserDashboard = createSelector(
+  getUserDashboards,
+  (dashboards: Dashboard[], props: {search: string}) => dashboards.find(({name}) => name === props.search)
+);
+
+export const getCards = (state: State) => {
+  return state[dashboardsFeatureKey].cards;
+};
+
 const initialState: DashboardState = {
   global: [],
-  user: []
+  user: [],
+  cards: []
 };
 
 function mergeDashboards(left: Dashboard[], right: Dashboard[]): Dashboard[] {
@@ -37,7 +48,7 @@ function mergeDashboards(left: Dashboard[], right: Dashboard[]): Dashboard[] {
     toMap.set(v.name, v);
   });
   toMap.forEach((v, k) => {
-    to.push({ name: k, value: v });
+    to.push(v);
   });
   return to;
 }
@@ -57,25 +68,36 @@ export const reducer = createReducer(
   on(DashboardActions.ok, (state, dashboard) => {
     return {
       global: state.global,
-      user: mergeDashboards(state.user, [dashboard.dashboard])
+      user: mergeDashboards(state.user, [dashboard.dashboard]),
+      cards: state.cards
     };
   }),
   on(DashboardActions.removeOk, (state, dashboard) => {
     return {
       global: state.global,
-      user: removeDashboard(state.user, dashboard.dashboard)
+      user: removeDashboard(state.user, dashboard.dashboard),
+      cards: state.cards
     };
   }),
   on(DashboardActions.loadGlobal, (state, dashboards) => {
     return {
       global: mergeDashboards(state.global, dashboards.dashboards),
-      user: state.user
+      user: state.user,
+      cards: state.cards
     };
   }),
   on(DashboardActions.loadUser, (state, dashboards) => {
     return {
       global: state.global,
-      user: mergeDashboards(state.user, dashboards.dashboards)
+      user: mergeDashboards(state.user, dashboards.dashboards),
+      cards: state.cards
+    };
+  }),
+  on(DashboardActions.setCards, (state, props) => {
+    return {
+      global: state.global,
+      user: state.user,
+      cards: props.cards
     };
   })
 );
