@@ -148,40 +148,35 @@ public class DefaultGithubApi implements GithubApi {
 		return prQueries(workflows)
 			.flatMap(githubGraphqlClient::query)
 			.map(data -> {
-				PullRequest pr = null;
-				Optional<PrLastCommitStatusQuery.Node> findFirst = data.repository().pullRequests().nodes().stream().findFirst();
-				if (findFirst.isPresent()) {
-					pr = new PullRequest();
-					pr.setName(findFirst.get().title());
-					pr.setNumber(findFirst.get().number());
-					pr.setUrl((String)findFirst.get().url());
-					Optional<PrLastCommitStatusQuery.Node1> findFirst2 = findFirst.get().commits().nodes().stream().findFirst();
-					if (findFirst2.isPresent()) {
-						Optional<PrLastCommitStatusQuery.Node2> findFirst3 = findFirst2.get().commit().checkSuites().nodes().stream().findFirst();
-						if (findFirst3.isPresent()) {
-							Optional<PrLastCommitStatusQuery.Node3> findFirst4 = findFirst3.get().checkRuns().nodes().stream().findFirst();
-							if (findFirst4.isPresent()) {
+				List<PullRequest> pullRequests = new ArrayList<>();
+				data.repository().pullRequests().nodes().stream().forEach(prNode -> {
+					PullRequest pr = new PullRequest();
+					pr.setName(prNode.title());
+					pr.setNumber(prNode.number());
+					pr.setUrl((String)prNode.url());
+					Optional<PrLastCommitStatusQuery.Node1> node1 = prNode.commits().nodes().stream().findFirst();
+					if (node1.isPresent()) {
+						Optional<PrLastCommitStatusQuery.Node2> node2 = node1.get().commit().checkSuites().nodes().stream().findFirst();
+						if (node2.isPresent()) {
+							Optional<PrLastCommitStatusQuery.Node3> node3 = node2.get().checkRuns().nodes().stream().findFirst();
+							if (node3.isPresent()) {
 								CheckRun checkRun = new CheckRun();
-								checkRun.setName(findFirst4.get().name());
-								checkRun.setStatus(findFirst4.get().status().rawValue());
-								if (findFirst4.get().conclusion() != null) {
-									checkRun.setConclusion(findFirst4.get().conclusion().rawValue());
+								checkRun.setName(node3.get().name());
+								checkRun.setStatus(node3.get().status().rawValue());
+								if (node3.get().conclusion() != null) {
+									checkRun.setConclusion(node3.get().conclusion().rawValue());
 								}
-								if (findFirst4.get().checkSuite() != null) {
-									checkRun.setUrl((String)findFirst4.get().checkSuite().url());
+								if (node3.get().checkSuite() != null) {
+									checkRun.setUrl((String)node3.get().checkSuite().url());
 								}
 								List<CheckRun> checkRuns = new ArrayList<>();
 								checkRuns.add(checkRun);
 								pr.setCheckRuns(checkRuns);
 							}
 						}
-
 					}
-				}
-				List<PullRequest> pullRequests = new ArrayList<>();
-				if (pr != null) {
 					pullRequests.add(pr);
-				}
+				});
 				return Repository.of(data.repository().owner().login(), data.repository().name(),
 						(String) data.repository().url(), null, pullRequests);
 			});
