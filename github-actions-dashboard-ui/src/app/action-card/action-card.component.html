@@ -1,7 +1,7 @@
 <div class="card">
 
   <div class="card-header">
-    <a href="{{workflow.url}}" class="card-link">{{workflow.name}}</a>
+    <a href="{{workflow.url}}" target="_blank" class="card-link">{{workflow.name}}</a>
   </div>
 
   <div *ngIf="workflow.branches?.length > 0" class="card-block">
@@ -10,10 +10,10 @@
     </div>
     <ul class="list">
       <li *ngFor="let branch of workflow.branches">
-        <a href="{{branch.url}}">{{branch.name}}</a>
+        <a href="{{branch.url}}" target="_blank">{{branch.name}}</a>
         <ul *ngIf="branch.checkRuns?.length > 0" class="list">
           <li *ngFor="let checkRun of branch.checkRuns">
-            <a href="{{checkRun.url}}">{{checkRun.name}}</a>
+            <a href="{{checkRun.url}}" target="_blank">{{checkRun.name}}</a>
             <div class="progress-block">
               <div class="progress-static" [ngClass]="checkRunStyle(checkRun)" >
                 <div class="progress-meter" data-value="100"></div>
@@ -33,10 +33,10 @@
     <ul class="list">
       <div *ngFor="let pr of workflow.pullRequests">
         <li *ngIf="pr.checkRuns?.length > 0">
-          <a href="{{pr.url}}">#{{pr.number}}</a>
+          <a href="{{pr.url}}" target="_blank">#{{pr.number}}</a>
           <ul class="list">
             <li *ngFor="let checkRun of pr.checkRuns">
-              <a href="{{checkRun.url}}">{{checkRun.name}}</a>
+              <a href="{{checkRun.url}}" target="_blank">{{checkRun.name}}</a>
               <div class="progress-block">
                 <div class="progress-static" [ngClass]="checkRunStyle(checkRun)" >
                   <div class="progress-meter" data-value="100"></div>
