@@ -46,6 +46,11 @@ export const removeError = createAction(
   props<{ dashboard: Dashboard }>()
 );
 
+export const save = createAction(
+  '[Dashboard] save',
+  props<{ dashboard: Dashboard }>()
+);
+
 export const update = createAction(
   '[Dashboard] update',
   props<{ dashboard: Dashboard }>()

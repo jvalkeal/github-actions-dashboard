@@ -99,5 +99,14 @@ export const reducer = createReducer(
       user: state.user,
       cards: props.cards
     };
+  }),
+  on(DashboardActions.removeCardOk, (state, props) => {
+    return {
+      global: state.global,
+      user: state.user,
+      cards: state.cards.filter(c =>
+        !(c.repository.owner === props.card.repository.owner && c.repository.name === props.card.repository.name)
+      )
+    };
   })
 );

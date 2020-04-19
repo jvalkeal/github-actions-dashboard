@@ -7,18 +7,50 @@ import { DashboardService } from '../../app/dashboard/dashboard.service';
 import * as DashboardActions from './dashboard.actions';
 import { State } from '../reducers';
 import { getUserDashboard } from './dashboard.reducer';
-import { Dashboard } from '../api.service';
+import { Dashboard, Repository } from '../api.service';
 
 @Injectable()
 export class DashboardEffects {
 
   saveDashboards$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(DashboardActions.update),
-      exhaustMap((dashboard) => this.dashboardService.save(dashboard.dashboard)
+      ofType(DashboardActions.save),
+      exhaustMap((action) => this.dashboardService.save(action.dashboard)
         .pipe(
-          map(aVoid => DashboardActions.ok({dashboard: dashboard.dashboard})),
-          catchError(() => of(DashboardActions.error({dashboard: dashboard.dashboard})))
+          map(aVoid => DashboardActions.ok({dashboard: action.dashboard})),
+          catchError(() => of(DashboardActions.error({dashboard: action.dashboard})))
+        )
+      )
+    )
+  );
+
+  updateDashboards$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DashboardActions.update),
+      switchMap((action) => {
+        return this.store.pipe(
+          select(getUserDashboard, {search: action.dashboard.name})).pipe(
+            map(ud => {
+              const toMap = new Map<string, Repository>();
+              ud.repositories.forEach(v => toMap.set(v.name, v));
+              action.dashboard.repositories.forEach(v => toMap.set(v.name, v));
+              const repositories: Repository[] = [];
+              toMap.forEach((v, k) => {
+                repositories.push(v);
+              });
+              const dashboard: Dashboard = {
+                name: ud.name,
+                description: ud.description,
+                repositories
+              };
+              return dashboard;
+            })
+        );
+      }),
+      exhaustMap((dashboard) => this.dashboardService.save(dashboard)
+        .pipe(
+          map(aVoid => DashboardActions.ok({dashboard})),
+          catchError(() => of(DashboardActions.error({dashboard})))
         )
       )
     )
@@ -50,26 +82,21 @@ export class DashboardEffects {
                 !(r.name === action.card.repository.name && r.owner === action.card.repository.owner)
               )
             };
-            return dashboard;
+            return { dashboard, card: action.card };
           })
       );
     }),
-    exhaustMap((dashboard) => this.dashboardService.save(dashboard)
+    exhaustMap((v) => this.dashboardService.save(v.dashboard)
       .pipe(
-        map(aVoid => DashboardActions.ok({dashboard})),
-        catchError(() => of(DashboardActions.error({dashboard})))
+        map(aVoid => DashboardActions.removeCardOk({ dashboard: v.dashboard, card: v.card })),
+        catchError(() => of(DashboardActions.removeCardError({ dashboard: v.dashboard, card: v.card })))
       )
     )
   );
-
-  private removey(dashboard: Dashboard): void {
-
-  }
 
   constructor(
     private actions$: Actions,
     private dashboardService: DashboardService,
     private store: Store<State>
   ) {}
-
 }

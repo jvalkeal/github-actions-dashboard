@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { ClrForm } from '@clr/angular';
 import { State, getUserDashboards } from '../../dashboard/dashboard.reducer';
-import { update } from '../../dashboard/dashboard.actions';
+import { save } from '../../dashboard/dashboard.actions';
 import { Dashboard } from '../../../app/api.service';
 
 /**
@@ -49,7 +49,7 @@ export class ModalNewDashboardComponent implements OnInit {
   }
 
   submit(): void {
-    this.store.dispatch(update({ dashboard: { name: this.name, description: '', repositories: []} }));
+    this.store.dispatch(save({ dashboard: { name: this.name, description: '', repositories: []} }));
     this.show = false;
     this.name = '';
   }
