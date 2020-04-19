@@ -66,7 +66,17 @@ export class ModalAddWorkflowComponent implements OnInit, AfterViewInit {
     this.repositories = this.api.searchRepositories(value);
   }
 
+  doCancel(): void {
+    this.reset();
+  }
+
   doFinish(): void {
     this.store.dispatch(update({ dashboard: { name: this.options, description: '', repositories: this.selected} }));
+    this.reset();
+  }
+
+  private reset(): void {
+    this.wizard.reset();
+    this.selected = [];
   }
 }

@@ -1,6 +1,7 @@
 <clr-wizard #wizardlg
   clrWizardSize="lg"
   [(clrWizardOpen)]="show"
+  (clrWizardOnCancel)="doCancel()"
   (clrWizardOnFinish)="doFinish()"
   clrWizardSize="lg">
 
