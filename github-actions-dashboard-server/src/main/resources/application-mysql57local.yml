@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: "jdbc:mysql://localhost:3309/dashboard"
+    username: spring
+    password: spring
+    driver-class-name: org.mariadb.jdbc.Driver
+  flyway:
+    locations:
+    - classpath:db/migration/mysql57
