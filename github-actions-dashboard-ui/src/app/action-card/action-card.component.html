@@ -6,48 +6,67 @@
 
   <div *ngIf="workflow.branches?.length > 0" class="card-block">
     <div class="card-title">
-      Branches
+      <a href="{{workflow.url}}/branches" target="_blank" class="card-link">Branches</a>
+      <span class="badge badge-success">{{branchState.successCount}}</span>
+      <span class="badge badge-danger">{{branchState.failedCount}}</span>
+      <span class="badge badge-info">{{branchState.runningCount}}</span>
     </div>
-    <ul class="list">
-      <li *ngFor="let branch of workflow.branches">
-        <a href="{{branch.url}}" target="_blank">{{branch.name}}</a>
-        <ul *ngIf="branch.checkRuns?.length > 0" class="list">
-          <li *ngFor="let checkRun of branch.checkRuns">
-            <a href="{{checkRun.url}}" target="_blank">{{checkRun.name}}</a>
-            <div class="progress-block">
-              <div class="progress-static" [ngClass]="checkRunStyle(checkRun)" >
-                <div class="progress-meter" data-value="100"></div>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </li>
-    </ul>
+
+    <div class="progress-block">
+      <div *ngIf="branchState.successPersentage > 0"
+        class="progress-static success"
+        style="display: inline-block;"
+        [style.width]="branchState.successPersentage+'%'">
+        <div class="progress-meter" data-value="100"></div>
+      </div>
+      <div *ngIf="branchState.failedPersentage > 0"
+        class="progress-static danger"
+        style="display: inline-block;"
+        [style.width]="branchState.failedPersentage+'%'">
+        <div class="progress-meter" data-value="100"></div>
+      </div>
+      <div *ngIf="branchState.runningPersentage > 0"
+        class="progress-static"
+        style="display: inline-block;"
+        [style.width]="branchState.runningPersentage+'%'">
+        <div class="progress-meter" data-value="100"></div>
+      </div>
+    </div>
   </div>
 
-  <div *ngIf="hasActivePrCheckRuns()" class="card-block">
+  <div  class="card-block">
     <div class="card-title">
-      Pull Requests
+      <a href="{{workflow.url}}/pulls" target="_blank" class="card-link">Pull Requests</a>
+      <div *ngIf="activePrCheckRuns" style="display: inline-block;">
+        <span class="badge badge-success">{{prState.successCount}}</span>
+        <span class="badge badge-danger">{{prState.failedCount}}</span>
+        <span class="badge badge-info">{{prState.runningCount}}</span>
+      </div>
     </div>
 
-    <ul class="list">
-      <div *ngFor="let pr of workflow.pullRequests">
-        <li *ngIf="pr.checkRuns?.length > 0">
-          <a href="{{pr.url}}" target="_blank">#{{pr.number}}</a>
-          <ul class="list">
-            <li *ngFor="let checkRun of pr.checkRuns">
-              <a href="{{checkRun.url}}" target="_blank">{{checkRun.name}}</a>
-              <div class="progress-block">
-                <div class="progress-static" [ngClass]="checkRunStyle(checkRun)" >
-                  <div class="progress-meter" data-value="100"></div>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </li>
+    <div *ngIf="activePrCheckRuns" class="progress-block">
+      <div *ngIf="prState.successPersentage > 0"
+        class="progress-static success"
+        style="display: inline-block;"
+        [style.width]="prState.successPersentage+'%'">
+        <div class="progress-meter" data-value="100"></div>
       </div>
-    </ul>
-
+      <div *ngIf="prState.failedPersentage > 0"
+        class="progress-static danger"
+        style="display: inline-block;"
+        [style.width]="prState.failedPersentage+'%'">
+        <div class="progress-meter" data-value="100"></div>
+      </div>
+      <div *ngIf="prState.runningPersentage > 0"
+        class="progress-static"
+        style="display: inline-block;"
+        [style.width]="prState.runningPersentage+'%'">
+        <div class="progress-meter" data-value="100"></div>
+      </div>
+    </div>
+    <div *ngIf="!activePrCheckRuns">
+      <span>No PRs</span>
+    </div>
   </div>
 
   <div *ngIf="type=='user'" class="card-footer">

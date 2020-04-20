@@ -7,10 +7,9 @@ import { SettingsComponent } from './settings/settings/settings.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'cards'},
-  { path: 'cards', component: ActionCardsComponent, canActivate: [AuthGuard] },
   { path: 'cards/:type/:id', component: ActionCardsComponent, canActivate: [AuthGuard] },
   { path: 'home', component: HomeComponent },
-  { path: 'settings', component: SettingsComponent },
+  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
   { path: '**', component: HomeComponent }
 ];
 

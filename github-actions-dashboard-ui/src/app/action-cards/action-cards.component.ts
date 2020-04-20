@@ -3,10 +3,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { Subscription, timer, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
-import { ApiService, Repository, Card } from '../api.service';
+import { ApiService, Repository, Card, CheckRun, PullRequest } from '../api.service';
 import { State, getRefreshSetting } from '../settings/settings.reducer';
 import { getCards } from '../dashboard/dashboard.reducer';
 import { setCards } from '../dashboard/dashboard.actions';
+import { PrStates } from '../action-card/action-card.component';
 
 @Component({
   selector: 'app-action-cards',
@@ -16,6 +17,7 @@ import { setCards } from '../dashboard/dashboard.actions';
 export class ActionCardsComponent implements OnInit, OnDestroy {
 
   cards = this.store.pipe(select(getCards));
+  cardsActive = true;
   private timerSub: Subscription;
   private refreshSub: Subscription;
   private refreshSetting = this.store.pipe(select(getRefreshSetting));
@@ -42,6 +44,98 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
     if (this.refreshSub) {
       this.refreshSub.unsubscribe();
     }
+  }
+
+  toggleCardsView(): void {
+    this.cardsActive = !this.cardsActive;
+  }
+
+  public checkRunStyle(checkRun: CheckRun): string {
+    if (checkRun.status === 'IN_PROGRESS') {
+      return '';
+    } else if (checkRun.conclusion === 'SUCCESS') {
+      return 'success';
+    } else {
+      return 'danger';
+    }
+  }
+
+  public hasActivePrCheckRuns(pullRequests: PullRequest[]): boolean {
+    let active = false;
+    if (pullRequests) {
+      pullRequests.forEach(pr => {
+        if (!active && pr.checkRuns && pr.checkRuns.length > 0) {
+          active = true;
+        }
+      });
+    }
+    return active;
+  }
+
+  public calculatePrStates(workflow: Repository): PrStates {
+    let successCount = 0;
+    let failedCount = 0;
+    let runningCount = 0;
+
+    workflow.pullRequests.forEach(pr => {
+      pr.checkRuns.forEach(cr => {
+        if (cr.status === 'IN_PROGRESS') {
+          runningCount++;
+        } else if (cr.conclusion === 'SUCCESS') {
+          successCount++;
+        } else {
+          failedCount++;
+        }
+      });
+    });
+
+    const totalCount = successCount + failedCount + runningCount;
+    const successPersentage = (successCount / totalCount) * 100;
+    const failedPersentage = (failedCount / totalCount) * 100;
+    const runningPersentage = (runningCount / totalCount) * 100;
+
+    return {
+      successCount,
+      failedCount,
+      runningCount,
+      totalCount,
+      successPersentage,
+      failedPersentage,
+      runningPersentage
+    };
+  }
+
+  public calculateBranchStates(workflow: Repository): PrStates {
+    let successCount = 0;
+    let failedCount = 0;
+    let runningCount = 0;
+
+    workflow.branches.forEach(b => {
+      b.checkRuns.forEach(cr => {
+        if (cr.status === 'IN_PROGRESS') {
+          runningCount++;
+        } else if (cr.conclusion === 'SUCCESS') {
+          successCount++;
+        } else {
+          failedCount++;
+        }
+      });
+    });
+
+    const totalCount = successCount + failedCount + runningCount;
+    const successPersentage = (successCount / totalCount) * 100;
+    const failedPersentage = (failedCount / totalCount) * 100;
+    const runningPersentage = (runningCount / totalCount) * 100;
+
+    return {
+      successCount,
+      failedCount,
+      runningCount,
+      totalCount,
+      successPersentage,
+      failedPersentage,
+      runningPersentage
+    };
   }
 
   private setupWorkflowsRefresh(refresh: number, type: string, id: string) {

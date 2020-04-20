@@ -11,8 +11,7 @@ import { removeCard } from '../dashboard/dashboard.actions';
 })
 export class ActionCardComponent implements OnInit {
 
-  @Input()
-  workflow: Repository;
+  private localWorkflow: Repository;
 
   @Input()
   type: string;
@@ -23,12 +22,93 @@ export class ActionCardComponent implements OnInit {
   @Input()
   card: Card;
 
+  prState: PrStates;
+  branchState: PrStates;
+  activePrCheckRuns = false;
 
   constructor(
     private store: Store<State>
   ) { }
 
   ngOnInit() {
+  }
+
+  @Input()
+  set workflow(workflow: Repository) {
+    this.localWorkflow = workflow;
+    this.prState = this.calculatePrStates(workflow);
+    this.branchState = this.calculateBranchStates(workflow);
+    this.activePrCheckRuns = this.hasActivePrCheckRuns();
+  }
+
+  private calculatePrStates(workflow: Repository): PrStates {
+    let successCount = 0;
+    let failedCount = 0;
+    let runningCount = 0;
+
+    workflow.pullRequests.forEach(pr => {
+      pr.checkRuns.forEach(cr => {
+        if (cr.status === 'IN_PROGRESS') {
+          runningCount++;
+        } else if (cr.conclusion === 'SUCCESS') {
+          successCount++;
+        } else {
+          failedCount++;
+        }
+      });
+    });
+
+    const totalCount = successCount + failedCount + runningCount;
+    const successPersentage = (successCount / totalCount) * 100;
+    const failedPersentage = (failedCount / totalCount) * 100;
+    const runningPersentage = (runningCount / totalCount) * 100;
+
+    return {
+      successCount,
+      failedCount,
+      runningCount,
+      totalCount,
+      successPersentage,
+      failedPersentage,
+      runningPersentage
+    };
+  }
+
+  private calculateBranchStates(workflow: Repository): PrStates {
+    let successCount = 0;
+    let failedCount = 0;
+    let runningCount = 0;
+
+    workflow.branches.forEach(b => {
+      b.checkRuns.forEach(cr => {
+        if (cr.status === 'IN_PROGRESS') {
+          runningCount++;
+        } else if (cr.conclusion === 'SUCCESS') {
+          successCount++;
+        } else {
+          failedCount++;
+        }
+      });
+    });
+
+    const totalCount = successCount + failedCount + runningCount;
+    const successPersentage = (successCount / totalCount) * 100;
+    const failedPersentage = (failedCount / totalCount) * 100;
+    const runningPersentage = (runningCount / totalCount) * 100;
+
+    return {
+      successCount,
+      failedCount,
+      runningCount,
+      totalCount,
+      successPersentage,
+      failedPersentage,
+      runningPersentage
+    };
+  }
+
+  get workflow(): Repository {
+    return this.localWorkflow;
   }
 
   public checkRunStyle(checkRun: CheckRun): string {
@@ -62,4 +142,14 @@ export class ActionCardComponent implements OnInit {
             description: '',
             repositories: []}, card: this.card }));
   }
+}
+
+export interface PrStates {
+  successCount: number;
+  failedCount: number;
+  runningCount: number;
+  totalCount: number;
+  successPersentage: number;
+  failedPersentage: number;
+  runningPersentage: number;
 }
