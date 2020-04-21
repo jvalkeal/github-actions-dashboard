@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
-import { runCssVarsPolyfill } from '@clr/core/common';
 import { State, getLoggedIn } from './auth/auth.reducer';
-
-const darkThemeStyleSheet = document.styleSheets[4];
+import { ThemeService } from './theme/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -18,16 +16,21 @@ export class AppComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private store: Store<State>
+    private store: Store<State>,
+    private themeService: ThemeService
   ) {}
 
   ngOnInit() {
-    darkThemeStyleSheet.disabled = true;
   }
 
   public toggleDarkTheme() {
-    darkThemeStyleSheet.disabled = !(this.darkThemeIsActive = !this.darkThemeIsActive);
-    runCssVarsPolyfill();
+    if (this.darkThemeIsActive) {
+      this.themeService.switchTheme('default');
+      this.darkThemeIsActive = false;
+    } else {
+      this.themeService.switchTheme('dark');
+      this.darkThemeIsActive = true;
+    }
   }
 
   public goHome(): boolean {
