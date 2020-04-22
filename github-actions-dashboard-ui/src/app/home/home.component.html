@@ -1,1 +1,2 @@
-<p>Please Log In... {{loggedIn$ | async}} </p>
+<p>Welcome to Github Actions Dashboard</p>
+<p *ngIf="!(loggedIn$ | async)">You need to log in via Github</p>
