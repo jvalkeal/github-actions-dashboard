@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { State, getLoggedIn } from './auth/auth.reducer';
 import { ThemeService } from './theme/theme.service';
+import { getThemeActiveSetting } from './settings/settings.reducer';
+import { map, take, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +14,8 @@ import { ThemeService } from './theme/theme.service';
 export class AppComponent implements OnInit {
 
   loggedIn$ = this.store.pipe(select(getLoggedIn));
-  private darkThemeIsActive = false;
+  themeActiveSetting$ = this.store.pipe(select(getThemeActiveSetting));
+  darkThemeIsActive = false;
 
   constructor(
     private router: Router,
@@ -21,6 +24,15 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.themeActiveSetting$.pipe(
+      filter(key => typeof key !== 'undefined'),
+      map(key => key === 'dark' ? true : false),
+      take(1)
+    ).subscribe(toggle => {
+      if (toggle) {
+        this.toggleDarkTheme();
+      }
+    });
   }
 
   public toggleDarkTheme() {

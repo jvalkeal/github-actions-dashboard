@@ -6,6 +6,8 @@ import { Setting } from '../api.service';
 export const settingsFeatureKey = 'settings';
 export const refreshKey = 'refresh';
 export const refreshDefault = '60';
+export const themeActiveKey = 'theme-active';
+export const themeActiveDefault = 'default';
 
 export interface SettingsState {
   settings: Setting[];
@@ -21,6 +23,10 @@ export const getSettings = (state: State) => {
 
 export const getRefreshSetting = (state: State) => {
   return state.settings.settings.find(s => s.name === refreshKey).value;
+};
+
+export const getThemeActiveSetting = (state: State) => {
+  return state.settings.settings.find(s => s.name === themeActiveKey)?.value;
 };
 
 const initialState: SettingsState = {
