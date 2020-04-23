@@ -23,11 +23,11 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
   }
 
-  refreshOnChange(val: string) {
+  refreshSettingOnChange(val: string) {
     this.store.dispatch(update({ setting: { name: refreshKey, value: val} }));
   }
 
-  refreshThemeActiveOnChange(val: string) {
+  themeActiveSettingOnChange(val: string) {
     this.store.dispatch(update({ setting: { name: themeActiveKey, value: val} }));
   }
 }

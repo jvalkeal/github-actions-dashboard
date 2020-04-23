@@ -3,26 +3,31 @@
   <form clrForm>
 
     <clr-select-container>
-      <label>Refresh time</label>
+      <label>Workflow Refresh Time</label>
       <select clrSelect
         name="refresh"
         [value]="refreshSetting$ | async"
-        (change)="refreshOnChange($event.target.value)" >
+        (change)="refreshSettingOnChange($event.target.value)" >
         <option value="30">30s</option>
         <option value="60">1m</option>
         <option value="0">Disabled</option>
       </select>
+      <clr-control-helper>How often active workflow data is updated.</clr-control-helper>
     </clr-select-container>
 
     <clr-select-container>
-      <label>Default theme</label>
+      <label>Initial Theme</label>
       <select clrSelect
         name="theme"
         [value]="themeActiveSetting$ | async"
-        (change)="refreshThemeActiveOnChange($event.target.value)" >
+        (change)="themeActiveSettingOnChange($event.target.value)" >
         <option value="default">default</option>
         <option value="dark">dark</option>
       </select>
+      <clr-control-helper>
+        Defines a theme which will be automatically activate. Light theme is the default
+        and dark theme the dark.
+      </clr-control-helper>
     </clr-select-container>
 
   </form>
