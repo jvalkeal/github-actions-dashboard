@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
+import { Actions, Effect, ofType } from '@ngrx/effects';
+import { map, take, tap } from 'rxjs/operators';
 import { State, getLoggedIn } from './auth/auth.reducer';
 import { ThemeService } from './theme/theme.service';
-import { getThemeActiveSetting } from './settings/settings.reducer';
-import { map, take, filter } from 'rxjs/operators';
+import { getThemeActiveSetting, themeActiveKey } from './settings/settings.reducer';
+import * as SettingsActions from './settings/settings.actions';
 
 @Component({
   selector: 'app-root',
@@ -17,22 +19,26 @@ export class AppComponent implements OnInit {
   themeActiveSetting$ = this.store.pipe(select(getThemeActiveSetting));
   darkThemeIsActive = false;
 
+  @Effect({ dispatch: false })
+  updateTheme$ = this.actions$.pipe(
+    ofType(SettingsActions.load),
+    take(1),
+    map(action => action.settings.find(s => s.name === themeActiveKey)?.value),
+    tap(theme => {
+      if (theme === 'dark') {
+        this.toggleDarkTheme();
+      }
+    })
+  ).subscribe();
+
   constructor(
     private router: Router,
     private store: Store<State>,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private actions$: Actions,
   ) {}
 
   ngOnInit() {
-    this.themeActiveSetting$.pipe(
-      filter(key => typeof key !== 'undefined'),
-      map(key => key === 'dark' ? true : false),
-      take(1)
-    ).subscribe(toggle => {
-      if (toggle) {
-        this.toggleDarkTheme();
-      }
-    });
   }
 
   public toggleDarkTheme() {

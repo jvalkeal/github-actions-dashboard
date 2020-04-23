@@ -31,7 +31,8 @@ export const getThemeActiveSetting = (state: State) => {
 
 const initialState: SettingsState = {
   settings: [
-    { name: refreshKey, value: refreshDefault }
+    { name: refreshKey, value: refreshDefault },
+    { name: themeActiveKey, value: themeActiveDefault }
   ]
 };
 
