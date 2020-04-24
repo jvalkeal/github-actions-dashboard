@@ -27,6 +27,7 @@ apollo {
 build.dependsOn 'generateApolloSources'
 
 repositories {
+	mavenLocal()
 	mavenCentral()
 	jcenter()
 	maven { url 'https://repo.spring.io/milestone' }
