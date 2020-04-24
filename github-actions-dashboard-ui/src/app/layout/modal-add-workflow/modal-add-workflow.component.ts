@@ -1,7 +1,7 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { tap, map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { tap, map, debounceTime } from 'rxjs/operators';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { ClrWizard, ClrSelect } from '@clr/angular';
 import { State, getUserDashboards } from '../../dashboard/dashboard.reducer';
 import { ApiService, Repository } from '../../api.service';
@@ -16,7 +16,7 @@ import { selectRouteParams } from '../../../app/reducers';
   templateUrl: './modal-add-workflow.component.html',
   styleUrls: ['./modal-add-workflow.component.css']
 })
-export class ModalAddWorkflowComponent implements OnInit, AfterViewInit {
+export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
 
   show = false;
   userDashboards$ = this.store.pipe(select(getUserDashboards));
@@ -36,11 +36,16 @@ export class ModalAddWorkflowComponent implements OnInit, AfterViewInit {
     })
   );
 
+  private searchSubject: Subject<string> = new Subject();
+
   @ViewChild(ClrSelect)
   select: ClrSelect;
 
   @ViewChild(ClrWizard)
   private wizard: ClrWizard;
+
+  private currentUserCardNameSub: Subscription;
+  private searchSubjectSub: Subscription;
 
   constructor(
     private api: ApiService,
@@ -48,14 +53,26 @@ export class ModalAddWorkflowComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
-    this.currentUserCardName.pipe(
+    this.currentUserCardNameSub = this.currentUserCardName.pipe(
       tap(name => {
         this.options = name;
       })
     ).subscribe();
+    this.searchSubjectSub = this.searchSubject.pipe(
+      debounceTime(500),
+      map(search => this.api.searchRepositories(search))
+    ).subscribe(repositories => {
+      this.repositories = repositories;
+    });
   }
 
-  ngAfterViewInit(): void {
+  ngOnDestroy(): void {
+    if (this.currentUserCardNameSub) {
+      this.currentUserCardNameSub.unsubscribe();
+    }
+    if (this.searchSubjectSub) {
+      this.searchSubjectSub.unsubscribe();
+    }
   }
 
   open(): void {
@@ -63,7 +80,7 @@ export class ModalAddWorkflowComponent implements OnInit, AfterViewInit {
   }
 
   onKey(value: string) {
-    this.repositories = this.api.searchRepositories(value);
+    this.searchSubject.next(value);
   }
 
   doCancel(): void {
