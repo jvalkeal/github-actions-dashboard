@@ -1,20 +1,5 @@
 <clr-vertical-nav [clrVerticalNavCollapsible]="collapsible">
 
-  <!-- <clr-vertical-nav-group routerLinkActive="active">
-    <clr-icon shape="dashboard" clrVerticalNavIcon></clr-icon>
-    Global Dashboards
-    <clr-vertical-nav-group-children>
-      <a *ngFor="let d of globalDashboards|async"
-        clrVerticalNavLink
-        routerLinkActive="active"
-        routerLink="/cards/global/{{d.name}}">
-        {{d.name}}
-      </a>
-
-    </clr-vertical-nav-group-children>
-  </clr-vertical-nav-group> -->
-
-
   <clr-vertical-nav-group *ngIf="(globalDashboards | async)?.length > 0" routerLinkActive="active">
     <clr-icon shape="dashboard" clrVerticalNavIcon></clr-icon>
     Global Dashboards
