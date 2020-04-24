@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { runCssVarsPolyfill } from '@clr/core/common';
+import { runCssVarsPolyfill } from '@clr/core';
 import { Theme } from './types';
 import { defaultTheme } from './default-theme';
 import { darkTheme } from './dark-theme';
