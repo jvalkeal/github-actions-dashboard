@@ -18,6 +18,7 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
 
   cards = this.store.pipe(select(getCards));
   cardsActive = true;
+  loading = false;
   private timerSub: Subscription;
   private refreshSub: Subscription;
   private refreshSetting = this.store.pipe(select(getRefreshSetting));
@@ -150,6 +151,7 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
         refresh = refresh *= 1000;
       }
     }
+    this.loading = true;
     this.timerSub = timer(0, refresh)
       .pipe(
         switchMap(() => {
@@ -175,7 +177,7 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
             },
             cards
           }));
-
+        this.loading = false;
       });
   }
 }

@@ -1,89 +1,97 @@
-<div class="clr-row clr-justify-content-end">
-  <a style="display: flex; cursor: pointer;">
-    <clr-icon class="clr-align-self-center" shape="view-cards" style="margin-left: 0; margin-right: 0.4rem;"></clr-icon>
-    <input type="checkbox" clrToggle (click)="toggleCardsView()"/>
-    <clr-icon class="clr-align-self-center" shape="view-list" style="margin-left: -0.7rem;"></clr-icon>
-  </a>
+<div *ngIf="loading" class="clr-row clr-justify-content-center">
+  <span class="spinner">
+    Loading...
+  </span>
 </div>
 
-<div *ngIf="cardsActive">
-  <div class="clr-row">
-    <div *ngFor="let card of cards|async" class="clr-col-xl-3 clr-col-lg-4 clr-col-md-6 clr-col-sm-12 clr-col-12">
-      <app-action-card
-        [type]="card.type"
-        [card]="card"
-        [name]="card.name"
-        [workflow]="card.repository"></app-action-card>
+<div *ngIf="!loading">
+  <div class="clr-row clr-justify-content-end">
+    <a style="display: flex; cursor: pointer;">
+      <clr-icon class="clr-align-self-center" shape="view-cards" style="margin-left: 0; margin-right: 0.4rem;"></clr-icon>
+      <input type="checkbox" clrToggle (click)="toggleCardsView()"/>
+      <clr-icon class="clr-align-self-center" shape="view-list" style="margin-left: -0.7rem;"></clr-icon>
+    </a>
+  </div>
+
+  <div *ngIf="cardsActive">
+    <div class="clr-row">
+      <div *ngFor="let card of cards|async" class="clr-col-xl-3 clr-col-lg-4 clr-col-md-6 clr-col-sm-12 clr-col-12">
+        <app-action-card
+          [type]="card.type"
+          [card]="card"
+          [name]="card.name"
+          [workflow]="card.repository"></app-action-card>
+      </div>
     </div>
   </div>
-</div>
-<div *ngIf="!cardsActive">
-  <clr-datagrid>
-    <clr-dg-column>Name</clr-dg-column>
-    <clr-dg-column>Owner</clr-dg-column>
-    <clr-dg-column>Branches</clr-dg-column>
-    <clr-dg-column>PRs</clr-dg-column>
-    <clr-dg-row
-      *clrDgItems="let card of cards|async"
-      [clrDgItem]="card"
-      [clrDgDetailOpenLabel]="'Open row details for ' + card.repository.name"
-      [clrDgDetailCloseLabel]="'Open row details for ' + card.repository.name">
-      <clr-dg-cell>{{card.repository.name}}</clr-dg-cell>
-      <clr-dg-cell>{{card.repository.owner}}</clr-dg-cell>
-      <clr-dg-cell>
-        <span *ngIf="calculateBranchStates(card.repository).failedCount > 0" class="label label-danger">Error</span>
-        <span *ngIf="calculateBranchStates(card.repository).failedCount == 0" class="label label-success">Success</span>
-      </clr-dg-cell>
-      <clr-dg-cell>
-        <span *ngIf="calculatePrStates(card.repository).failedCount > 0" class="label label-danger">Error</span>
-        <span *ngIf="calculatePrStates(card.repository).failedCount == 0" class="label label-success">Success</span>
-      </clr-dg-cell>
-    </clr-dg-row>
+  <div *ngIf="!cardsActive">
+    <clr-datagrid>
+      <clr-dg-column>Name</clr-dg-column>
+      <clr-dg-column>Owner</clr-dg-column>
+      <clr-dg-column>Branches</clr-dg-column>
+      <clr-dg-column>PRs</clr-dg-column>
+      <clr-dg-row
+        *clrDgItems="let card of cards|async"
+        [clrDgItem]="card"
+        [clrDgDetailOpenLabel]="'Open row details for ' + card.repository.name"
+        [clrDgDetailCloseLabel]="'Open row details for ' + card.repository.name">
+        <clr-dg-cell>{{card.repository.name}}</clr-dg-cell>
+        <clr-dg-cell>{{card.repository.owner}}</clr-dg-cell>
+        <clr-dg-cell>
+          <span *ngIf="calculateBranchStates(card.repository).failedCount > 0" class="label label-danger">Error</span>
+          <span *ngIf="calculateBranchStates(card.repository).failedCount == 0" class="label label-success">Success</span>
+        </clr-dg-cell>
+        <clr-dg-cell>
+          <span *ngIf="calculatePrStates(card.repository).failedCount > 0" class="label label-danger">Error</span>
+          <span *ngIf="calculatePrStates(card.repository).failedCount == 0" class="label label-success">Success</span>
+        </clr-dg-cell>
+      </clr-dg-row>
 
-    <clr-dg-detail *clrIfDetail="let detail">
-      <clr-dg-detail-header>{{detail.repository.name}} Details</clr-dg-detail-header>
-      <clr-dg-detail-body>
-        <div>
-          Branches
-        </div>
-        <ul class="list">
-          <li *ngFor="let branch of detail.repository.branches">
-            <a href="{{branch.url}}" target="_blank">{{branch.name}}</a>
-            <ul *ngIf="branch.checkRuns?.length > 0" class="list">
-              <li *ngFor="let checkRun of branch.checkRuns">
-                <a href="{{checkRun.url}}" target="_blank">{{checkRun.name}}</a>
-                <div class="progress-block">
-                  <div class="progress-static" [ngClass]="checkRunStyle(checkRun)" >
-                    <div class="progress-meter" data-value="100"></div>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </li>
-        </ul>
-        <div *ngIf="hasActivePrCheckRuns(detail.repository.pullRequests)">
+      <clr-dg-detail *clrIfDetail="let detail">
+        <clr-dg-detail-header>{{detail.repository.name}} Details</clr-dg-detail-header>
+        <clr-dg-detail-body>
           <div>
-            Pull Requests
+            Branches
           </div>
           <ul class="list">
-            <div *ngFor="let pr of detail.repository.pullRequests">
-              <li *ngIf="pr.checkRuns?.length > 0">
-                <a href="{{pr.url}}" target="_blank">#{{pr.number}}</a>
-                <ul class="list">
-                  <li *ngFor="let checkRun of pr.checkRuns">
-                    <a href="{{checkRun.url}}" target="_blank">{{checkRun.name}}</a>
-                    <div class="progress-block">
-                      <div class="progress-static" [ngClass]="checkRunStyle(checkRun)">
-                        <div class="progress-meter" data-value="100"></div>
-                      </div>
+            <li *ngFor="let branch of detail.repository.branches">
+              <a href="{{branch.url}}" target="_blank">{{branch.name}}</a>
+              <ul *ngIf="branch.checkRuns?.length > 0" class="list">
+                <li *ngFor="let checkRun of branch.checkRuns">
+                  <a href="{{checkRun.url}}" target="_blank">{{checkRun.name}}</a>
+                  <div class="progress-block">
+                    <div class="progress-static" [ngClass]="checkRunStyle(checkRun)" >
+                      <div class="progress-meter" data-value="100"></div>
                     </div>
-                  </li>
-                </ul>
-              </li>
-            </div>
+                  </div>
+                </li>
+              </ul>
+            </li>
           </ul>
-        </div>
-      </clr-dg-detail-body>
-    </clr-dg-detail>
-  </clr-datagrid>
+          <div *ngIf="hasActivePrCheckRuns(detail.repository.pullRequests)">
+            <div>
+              Pull Requests
+            </div>
+            <ul class="list">
+              <div *ngFor="let pr of detail.repository.pullRequests">
+                <li *ngIf="pr.checkRuns?.length > 0">
+                  <a href="{{pr.url}}" target="_blank">#{{pr.number}}</a>
+                  <ul class="list">
+                    <li *ngFor="let checkRun of pr.checkRuns">
+                      <a href="{{checkRun.url}}" target="_blank">{{checkRun.name}}</a>
+                      <div class="progress-block">
+                        <div class="progress-static" [ngClass]="checkRunStyle(checkRun)">
+                          <div class="progress-meter" data-value="100"></div>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </li>
+              </div>
+            </ul>
+          </div>
+        </clr-dg-detail-body>
+      </clr-dg-detail>
+    </clr-datagrid>
+  </div>
 </div>
