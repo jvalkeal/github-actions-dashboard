@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { User } from '../../../app/api.service';
 import { AuthService } from '../../../app/auth/auth.service';
-import { SettingsService } from '../../../app/settings/settings.service';
-import { DashboardService } from '../../../app/dashboard/dashboard.service';
+import { SettingsService } from 'src/app/settings/settings.service';
+import { DashboardService } from 'src/app/dashboard/dashboard.service';
 
 @Component({
   selector: 'app-user-header-action',
@@ -13,9 +14,7 @@ import { DashboardService } from '../../../app/dashboard/dashboard.service';
 })
 export class UserHeaderActionComponent implements OnInit, OnDestroy {
 
-  private sub1: Subscription;
-  private sub2: Subscription;
-  private sub3: Subscription;
+  private subs: Subscription[] = [];
   public userLoggedIn: User = {};
 
   constructor(
@@ -26,45 +25,28 @@ export class UserHeaderActionComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.sub1 = this.authService.userLoggedIn.subscribe(user => {
-      console.log('new user', user);
+    this.subs.push(this.authService.userLoggedIn.subscribe(user => {
       this.userLoggedIn = user;
-    });
+    }));
     this.login();
   }
 
   ngOnDestroy() {
-    if (this.sub1) {
-      this.sub1.unsubscribe();
-    }
-    if (this.sub2) {
-      this.sub2.unsubscribe();
-    }
-    if (this.sub3) {
-      this.sub3.unsubscribe();
-    }
+    this.subs.forEach(sub => sub.unsubscribe());
   }
 
   login(): void {
-    this.sub2 = this.authService.login().subscribe(data => {
+    this.subs.push(this.authService.login().subscribe(data => {
       this.router.navigate(['/cards']);
-      this.settingsService.load().subscribe(d => {
-        console.log('settings', d);
-      });
-      this.dashboardService.loadGlobal().subscribe(d => {
-        console.log('dashboards', d);
-      });
-      this.dashboardService.loadUser().subscribe(d => {
-        console.log('dashboards users', d);
-      });
-    });
+      this.settingsService.load().pipe(take(1)).subscribe();
+      this.dashboardService.loadGlobal().pipe(take(1)).subscribe();
+      this.dashboardService.loadUser().pipe(take(1)).subscribe();
+    }));
   }
 
   logout(): void {
-    console.log('trying to logout');
-    this.authService.logout().subscribe(data => {
-      console.log('navigate', data);
+    this.subs.push(this.authService.logout().subscribe(data => {
       this.router.navigate(['/home']);
-    });
+    }));
   }
 }
