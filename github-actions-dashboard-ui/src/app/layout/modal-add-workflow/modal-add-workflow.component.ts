@@ -5,7 +5,7 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { ClrWizard, ClrSelect } from '@clr/angular';
 import { State, getUserDashboards } from '../../dashboard/dashboard.reducer';
 import { ApiService, Repository } from '../../api.service';
-import { update } from '../../dashboard/dashboard.actions';
+import { update, refreshCard } from '../../dashboard/dashboard.actions';
 import { selectRouteParams } from '../../../app/reducers';
 
 /**
@@ -14,10 +14,9 @@ import { selectRouteParams } from '../../../app/reducers';
 @Component({
   selector: 'app-modal-add-workflow',
   templateUrl: './modal-add-workflow.component.html',
-  styleUrls: ['./modal-add-workflow.component.css']
+  styleUrls: ['./modal-add-workflow.component.css'],
 })
 export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
-
   show = false;
   userDashboards$ = this.store.pipe(select(getUserDashboards));
   options: string;
@@ -25,10 +24,8 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
   repositories: Observable<Repository[]>;
   selected: Repository[] = [];
 
-  private currentUserCardName = this.store.pipe(
-    select(selectRouteParams)
-  ).pipe(
-    map(params => {
+  private currentUserCardName = this.store.pipe(select(selectRouteParams)).pipe(
+    map((params) => {
       if (params?.type === 'user') {
         return params.id;
       }
@@ -47,23 +44,24 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
   private currentUserCardNameSub: Subscription;
   private searchSubjectSub: Subscription;
 
-  constructor(
-    private api: ApiService,
-    private store: Store<State>
-  ) { }
+  constructor(private api: ApiService, private store: Store<State>) {}
 
   ngOnInit(): void {
-    this.currentUserCardNameSub = this.currentUserCardName.pipe(
-      tap(name => {
-        this.options = name;
-      })
-    ).subscribe();
-    this.searchSubjectSub = this.searchSubject.pipe(
-      debounceTime(500),
-      map(search => this.api.searchRepositories(search))
-    ).subscribe(repositories => {
-      this.repositories = repositories;
-    });
+    this.currentUserCardNameSub = this.currentUserCardName
+      .pipe(
+        tap((name) => {
+          this.options = name;
+        })
+      )
+      .subscribe();
+    this.searchSubjectSub = this.searchSubject
+      .pipe(
+        debounceTime(500),
+        map((search) => this.api.searchRepositories(search))
+      )
+      .subscribe((repositories) => {
+        this.repositories = repositories;
+      });
   }
 
   ngOnDestroy(): void {
@@ -88,8 +86,17 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
   }
 
   doFinish(): void {
-    this.store.dispatch(update({ dashboard: { name: this.options, description: '', repositories: this.selected} }));
+    this.store.dispatch(
+      update({
+        dashboard: {
+          name: this.options,
+          description: '',
+          repositories: this.selected,
+        },
+      })
+    );
     this.reset();
+    this.store.dispatch(refreshCard({}));
   }
 
   private reset(): void {

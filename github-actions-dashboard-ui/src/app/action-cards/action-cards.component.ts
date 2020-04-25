@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { Store, select } from '@ngrx/store';
+import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Subscription, timer, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { ApiService, Repository, Card, CheckRun, PullRequest } from '../api.service';
@@ -8,6 +9,7 @@ import { State, getRefreshSetting } from '../settings/settings.reducer';
 import { getCards } from '../dashboard/dashboard.reducer';
 import { setCards } from '../dashboard/dashboard.actions';
 import { PrStates } from '../action-card/action-card.component';
+import * as DashboardActions from '../dashboard/dashboard.actions';
 
 @Component({
   selector: 'app-action-cards',
@@ -22,19 +24,31 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
   private timerSub: Subscription;
   private refreshSub: Subscription;
   private refreshSetting = this.store.pipe(select(getRefreshSetting));
+  private refresh = 0;
+  private params: Params;
+
+  @Effect({ dispatch: false })
+  refreshCard$ = this.actions$.pipe(
+    ofType(DashboardActions.refreshCard),
+  ).subscribe(action => {
+    this.setupWorkflowsRefresh(this.refresh, this.params);
+  });
 
   constructor(
     private api: ApiService,
     private store: Store<State>,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private actions$: Actions,
   ) {}
 
   ngOnInit() {
-    this.refreshSub = combineLatest([this.route.params, this.refreshSetting]).subscribe(([param, time]) => {
-      if (param && param.type && param.id) {
-        const refresh = +time;
-        this.setupWorkflowsRefresh(refresh, param.type, param.id);
-      }
+    this.refreshSub = combineLatest([
+      this.route.params,
+      this.refreshSetting,
+    ]).subscribe(([params, time]) => {
+      this.refresh = +time;
+      this.params = params;
+      this.refreshCards();
     });
   }
 
@@ -49,6 +63,10 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
 
   toggleCardsView(): void {
     this.cardsActive = !this.cardsActive;
+  }
+
+  refreshCards(): void {
+    this.store.dispatch(DashboardActions.refreshCard({}));
   }
 
   public checkRunStyle(checkRun: CheckRun): string {
@@ -139,7 +157,10 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
     };
   }
 
-  private setupWorkflowsRefresh(refresh: number, type: string, id: string) {
+  private setupWorkflowsRefresh(refresh: number, params: Params) {
+    if (!(params && params.id && params.type)) {
+      return;
+    }
     if (this.timerSub) {
       this.timerSub.unsubscribe();
       this.timerSub = null;
@@ -155,15 +176,15 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
     this.timerSub = timer(0, refresh)
       .pipe(
         switchMap(() => {
-          if (type === 'global') {
-            return this.api.getGlobalWorkflow(id);
-          } else if (type === 'user') {
-            return this.api.getUserWorkflow(id);
+          if (params.type === 'global') {
+            return this.api.getGlobalWorkflow(params.id);
+          } else if (params.type === 'user') {
+            return this.api.getUserWorkflow(params.id);
           }
         }),
         map<Repository[], Card[]>(repositories => {
           const cards: Card[] = [];
-          repositories.forEach(repository => cards.push({ name: id, type, repository }));
+          repositories.forEach(repository => cards.push({ name: params.id, type: params.type, repository }));
           return cards;
         })
       )
@@ -171,7 +192,7 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
         this.store.dispatch(setCards(
           {
             dashboard: {
-              name: id,
+              name: params.id,
               description: '',
               repositories: []
             },

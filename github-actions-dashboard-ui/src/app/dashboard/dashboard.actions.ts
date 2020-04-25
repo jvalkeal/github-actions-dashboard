@@ -31,6 +31,11 @@ export const removeCardError = createAction(
   props<{ dashboard: Dashboard, card: Card }>()
 );
 
+export const refreshCard = createAction(
+  '[Dashboard] refresh card',
+  props<{}>()
+);
+
 export const setCards = createAction(
   '[Dashboard] set cards',
   props<{ dashboard: Dashboard, cards: Card[] }>()

@@ -5,12 +5,18 @@
 </div>
 
 <div *ngIf="!loading">
-  <div class="clr-row clr-justify-content-end">
-    <a style="display: flex; cursor: pointer;">
-      <clr-icon class="clr-align-self-center" shape="view-cards" style="margin-left: 0; margin-right: 0.4rem;"></clr-icon>
-      <input type="checkbox" clrToggle [checked]="!cardsActive" (click)="toggleCardsView()"/>
-      <clr-icon class="clr-align-self-center" shape="view-list" style="margin-left: -0.7rem;"></clr-icon>
-    </a>
+
+  <div class="clr-row clr-justify-content-between clr-align-items-center">
+    <div>
+      <button class="btn btn-outline" (click)="refreshCards()">Refresh</button>
+    </div>
+    <div>
+      <a style="display: flex; cursor: pointer;">
+        <clr-icon class="clr-align-self-center" shape="view-cards" style="margin-left: 0; margin-right: 0.4rem;"></clr-icon>
+        <input type="checkbox" clrToggle [checked]="!cardsActive" (click)="toggleCardsView()"/>
+        <clr-icon class="clr-align-self-center" shape="view-list" style="margin-left: -0.7rem;"></clr-icon>
+      </a>
+    </div>
   </div>
 
   <div *ngIf="cardsActive">
