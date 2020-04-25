@@ -74,6 +74,7 @@ public class DashboardProperties {
 
 		private String owner;
 		private String name;
+		private String title;
 		private List<String> branches = new ArrayList<>(Arrays.asList("master"));
 
 		public String getOwner() {
@@ -90,6 +91,14 @@ public class DashboardProperties {
 
 		public void setName(String name) {
 			this.name = name;
+		}
+
+		public String getTitle() {
+			return title;
+		}
+
+		public void setTitle(String title) {
+			this.title = title;
 		}
 
 		public List<String> getBranches() {

@@ -39,7 +39,8 @@ public class DashboardRepositoryTests {
 
 	@Test
 	public void testDashboards() {
-		RepositoryEntity repositoryEntity = new RepositoryEntity("owner1", "repository1", new HashSet<>(Arrays.asList("master")));
+		RepositoryEntity repositoryEntity = new RepositoryEntity("owner1", "repository1", "title1",
+				new HashSet<>(Arrays.asList("master")));
 		Set<RepositoryEntity> repositoryEntities = new HashSet<>(Arrays.asList(repositoryEntity));
 		DashboardEntity dashboardEntity = new DashboardEntity("name1", "description1", repositoryEntities);
 		dashboardEntity.setUsername("user1");
@@ -49,7 +50,7 @@ public class DashboardRepositoryTests {
 				.collect(Collectors.toList());
 		assertThat(dashboardEntities).hasSize(1);
 
-		repositoryEntity = new RepositoryEntity("owner2", "repository2", new HashSet<>(Arrays.asList("dev")));
+		repositoryEntity = new RepositoryEntity("owner2", "repository2", "title2", new HashSet<>(Arrays.asList("dev")));
 		repositoryEntities = new HashSet<>(Arrays.asList(repositoryEntity));
 		dashboardEntity = new DashboardEntity("name2", "description2", repositoryEntities);
 		dashboardEntity.setUsername("user1");
@@ -62,5 +63,9 @@ public class DashboardRepositoryTests {
 		assertThat(repository.findByUsernameAndName("user1", "name1")).isNotNull();
 		assertThat(repository.findByUsernameAndName("user1", "name2")).isNotNull();
 		assertThat(repository.findByUsernameAndName("user1", "name3")).isNull();
+
+		assertThat(repository.findByUsernameAndName("user1", "name1").getRepositories()).hasSize(1);
+		assertThat(repository.findByUsernameAndName("user1", "name1").getRepositories().stream().findFirst().get()
+				.getTitle()).isEqualTo("title1");
 	}
 }

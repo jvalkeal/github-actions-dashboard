@@ -168,6 +168,7 @@ export interface Branch {
 export interface Repository {
   owner: string;
   name: string;
+  title: string;
   url: string;
   branches: Branch[];
   pullRequests: PullRequest[];

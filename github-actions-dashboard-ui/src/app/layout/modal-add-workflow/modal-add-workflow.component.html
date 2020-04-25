@@ -26,13 +26,13 @@
     </form>
   </clr-wizard-page>
 
-  <clr-wizard-page [clrWizardPageNextDisabled]="selected.length==0">
+  <clr-wizard-page [clrWizardPageNextDisabled]="!selectedRepository">
     <ng-template clrPageTitle>Repository</ng-template>
     <clr-input-container>
       <label>Query</label>
       <input #query clrInput placeholder="spring user:spring-projects" [(ngModel)]="name" required (keyup)="onKey(query.value)"/>
     </clr-input-container>
-    <clr-datagrid class="datagrid-compact" [(clrDgSelected)]="selected">
+    <clr-datagrid class="datagrid-compact" [(clrDgSingleSelected)]="selectedRepository">
       <clr-dg-column>Owner</clr-dg-column>
       <clr-dg-column>Name</clr-dg-column>
       <clr-dg-row *clrDgItems="let repository of repositories|async" [clrDgItem]="repository">
@@ -44,12 +44,23 @@
   </clr-wizard-page>
 
   <clr-wizard-page>
+    <ng-template clrPageTitle>Card</ng-template>
+    <form clrForm [formGroup]="form">
+      <clr-input-container>
+        <label>Title</label>
+        <input clrInput formControlName="title" [(ngModel)]="title" required/>
+        <clr-control-helper>Valid title</clr-control-helper>
+        <clr-control-error>Missing title</clr-control-error>
+      </clr-input-container>
+    </form>
+  </clr-wizard-page>
+
+  <clr-wizard-page>
     <ng-template clrPageTitle>Create</ng-template>
     <div>You're about to create a new workflow for following settings:</div>
     <div>Dashboard: {{options}}</div>
-    <div>Repositories:
-      <span *ngFor="let d of selected">{{d.owner}}/{{d.name}} </span>
-    </div>
+    <div>Title: {{title}}</div>
+    <div *ngIf="selectedRepository">Repository: {{selectedRepository.owner}}/{{selectedRepository.name}}</div>
   </clr-wizard-page>
 
 </clr-wizard>

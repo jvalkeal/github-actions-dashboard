@@ -29,6 +29,7 @@ public class Repository implements Comparable<Repository> {
 
 	private String owner;
 	private String name;
+	private String title;
 	private String url;
 	private List<Branch> branches = new ArrayList<>();
 	private List<PullRequest> pullRequests = new ArrayList<>();
@@ -36,15 +37,17 @@ public class Repository implements Comparable<Repository> {
 	public Repository() {
 	}
 
-	public Repository(String owner, String name, String url) {
+	public Repository(String owner, String name, String title, String url) {
 		this.owner = owner;
 		this.name = name;
+		this.title = title;
 		this.url = url;
 	}
 
-	public Repository(String owner, String name, String url, List<Branch> branches, List<PullRequest> pullRequests) {
+	public Repository(String owner, String name, String title, String url, List<Branch> branches, List<PullRequest> pullRequests) {
 		this.owner = owner;
 		this.name = name;
+		this.title = title;
 		this.url = url;
 		if (branches != null) {
 			this.branches = branches;
@@ -54,16 +57,16 @@ public class Repository implements Comparable<Repository> {
 		}
 	}
 
-	public static Repository of(String owner, String name, String url, List<Branch> branches, List<PullRequest> pullRequests) {
-		return new Repository(owner, name, url, branches, pullRequests);
+	public static Repository of(String owner, String name, String title, String url, List<Branch> branches, List<PullRequest> pullRequests) {
+		return new Repository(owner, name, title, url, branches, pullRequests);
 	}
 
-	public static Repository of(String owner, String name, String url) {
-		return new Repository(owner, name, url);
+	public static Repository of(String owner, String name, String title, String url) {
+		return new Repository(owner, name, title, url);
 	}
 
 	public static Repository of(RepositoryEntity entity) {
-		return new Repository(entity.getOwner(), entity.getRepository(), null);
+		return new Repository(entity.getOwner(), entity.getRepository(), entity.getTitle(), null);
 	}
 
 	public Repository merge(Repository repository) {
@@ -72,6 +75,9 @@ public class Repository implements Comparable<Repository> {
 		}
 		if (repository.getName() != null) {
 			setName(repository.getName());
+		}
+		if (repository.getTitle() != null) {
+			setTitle(repository.getTitle());
 		}
 		if (repository.getUrl() != null) {
 			setUrl(repository.getUrl());
@@ -95,6 +101,14 @@ public class Repository implements Comparable<Repository> {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public String getUrl() {
@@ -169,7 +183,7 @@ public class Repository implements Comparable<Repository> {
 
 	@Override
 	public String toString() {
-		return "Repository [branches=" + branches + ", name=" + name + ", owner=" + owner + ", pullRequests="
-				+ pullRequests + ", url=" + url + "]";
+		return "Repository [branches=" + branches + ", name=" + name + ", owner=" + owner + ", title=" + title
+				+ ", pullRequests=" + pullRequests + ", url=" + url + "]";
 	}
 }

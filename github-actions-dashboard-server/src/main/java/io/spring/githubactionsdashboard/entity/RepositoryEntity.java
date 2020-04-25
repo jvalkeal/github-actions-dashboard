@@ -38,22 +38,25 @@ public class RepositoryEntity extends AbstractEntity {
     @Column(name = "repository")
 	private String repository;
 
+    @Column(name = "title")
+	private String title;
+
 	@ElementCollection(fetch = FetchType.EAGER, targetClass = String.class)
 	@CollectionTable(name = "branches", foreignKey = @ForeignKey(name = "fk_repository_branches"))
 	private Set<String> branches;
 
-
     public RepositoryEntity() {
     }
 
-    public RepositoryEntity(String owner, String repository, Set<String> branches) {
+    public RepositoryEntity(String owner, String repository, String title, Set<String> branches) {
         this.owner = owner;
         this.repository = repository;
+        this.title = title;
         this.branches = branches;
     }
 
     public static RepositoryEntity from(Repository repository) {
-        return new RepositoryEntity(repository.getOwner(), repository.getName(),
+        return new RepositoryEntity(repository.getOwner(), repository.getName(), repository.getTitle(),
                 repository.getBranches().stream().map(b -> b.getName()).collect(Collectors.toSet()));
     }
 
@@ -73,11 +76,25 @@ public class RepositoryEntity extends AbstractEntity {
         this.repository = repository;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public Set<String> getBranches() {
         return branches;
     }
 
     public void setBranches(Set<String> branches) {
         this.branches = branches;
+    }
+
+    @Override
+    public String toString() {
+        return "RepositoryEntity [branches=" + branches + ", owner=" + owner + ", repository=" + repository + ", title="
+                + title + "]";
     }
 }

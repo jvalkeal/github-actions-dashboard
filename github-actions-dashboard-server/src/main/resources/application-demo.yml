@@ -5,24 +5,33 @@ dashboard:
       workflows:
         - owner: spring-cloud
           name: spring-cloud-dataflow
+          title: Dataflow
           branches: [master, 2.4.x]
         - owner: spring-cloud
           name: spring-cloud-skipper
+          title: Skipper
           branches: [master, 2.3.x]
         - owner: spring-cloud
           name: spring-cloud-deployer
+          title: Deployer
         - owner: spring-cloud
           name: spring-cloud-deployer-local
+          title: Deployer Local
         - owner: spring-cloud
           name: spring-cloud-deployer-cloudfoundry
+          title: Deployer CF
         - owner: spring-cloud
           name: spring-cloud-deployer-kubernetes
+          title: Deployer k8s
         - owner: spring-cloud
           name: spring-cloud-dataflow-build
+          title: Dataflow Build
         - owner: spring-cloud
           name: spring-cloud-dataflow-common
+          title: Dataflow Common
         - owner: spring-cloud
           name: spring-cloud-common-security-config
+          title: Dataflow Sec
     - name: Boot
       description: Spring Boot
       workflows:

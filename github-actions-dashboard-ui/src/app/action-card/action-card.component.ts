@@ -41,6 +41,14 @@ export class ActionCardComponent implements OnInit {
     this.activePrCheckRuns = this.hasActivePrCheckRuns();
   }
 
+  get workflow(): Repository {
+    return this.localWorkflow;
+  }
+
+  get title() {
+    return this.card.repository.title || this.card.repository.name;
+  }
+
   private calculatePrStates(workflow: Repository): PrStates {
     let successCount = 0;
     let failedCount = 0;
@@ -105,10 +113,6 @@ export class ActionCardComponent implements OnInit {
       failedPersentage,
       runningPersentage
     };
-  }
-
-  get workflow(): Repository {
-    return this.localWorkflow;
   }
 
   public checkRunStyle(checkRun: CheckRun): string {

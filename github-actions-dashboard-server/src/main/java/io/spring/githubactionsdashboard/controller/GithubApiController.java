@@ -91,11 +91,11 @@ public class GithubApiController {
 					Workflow workflow = new Workflow();
 					workflow.setOwner(re.getOwner());
 					workflow.setName(re.getRepository());
+					workflow.setTitle(re.getTitle());
 					return workflow;
 				}).collect(Collectors.toList());
 				return Mono.just(workflows);
 			})
-			.flatMapMany(workflows -> this.api.branchAndPrWorkflows(workflows))
-			;
+			.flatMapMany(workflows -> this.api.branchAndPrWorkflows(workflows));
 	}
 }

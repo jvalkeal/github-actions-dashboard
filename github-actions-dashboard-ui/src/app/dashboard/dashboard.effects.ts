@@ -49,7 +49,10 @@ export class DashboardEffects {
       }),
       exhaustMap((dashboard) => this.dashboardService.save(dashboard)
         .pipe(
-          map(aVoid => DashboardActions.ok({dashboard})),
+          switchMap(aVoid => [
+            DashboardActions.ok({dashboard}),
+            DashboardActions.refreshCard({})
+          ]),
           catchError(() => of(DashboardActions.error({dashboard})))
         )
       )

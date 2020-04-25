@@ -18,6 +18,8 @@ package io.spring.githubactionsdashboard.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +44,7 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/user/dashboards")
 public class DashboardController {
 
+	private final static Logger log = LoggerFactory.getLogger(DashboardController.class);
 	private final DashboardRepository repository;
 	private final DashboardProperties properties;
 
@@ -71,7 +74,7 @@ public class DashboardController {
 	@ResponseBody
 	public Flux<Dashboard> getUserDashboards(@AuthenticationPrincipal OAuth2User oauth2User) {
 		return Flux
-		 	.fromIterable(this.repository.findByUsername(oauth2User.getName()))
+			.fromIterable(this.repository.findByUsername(oauth2User.getName()))
 			.map(Dashboard::of);
 	}
 
@@ -87,10 +90,13 @@ public class DashboardController {
 		return Mono.just(dashboard)
 			.map(d -> {
 				DashboardEntity entity = this.repository.findByUsernameAndName(oauth2User.getName(), dashboard.getName());
+				log.debug("Existing entity {}", entity);
 				if (entity == null) {
 					entity = DashboardEntity.from(dashboard);
+					log.debug("Created new entity {}", entity);
 				} else {
 					entity.setRepositories(dashboard.getRepositories().stream().map(RepositoryEntity::from).collect(Collectors.toSet()));
+					log.debug("Updated entity {}", entity);
 				}
 				return entity;
 			})
@@ -119,7 +125,7 @@ public class DashboardController {
 				List<Repository> repositories = view.getWorkflows().stream()
 						.map(workFlow -> {
 							List<Branch> branches = workFlow.getBranches().stream().map(b -> Branch.of(b, null)).collect(Collectors.toList());
-							return Repository.of(workFlow.getOwner(), workFlow.getName(), repoUrl(workFlow), branches, null);
+							return Repository.of(workFlow.getOwner(), workFlow.getName(), workFlow.getTitle(), repoUrl(workFlow), branches, null);
 						})
 						.collect(Collectors.toList());
 				return new Dashboard(view.getName(), view.getDescription(), repositories);

@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { Store, select } from '@ngrx/store';
 import { tap, map, debounceTime } from 'rxjs/operators';
 import { Observable, Subject, Subscription } from 'rxjs';
@@ -21,8 +22,20 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
   userDashboards$ = this.store.pipe(select(getUserDashboards));
   options: string;
   name: string;
+  title: string;
   repositories: Observable<Repository[]>;
-  selected: Repository[] = [];
+  private selectedRepositoryLocal: Repository;
+
+  get selectedRepository() {
+    return this.selectedRepositoryLocal;
+  }
+
+  set selectedRepository(selectedRepository: Repository) {
+    this.selectedRepositoryLocal = selectedRepository;
+    if (selectedRepository) {
+      this.title = selectedRepository.name;
+    }
+  }
 
   private currentUserCardName = this.store.pipe(select(selectRouteParams)).pipe(
     map((params) => {
@@ -43,10 +56,16 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
 
   private currentUserCardNameSub: Subscription;
   private searchSubjectSub: Subscription;
+  private titleControl: FormControl;
+  form: FormGroup;
 
   constructor(private api: ApiService, private store: Store<State>) {}
 
   ngOnInit(): void {
+    this.titleControl = new FormControl(this.title, Validators.required);
+    this.form = new FormGroup({
+      title: this.titleControl
+    });
     this.currentUserCardNameSub = this.currentUserCardName
       .pipe(
         tap((name) => {
@@ -91,16 +110,22 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
         dashboard: {
           name: this.options,
           description: '',
-          repositories: this.selected,
+          repositories: [{
+            owner: this.selectedRepository.owner,
+            name: this.selectedRepository.name,
+            title: this.title,
+            url: this.selectedRepository.url,
+            branches: [],
+            pullRequests: []
+          }],
         },
       })
     );
     this.reset();
-    this.store.dispatch(refreshCard({}));
   }
 
   private reset(): void {
     this.wizard.reset();
-    this.selected = [];
+    this.selectedRepository = null;
   }
 }

@@ -82,4 +82,10 @@ public class DashboardEntity extends AbstractUserEntity {
 	public void setRepositories(Set<RepositoryEntity> repositories) {
 		this.repositories = repositories;
 	}
+
+	@Override
+	public String toString() {
+		return "DashboardEntity [description=" + description + ", name=" + name + ", repositories=" + repositories
+				+ "]";
+	}
 }

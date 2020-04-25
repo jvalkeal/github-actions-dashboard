@@ -76,7 +76,7 @@ public class DefaultGithubApi implements GithubApi {
 				data.search().nodes().stream().forEach(n -> {
 					if (n instanceof RepositoriesQuery.AsRepository) {
 						RepositoriesQuery.AsRepository r = ((RepositoriesQuery.AsRepository) n);
-						repositories.add(new Repository(r.owner().login(), r.name, null));
+						repositories.add(new Repository(r.owner().login(), r.name, "", null));
 					}
 				});
 				return repositories;
@@ -111,8 +111,9 @@ public class DefaultGithubApi implements GithubApi {
 
 	private Flux<Repository> branchRepos(List<Workflow> workflows) {
 		return branchQueries(workflows)
-			.flatMap(githubGraphqlClient::query)
-			.map(data -> {
+			.flatMap(wq -> Mono.zip(Mono.just(wq.workflow), githubGraphqlClient.query(wq.query)))
+			.map(tuple -> {
+				BranchLastCommitStatusQuery.Data data = tuple.getT2();
 				log.debug("Branch query returned data {}", data);
 				List<Branch> branches = new ArrayList<>();
 				Branch branch = Branch.of(data.repository().ref().name(),
@@ -140,14 +141,15 @@ public class DefaultGithubApi implements GithubApi {
 					});
 				}
 				return Repository.of(data.repository().owner().login(), data.repository().name(),
-						(String) data.repository().url(), branches, null);
+						tuple.getT1().getTitle(), (String) data.repository().url(), branches, null);
 			});
 	}
 
 	private Flux<Repository> prRepos(List<Workflow> workflows) {
 		return prQueries(workflows)
-			.flatMap(githubGraphqlClient::query)
-			.map(data -> {
+			.flatMap(wq -> Mono.zip(Mono.just(wq.workflow), githubGraphqlClient.query(wq.query)))
+			.map(tuple -> {
+				PrLastCommitStatusQuery.Data data = tuple.getT2();
 				List<PullRequest> pullRequests = new ArrayList<>();
 				data.repository().pullRequests().nodes().stream().forEach(prNode -> {
 					PullRequest pr = new PullRequest();
@@ -178,29 +180,61 @@ public class DefaultGithubApi implements GithubApi {
 					pullRequests.add(pr);
 				});
 				return Repository.of(data.repository().owner().login(), data.repository().name(),
-						(String) data.repository().url(), null, pullRequests);
+						tuple.getT1().getTitle(), (String) data.repository().url(), null, pullRequests);
 			});
 	}
 
-	private Flux<BranchLastCommitStatusQuery> branchQueries(List<Workflow> workflows) {
+	private Flux<WorkflowBranchLastCommitStatusQuery> branchQueries(List<Workflow> workflows) {
 		return Flux.fromIterable(workflows)
 			.flatMap(workflow -> {
 				return Flux.fromIterable(workflow.getBranches())
 					.map(branch -> {
-						return BranchLastCommitStatusQuery.builder()
-							.owner(workflow.getOwner())
-							.name(workflow.getName())
-							.branch(branch)
-							.build();
+						return WorkflowBranchLastCommitStatusQuery.of(
+							workflow,
+							BranchLastCommitStatusQuery.builder()
+								.owner(workflow.getOwner())
+								.name(workflow.getName())
+								.branch(branch)
+								.build());
 					});
 			});
 	}
 
-	private Flux<PrLastCommitStatusQuery> prQueries(List<Workflow> workflows) {
+	private Flux<WorkflowPrLastCommitStatusQuery> prQueries(List<Workflow> workflows) {
 		return Flux.fromIterable(workflows)
-			.map(workflow -> PrLastCommitStatusQuery.builder()
-				.owner(workflow.getOwner())
-				.name(workflow.getName())
-				.build());
+			.map(workflow -> WorkflowPrLastCommitStatusQuery.of(
+				workflow,
+				PrLastCommitStatusQuery.builder()
+					.owner(workflow.getOwner())
+					.name(workflow.getName())
+					.build()));
+	}
+
+	private static class WorkflowBranchLastCommitStatusQuery {
+		Workflow workflow;
+		BranchLastCommitStatusQuery query;
+
+		WorkflowBranchLastCommitStatusQuery(Workflow workflow, BranchLastCommitStatusQuery query) {
+			this.workflow = workflow;
+			this.query = query;
+		}
+
+		static WorkflowBranchLastCommitStatusQuery of(Workflow workflow, BranchLastCommitStatusQuery query) {
+			return new WorkflowBranchLastCommitStatusQuery(workflow, query);
+		}
+	}
+
+	private static class WorkflowPrLastCommitStatusQuery {
+		Workflow workflow;
+		PrLastCommitStatusQuery query;
+
+		WorkflowPrLastCommitStatusQuery(Workflow workflow, PrLastCommitStatusQuery query) {
+			this.workflow = workflow;
+			this.query = query;
+		}
+
+		static WorkflowPrLastCommitStatusQuery of(Workflow workflow, PrLastCommitStatusQuery query) {
+			return new WorkflowPrLastCommitStatusQuery(workflow, query);
+		}
 	}
 }
