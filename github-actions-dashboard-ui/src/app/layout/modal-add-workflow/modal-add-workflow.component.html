@@ -11,7 +11,7 @@
   <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
   <clr-wizard-button [type]="'finish'">Create</clr-wizard-button>
 
-  <clr-wizard-page [clrWizardPageNextDisabled]="!formPageOne.valid">
+  <clr-wizard-page [clrWizardPageNextDisabled]="!formPageOne.valid || (userDashboards$|async)?.length==0">
     <ng-template clrPageTitle>Dashboard</ng-template>
     <form clrForm #formPageOne="ngForm">
       <div *ngIf="(userDashboards$|async)?.length==0">No user dashboards!</div>
