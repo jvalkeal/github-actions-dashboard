@@ -37,7 +37,7 @@ export class UserHeaderActionComponent implements OnInit, OnDestroy {
 
   login(): void {
     this.subs.push(this.authService.login().subscribe(data => {
-      this.router.navigate(['/cards']);
+      this.router.navigate(['/home']);
       this.settingsService.load().pipe(take(1)).subscribe();
       this.dashboardService.loadGlobal().pipe(take(1)).subscribe();
       this.dashboardService.loadUser().pipe(take(1)).subscribe();

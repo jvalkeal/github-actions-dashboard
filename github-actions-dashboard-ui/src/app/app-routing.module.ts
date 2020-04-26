@@ -6,7 +6,7 @@ import { HomeComponent } from './home/home.component';
 import { SettingsComponent } from './settings/settings/settings.component';
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'cards'},
+  { path: '', pathMatch: 'full', redirectTo: '/home'},
   { path: 'cards/:type/:id', component: ActionCardsComponent, canActivate: [AuthGuard] },
   { path: 'home', component: HomeComponent },
   { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
