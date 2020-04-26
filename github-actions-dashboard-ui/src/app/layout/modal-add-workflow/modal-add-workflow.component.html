@@ -44,6 +44,17 @@
   </clr-wizard-page>
 
   <clr-wizard-page>
+    <ng-template clrPageTitle>Branches</ng-template>
+    <clr-datagrid class="datagrid-compact" [(clrDgSelected)]="selectedBranches">
+      <clr-dg-column>Name</clr-dg-column>
+      <clr-dg-row *clrDgItems="let branch of branches" [clrDgItem]="branch">
+        <clr-dg-cell>{{branch.name}}</clr-dg-cell>
+      </clr-dg-row>
+      <clr-dg-footer>{{branches.length || 0}} branches</clr-dg-footer>
+    </clr-datagrid>
+  </clr-wizard-page>
+
+  <clr-wizard-page>
     <ng-template clrPageTitle>Card</ng-template>
     <form clrForm [formGroup]="form">
       <clr-input-container>
@@ -61,6 +72,10 @@
     <div>Dashboard: {{options}}</div>
     <div>Title: {{title}}</div>
     <div *ngIf="selectedRepository">Repository: {{selectedRepository.owner}}/{{selectedRepository.name}}</div>
+    <div *ngIf="selectedBranches.length > 0">
+      Branches:
+      <span *ngFor="let branch of selectedBranches">{{branch.name}}&nbsp;</span>
+    </div>
   </clr-wizard-page>
 
 </clr-wizard>

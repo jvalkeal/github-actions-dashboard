@@ -38,6 +38,10 @@ public class Branch implements Comparable<Branch> {
 		this.checkRuns = checkRuns;
 	}
 
+	public static Branch of(String name) {
+		return new Branch(name, null);
+	}
+
 	public static Branch of(String name, String url) {
 		return new Branch(name, url);
 	}

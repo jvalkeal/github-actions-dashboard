@@ -16,7 +16,9 @@
 package io.spring.githubactionsdashboard.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.spring.githubactionsdashboard.entity.RepositoryEntity;
 
@@ -66,7 +68,9 @@ public class Repository implements Comparable<Repository> {
 	}
 
 	public static Repository of(RepositoryEntity entity) {
-		return new Repository(entity.getOwner(), entity.getRepository(), entity.getTitle(), null);
+		List<Branch> branches = (entity.getBranches() != null ? entity.getBranches() : Collections.<String>emptySet())
+				.stream().map(branchName -> Branch.of(branchName)).collect(Collectors.toList());
+		return new Repository(entity.getOwner(), entity.getRepository(), entity.getTitle(), null, branches, null);
 	}
 
 	public Repository merge(Repository repository) {

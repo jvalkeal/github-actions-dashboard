@@ -6,6 +6,11 @@ query Repositories($query: String!) {
         owner {
           login
         }
+        refs(last: 10, refPrefix: "refs/heads/") {
+          nodes {
+            name
+          }
+        }
       }
     }
   }

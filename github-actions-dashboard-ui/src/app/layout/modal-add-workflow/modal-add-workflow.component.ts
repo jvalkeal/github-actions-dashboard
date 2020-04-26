@@ -5,7 +5,7 @@ import { tap, map, debounceTime } from 'rxjs/operators';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { ClrWizard, ClrSelect } from '@clr/angular';
 import { State, getUserDashboards } from '../../dashboard/dashboard.reducer';
-import { ApiService, Repository } from '../../api.service';
+import { ApiService, Repository, Branch } from '../../api.service';
 import { update, refreshCard } from '../../dashboard/dashboard.actions';
 import { selectRouteParams } from '../../../app/reducers';
 
@@ -25,6 +25,7 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
   title: string;
   repositories: Observable<Repository[]>;
   private selectedRepositoryLocal: Repository;
+  selectedBranches: Branch[] = [];
 
   get selectedRepository() {
     return this.selectedRepositoryLocal;
@@ -35,6 +36,10 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
     if (selectedRepository) {
       this.title = selectedRepository.name;
     }
+  }
+
+  get branches(): Branch[] {
+    return this.selectedRepositoryLocal?.branches || [];
   }
 
   private currentUserCardName = this.store.pipe(select(selectRouteParams)).pipe(
@@ -115,7 +120,7 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
             name: this.selectedRepository.name,
             title: this.title,
             url: this.selectedRepository.url,
-            branches: [],
+            branches: this.selectedBranches,
             pullRequests: []
           }],
         },
@@ -127,5 +132,6 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
   private reset(): void {
     this.wizard.reset();
     this.selectedRepository = null;
+    this.selectedBranches = [];
   }
 }

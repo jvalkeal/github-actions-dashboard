@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +77,9 @@ public class DefaultGithubApi implements GithubApi {
 				data.search().nodes().stream().forEach(n -> {
 					if (n instanceof RepositoriesQuery.AsRepository) {
 						RepositoriesQuery.AsRepository r = ((RepositoriesQuery.AsRepository) n);
-						repositories.add(new Repository(r.owner().login(), r.name, "", null));
+						List<Branch> branches = r.refs().nodes().stream()
+							.map(refNode -> Branch.of(refNode.name)).collect(Collectors.toList());
+						repositories.add(new Repository(r.owner().login(), r.name, "", null, branches, null));
 					}
 				});
 				return repositories;

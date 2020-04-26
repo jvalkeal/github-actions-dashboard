@@ -92,6 +92,9 @@ public class GithubApiController {
 					workflow.setOwner(re.getOwner());
 					workflow.setName(re.getRepository());
 					workflow.setTitle(re.getTitle());
+					if (re.getBranches() != null && !re.getBranches().isEmpty()) {
+						workflow.setBranches(re.getBranches().stream().collect(Collectors.toList()));
+					}
 					return workflow;
 				}).collect(Collectors.toList());
 				return Mono.just(workflows);
