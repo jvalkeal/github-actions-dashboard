@@ -24,7 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import io.spring.githubactionsdashboard.domain.Dashboard;
@@ -39,8 +39,9 @@ public class DashboardEntity extends AbstractUserEntity {
 	@Column(name = "description")
 	private String description;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(
+		name = "repositories",
 		foreignKey = @ForeignKey(name = "fk_dashboard_repositories_t"),
 		inverseForeignKey = @ForeignKey(name = "fk_dashboard_repositories_a"))
 	private Set<RepositoryEntity> repositories;

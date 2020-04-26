@@ -19,7 +19,7 @@ create table dashboard (
   primary key (id)
 );
 
-create table dashboard_repositories (
+create table repositories (
   dashboard_entity_id bigint not null,
   repositories_id bigint not null,
   primary key (dashboard_entity_id, repositories_id)
@@ -29,6 +29,7 @@ create table repository (
   id bigint not null,
   owner varchar(255),
   repository varchar(255),
+  title varchar(255),
   primary key (id)
 );
 
@@ -40,17 +41,20 @@ create table user_setting (
   primary key (id)
 );
 
+alter table repositories
+  add constraint uk_repositories_id unique (repositories_id);
+
 alter table branches
   add constraint fk_repository_branches
   foreign key (repository_entity_id)
   references repository (id);
 
-alter table dashboard_repositories
+alter table repositories
   add constraint fk_dashboard_repositories_a
   foreign key (repositories_id)
   references repository (id);
 
-alter table dashboard_repositories
+alter table repositories
   add constraint fk_dashboard_repositories_t
   foreign key (dashboard_entity_id)
   references dashboard (id);
