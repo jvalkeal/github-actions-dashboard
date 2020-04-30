@@ -38,9 +38,9 @@ dashboard:
         - owner: spring-projects
           name: spring-boot
           branches: [master]
-    - name: GH Actions Project
+    - name: Actions Dashboard
       description: Github Actions Dashboard Project
       workflows:
         - owner: jvalkeal
           name: github-actions-dashboard
-          branches: [master]
+          branches: [master, ghtest1]
