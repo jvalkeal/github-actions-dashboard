@@ -37,10 +37,12 @@ dashboard:
       workflows:
         - owner: spring-projects
           name: spring-boot
+          title: Spring Boot
           branches: [master]
     - name: Actions Dashboard
       description: Github Actions Dashboard Project
       workflows:
         - owner: jvalkeal
           name: github-actions-dashboard
+          title: Actions Dashboard
           branches: [master, ghtest1]
