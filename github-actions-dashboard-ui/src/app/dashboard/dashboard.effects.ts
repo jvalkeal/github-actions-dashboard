@@ -7,7 +7,7 @@ import { DashboardService } from '../../app/dashboard/dashboard.service';
 import * as DashboardActions from './dashboard.actions';
 import { State } from '../reducers';
 import { getUserDashboard } from './dashboard.reducer';
-import { Dashboard, Repository } from '../api.service';
+import { Dashboard, Repository } from '../api/api.service';
 
 @Injectable()
 export class DashboardEffects {

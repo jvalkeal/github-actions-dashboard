@@ -1,7 +1,7 @@
 import { createReducer, createSelector, on } from '@ngrx/store';
 import * as DashboardActions from './dashboard.actions';
 import * as fromRoot from '../reducers';
-import { Dashboard, Card } from '../api.service';
+import { Dashboard, Card } from '../api/api.service';
 
 export const dashboardsFeatureKey = 'dashboards';
 

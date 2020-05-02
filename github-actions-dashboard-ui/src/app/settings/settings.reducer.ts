@@ -1,7 +1,7 @@
 import { createReducer, on } from '@ngrx/store';
 import * as SettingsActions from './settings.actions';
 import * as fromRoot from '../reducers';
-import { Setting } from '../api.service';
+import { Setting } from '../api/api.service';
 
 export const settingsFeatureKey = 'settings';
 export const refreshKey = 'refresh';

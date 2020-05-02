@@ -5,7 +5,7 @@ import { tap, map, debounceTime } from 'rxjs/operators';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { ClrWizard, ClrSelect } from '@clr/angular';
 import { State, getUserDashboards } from '../../dashboard/dashboard.reducer';
-import { ApiService, Repository, Branch } from '../../api.service';
+import { ApiService, Repository, Branch } from '../../api/api.service';
 import { update, refreshCard } from '../../dashboard/dashboard.actions';
 import { selectRouteParams } from '../../../app/reducers';
 

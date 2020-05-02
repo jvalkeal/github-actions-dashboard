@@ -3,8 +3,8 @@ import { HttpClient, HttpResponse, HttpErrorResponse, HttpParams } from '@angula
 import { Store } from '@ngrx/store';
 import { Observable, of, EMPTY } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { State } from './reducers';
-import { unauthorised } from './auth/auth.actions';
+import { State } from '../reducers';
+import { unauthorised } from '../auth/auth.actions';
 
 @Injectable({
   providedIn: 'root'

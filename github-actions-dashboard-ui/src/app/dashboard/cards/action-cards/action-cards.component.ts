@@ -4,7 +4,7 @@ import { Store, select } from '@ngrx/store';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Subscription, timer, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
-import { ApiService, Repository, Card, CheckRun, PullRequest } from '../../../api.service';
+import { ApiService, Repository, Card, CheckRun, PullRequest } from '../../../api/api.service';
 import { State, getRefreshSetting } from '../../../settings/settings.reducer';
 import { getCards } from '../../dashboard.reducer';
 import { setCards } from '../../dashboard.actions';

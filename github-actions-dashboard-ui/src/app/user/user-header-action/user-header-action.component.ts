@@ -2,10 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { User } from '../../../app/api.service';
-import { AuthService } from '../../../app/auth/auth.service';
-import { SettingsService } from 'src/app/settings/settings.service';
-import { DashboardService } from 'src/app/dashboard/dashboard.service';
+import { User } from '../../api/api.service';
+import { AuthService } from '../../auth/auth.service';
+import { SettingsService } from '../../settings/settings.service';
+import { DashboardService } from '../../dashboard/dashboard.service';
 
 @Component({
   selector: 'app-user-header-action',

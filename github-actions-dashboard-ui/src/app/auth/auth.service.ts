@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ApiService, User } from '../api.service';
+import { ApiService, User } from '../api/api.service';
 import { login, logout } from './auth.actions';
 import { AuthState } from './auth.reducer';
 

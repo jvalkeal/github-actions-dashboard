@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { Dashboard, Card } from '../api.service';
+import { Dashboard, Card } from '../api/api.service';
 
 export const loadGlobal = createAction(
   '[Dashboard] load global',

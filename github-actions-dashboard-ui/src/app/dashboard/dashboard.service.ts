@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ApiService, Dashboard } from '../api.service';
+import { ApiService, Dashboard } from '../api/api.service';
 import { DashboardState } from './dashboard.reducer';
 import { loadGlobal, loadUser } from './dashboard.actions';
 

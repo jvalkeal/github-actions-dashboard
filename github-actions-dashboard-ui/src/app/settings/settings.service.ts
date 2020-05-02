@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ApiService, Setting } from '../api.service';
+import { ApiService, Setting } from '../api/api.service';
 import { SettingsState } from './settings.reducer';
 import { load } from './settings.actions';
 

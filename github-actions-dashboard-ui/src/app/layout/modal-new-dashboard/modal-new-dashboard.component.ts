@@ -6,7 +6,7 @@ import { map, take } from 'rxjs/operators';
 import { ClrForm } from '@clr/angular';
 import { State, getUserDashboards } from '../../dashboard/dashboard.reducer';
 import { save } from '../../dashboard/dashboard.actions';
-import { Dashboard } from '../../../app/api.service';
+import { Dashboard } from '../../api/api.service';
 
 /**
  * Modal dialog to add a new dashboard.

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Repository, CheckRun, Card } from '../../../api.service';
+import { Repository, CheckRun, Card } from '../../../api/api.service';
 import { State } from '../../dashboard.reducer';
 import { removeCard } from '../../dashboard.actions';
 

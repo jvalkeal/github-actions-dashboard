@@ -3,7 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Store, select } from '@ngrx/store';
 import { tap, map } from 'rxjs/operators';
 import { State, getUserDashboards } from '../../dashboard/dashboard.reducer';
-import { selectRouteParams } from '../../../app/reducers';
+import { selectRouteParams } from '../../reducers';
 import { remove } from '../../../app/dashboard/dashboard.actions';
 
 /**
