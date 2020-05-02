@@ -4,12 +4,12 @@ import { Store, select } from '@ngrx/store';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Subscription, timer, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
-import { ApiService, Repository, Card, CheckRun, PullRequest } from '../api.service';
-import { State, getRefreshSetting } from '../settings/settings.reducer';
-import { getCards } from '../dashboard/dashboard.reducer';
-import { setCards } from '../dashboard/dashboard.actions';
+import { ApiService, Repository, Card, CheckRun, PullRequest } from '../../../api.service';
+import { State, getRefreshSetting } from '../../../settings/settings.reducer';
+import { getCards } from '../../dashboard.reducer';
+import { setCards } from '../../dashboard.actions';
 import { PrStates } from '../action-card/action-card.component';
-import * as DashboardActions from '../dashboard/dashboard.actions';
+import * as DashboardActions from '../../dashboard.actions';
 
 @Component({
   selector: 'app-action-cards',

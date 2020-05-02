@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ActionCardsComponent } from './action-cards/action-cards.component';
+import { ActionCardsComponent } from './dashboard/cards/action-cards/action-cards.component';
 import { AuthGuard } from './auth/auth.guard';
 import { HomeComponent } from './home/home.component';
 import { SettingsComponent } from './settings/settings/settings.component';

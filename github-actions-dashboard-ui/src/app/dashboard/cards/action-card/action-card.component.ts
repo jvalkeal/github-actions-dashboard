@@ -1,8 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Repository, CheckRun, Card } from '../api.service';
-import { State } from '../dashboard/dashboard.reducer';
-import { removeCard } from '../dashboard/dashboard.actions';
+import { Repository, CheckRun, Card } from '../../../api.service';
+import { State } from '../../dashboard.reducer';
+import { removeCard } from '../../dashboard.actions';
 
 @Component({
   selector: 'app-action-card',
