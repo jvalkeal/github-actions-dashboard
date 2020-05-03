@@ -1,0 +1,15 @@
+---
+applications:
+  - name: gh-actions-dashboard-demo
+    host: gh-actions-dashboard-demo
+    memory: 1G
+    disk_quota: 1G
+    instances: 1
+    path: github-actions-dashboard-server/build/libs/github-actions-dashboard-server-0.0.1-SNAPSHOT.jar
+    env:
+      SPRING_APPLICATION_NAME: gh-actions-dashboard-demo
+      SPRING_PROFILES_ACTIVE: cloud,demo
+      JBP_CONFIG_SPRING_AUTO_RECONFIGURATION: '{enabled: false}'
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_CLIENTID: ((clientid))
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_CLIENTSECRET: ((clientsecret))
+      SPRING_FLYWAY_LOCATIONS: classpath:db/migration/mysql57

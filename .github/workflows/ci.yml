@@ -25,5 +25,24 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Gradle
-      run: ./gradlew clean Build
-
+      run: ./gradlew clean build
+    - name: Set up CF CLI
+      if: success()
+      uses: jvalkeal/setup-cf-cli-action@master
+      with:
+        version: 6.51.0
+    - name: CF Login
+      if: success()
+      run: cf login -a $CF_API -u $CF_USERNAME -o $CF_ORG -s $CF_SPACE -p $CF_PASSWORD
+      env:
+        CF_API: ${{ secrets.CF_API }}
+        CF_ORG: ${{ secrets.CF_ORG }}
+        CF_SPACE: ${{ secrets.CF_SPACE }}
+        CF_USERNAME: ${{ secrets.CF_USERNAME }}
+        CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
+    - name: Deploy Demo
+      if: success()
+      run: cf delete -f gh-actions-dashboard-demo && cf push -f gh-actions-demo-manifest.yml --var clientid=$GH_CLIENTID  --var clientsecret=$GH_CLIENTSECRET
+      env:
+        GH_CLIENTID: ${{ secrets.GH_CLIENTID }}
+        GH_CLIENTSECRET: ${{ secrets.GH_CLIENTSECRET }}
