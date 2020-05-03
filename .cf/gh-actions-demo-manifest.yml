@@ -4,7 +4,7 @@ applications:
     memory: 1G
     disk_quota: 1G
     instances: 1
-    path: github-actions-dashboard-server/build/libs/github-actions-dashboard-server-0.0.1-SNAPSHOT.jar
+    path: ../github-actions-dashboard-server/build/libs/github-actions-dashboard-server-0.0.1-SNAPSHOT.jar
     env:
       SPRING_APPLICATION_NAME: gh-actions-dashboard-demo
       SPRING_PROFILES_ACTIVE: cloud,demo
