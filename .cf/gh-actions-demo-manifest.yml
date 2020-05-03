@@ -1,7 +1,6 @@
 ---
 applications:
   - name: gh-actions-dashboard-demo
-    host: gh-actions-dashboard-demo
     memory: 1G
     disk_quota: 1G
     instances: 1
@@ -13,3 +12,5 @@ applications:
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_CLIENTID: ((clientid))
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_CLIENTSECRET: ((clientsecret))
       SPRING_FLYWAY_LOCATIONS: classpath:db/migration/mysql57
+    services:
+      - gh-actions-dashboard-mysql
