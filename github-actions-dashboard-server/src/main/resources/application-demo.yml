@@ -6,11 +6,11 @@ dashboard:
         - owner: spring-cloud
           name: spring-cloud-dataflow
           title: Dataflow
-          branches: [master, 2.4.x]
+          branches: [master, 2.5.x, 2.4.x]
         - owner: spring-cloud
           name: spring-cloud-skipper
           title: Skipper
-          branches: [master, 2.3.x]
+          branches: [master, 2.4.x, 2.3.x]
         - owner: spring-cloud
           name: spring-cloud-deployer
           title: Deployer
