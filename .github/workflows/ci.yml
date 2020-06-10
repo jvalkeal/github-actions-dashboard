@@ -42,7 +42,8 @@ jobs:
         CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
     - name: Deploy Demo
       if: success()
-      run: cf delete -f gh-actions-dashboard-demo && cf push -f .cf/gh-actions-demo-manifest.yml --var clientid=$GH_CLIENTID  --var clientsecret=$GH_CLIENTSECRET
+      run: cf delete -f gh-actions-dashboard-demo && cf push -f .cf/gh-actions-demo-manifest.yml --var clientid=$GH_CLIENTID  --var clientsecret=$GH_CLIENTSECRET --var scope=$GH_SCOPE
       env:
         GH_CLIENTID: ${{ secrets.GH_CLIENTID }}
         GH_CLIENTSECRET: ${{ secrets.GH_CLIENTSECRET }}
+        GH_SCOPE: ${{ secrets.GH_SCOPE }}
