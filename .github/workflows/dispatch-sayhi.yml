@@ -1,0 +1,17 @@
+name: Dispatch Say Hi
+
+on:
+  repository_dispatch:
+    types: [github-actions-dashboard-command]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Build with Gradle
+      run: |
+        echo "Hi $CLIENT_PAYLOAD_MESSAGE"
+      env:
+        CLIENT_PAYLOAD_MESSAGE: ${{ github.event.client_payload.message }}
