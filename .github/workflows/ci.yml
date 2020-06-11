@@ -28,7 +28,7 @@ jobs:
       run: ./gradlew clean build
     - name: Set up CF CLI
       if: success()
-      uses: jvalkeal/setup-cf-cli@v1
+      uses: jvalkeal/setup-cf-cli@v0
       with:
         version: 6.51.0
     - name: CF Login
