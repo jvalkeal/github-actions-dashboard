@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Build with Gradle
+    - name: Show Dispatch Message
       run: |
         echo "Hi $CLIENT_PAYLOAD_MESSAGE"
       env:
