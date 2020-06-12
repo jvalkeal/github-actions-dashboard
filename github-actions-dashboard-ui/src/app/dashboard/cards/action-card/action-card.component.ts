@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Repository, CheckRun, Card } from '../../../api/api.service';
+import { Repository, CheckRun, Card, ApiService } from '../../../api/api.service';
 import { State } from '../../dashboard.reducer';
 import { removeCard } from '../../dashboard.actions';
 
@@ -27,7 +27,8 @@ export class ActionCardComponent implements OnInit {
   activePrCheckRuns = false;
 
   constructor(
-    private store: Store<State>
+    private store: Store<State>,
+    private api: ApiService
   ) { }
 
   ngOnInit() {
@@ -145,6 +146,11 @@ export class ActionCardComponent implements OnInit {
           { name: this.name,
             description: '',
             repositories: []}, card: this.card }));
+  }
+
+  dispatch(owner: string, name: string, eventType: string, clientPayload: any): void {
+    console.log('Dispatch', owner, name, eventType, clientPayload);
+    this.api.sendDispatch(owner, name, eventType, clientPayload).subscribe();
   }
 }
 

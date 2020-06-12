@@ -47,6 +47,34 @@ export class ApiService {
       );
   }
 
+  sendDispatch(owner: string, name: string, eventType: string, clientPayload: any): Observable<void> {
+    const params = new HttpParams().set('owner', owner).set('name', name);
+    return this.http.post<HttpResponse<string>>('/api/github/dispatch', { eventType, clientPayload}, { params })
+      .pipe(
+        map(r => undefined),
+        (catchError(() => EMPTY))
+      );
+  }
+
+  getUserDispatches(): Observable<Dispatch[]> {
+    return this.http.get<Dispatch[]>('/user/dispatches')
+      .pipe(
+        (catchError(() => {
+          this.store.dispatch(unauthorised());
+          return EMPTY;
+        }))
+      );
+  }
+
+  updateDispatch(dispatch: Dispatch): Observable<void> {
+    const params = new HttpParams().set('name', dispatch.name).set('eventType', dispatch.eventType);
+    return this.http.post<HttpResponse<string>>('/user/dispatches', dispatch.clientPayload, { params })
+      .pipe(
+        map(r => undefined),
+        (catchError(() => EMPTY))
+      );
+  }
+
   searchRepositories(query: string): Observable<Repository[]> {
     const params = new HttpParams().set('query', query);
     return this.http.get<Repository[]>('/api/github/search/repository', { params })
@@ -165,6 +193,12 @@ export interface Branch {
   checkRuns: CheckRun[];
 }
 
+export interface Dispatch {
+  name: string;
+  eventType: string;
+  clientPayload: any;
+}
+
 export interface Repository {
   owner: string;
   name: string;
@@ -172,6 +206,7 @@ export interface Repository {
   url: string;
   branches: Branch[];
   pullRequests: PullRequest[];
+  dispatches: Dispatch[];
 }
 
 export interface Card {

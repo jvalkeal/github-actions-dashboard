@@ -24,7 +24,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.spring.githubactionsdashboard.config.DashboardProperties;
 import io.spring.githubactionsdashboard.config.DashboardProperties.Workflow;
 import io.spring.githubactionsdashboard.domain.Repository;
+import io.spring.githubactionsdashboard.domain.RepositoryDispatchRequest;
 import io.spring.githubactionsdashboard.domain.User;
 import io.spring.githubactionsdashboard.github.GithubApi;
 import io.spring.githubactionsdashboard.repository.DashboardRepository;
@@ -58,6 +61,14 @@ public class GithubApiController {
 	@ResponseBody
 	public Mono<User> me() {
 		return this.api.me();
+	}
+
+	@RequestMapping(path = "/dispatch", method = RequestMethod.POST)
+	@ResponseBody
+	public Mono<Void> dispatch(@RequestParam("owner") String owner, @RequestParam("name") String name,
+			@RequestBody RepositoryDispatchRequest request) {
+		log.debug("Dispatch request {} {} {}", owner, name, request);
+		return this.api.dispatch(owner, name, request);
 	}
 
 	@RequestMapping(path = "/search/repository")

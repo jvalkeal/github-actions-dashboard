@@ -32,6 +32,8 @@ import io.spring.githubactionsdashboard.domain.Branch;
 import io.spring.githubactionsdashboard.domain.CheckRun;
 import io.spring.githubactionsdashboard.domain.PullRequest;
 import io.spring.githubactionsdashboard.domain.Repository;
+import io.spring.githubactionsdashboard.domain.RepositoryDispatch;
+import io.spring.githubactionsdashboard.domain.RepositoryDispatchRequest;
 import io.spring.githubactionsdashboard.domain.User;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -48,6 +50,7 @@ public class DefaultGithubApi implements GithubApi {
 	private final static Logger log = LoggerFactory.getLogger(DefaultGithubApi.class);
 	private final static String BASE_V3_API = "https://api.github.com";
 	private final static String V3_USER_API = BASE_V3_API + "/user";
+	private final static String V3_DISPATCH_API = BASE_V3_API + "/repos/{owner}/{name}/dispatches";
 	private final WebClient webClient;
 	private final GithubGraphqlClient githubGraphqlClient;
 
@@ -66,6 +69,18 @@ public class DefaultGithubApi implements GithubApi {
 	}
 
 	@Override
+	public Mono<Void> dispatch(String owner, String name, RepositoryDispatchRequest request) {
+		return this.webClient
+			.post()
+			.uri(uriBuilder -> uriBuilder
+				.path(V3_DISPATCH_API)
+				.build(owner, name))
+			.bodyValue(request)
+			.exchange()
+			.then();
+	}
+
+	@Override
 	public Flux<Repository> repositories(String query) {
 		return Mono.justOrEmpty(query)
 			.map(q -> RepositoriesQuery.builder()
@@ -79,7 +94,7 @@ public class DefaultGithubApi implements GithubApi {
 						RepositoriesQuery.AsRepository r = ((RepositoriesQuery.AsRepository) n);
 						List<Branch> branches = r.refs().nodes().stream()
 							.map(refNode -> Branch.of(refNode.name)).collect(Collectors.toList());
-						repositories.add(new Repository(r.owner().login(), r.name, "", null, branches, null));
+						repositories.add(new Repository(r.owner().login(), r.name, "", null, branches, null, null));
 					}
 				});
 				return repositories;
@@ -143,8 +158,12 @@ public class DefaultGithubApi implements GithubApi {
 						branch.setCheckRuns(checkRuns);
 					});
 				}
+				List<RepositoryDispatch> dispatches = tuple.getT1().getDispatches().stream()
+						.map(d -> RepositoryDispatch.of(d.getName(), d.getEventType(), d.getClientPayload()))
+						.collect(Collectors.toList());
+				log.debug("Dispatches {}", dispatches);
 				return Repository.of(data.repository().owner().login(), data.repository().name(),
-						tuple.getT1().getTitle(), (String) data.repository().url(), branches, null);
+						tuple.getT1().getTitle(), (String) data.repository().url(), branches, null, dispatches);
 			});
 	}
 
@@ -183,7 +202,7 @@ public class DefaultGithubApi implements GithubApi {
 					pullRequests.add(pr);
 				});
 				return Repository.of(data.repository().owner().login(), data.repository().name(),
-						tuple.getT1().getTitle(), (String) data.repository().url(), null, pullRequests);
+						tuple.getT1().getTitle(), (String) data.repository().url(), null, pullRequests, null);
 			});
 	}
 

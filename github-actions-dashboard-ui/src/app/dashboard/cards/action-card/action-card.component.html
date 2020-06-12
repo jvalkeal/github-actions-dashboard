@@ -69,13 +69,32 @@
     </div>
   </div>
 
-  <div *ngIf="type=='user'" class="card-footer">
+  <!-- <div *ngIf="type=='user'" class="card-footer">
     <clr-dropdown [clrCloseMenuOnItemClick]="false">
       <button clrDropdownTrigger aria-label="Actions">
           <clr-icon shape="cog"></clr-icon>
       </button>
       <clr-dropdown-menu *clrIfOpen>
           <div clrDropdownItem (click)="remove()">Remove</div>
+      </clr-dropdown-menu>
+    </clr-dropdown>
+  </div> -->
+
+  <div class="card-footer">
+    <clr-dropdown *ngIf="type=='user'" [clrCloseMenuOnItemClick]="false">
+      <button clrDropdownTrigger aria-label="Actions">
+          <clr-icon shape="cog"></clr-icon>
+      </button>
+      <clr-dropdown-menu *clrIfOpen>
+          <div clrDropdownItem (click)="remove()">Remove</div>
+      </clr-dropdown-menu>
+    </clr-dropdown>
+    <clr-dropdown *ngIf="workflow.dispatches.length > 0" [clrCloseMenuOnItemClick]="false">
+      <button clrDropdownTrigger aria-label="Actions">
+          <clr-icon shape="dot-circle"></clr-icon>
+      </button>
+      <clr-dropdown-menu *clrIfOpen>
+          <div clrDropdownItem (click)="dispatch(workflow.owner, workflow.name, d.eventType, d.clientPayload)" *ngFor="let d of workflow.dispatches">{{d.name}}</div>
       </clr-dropdown-menu>
     </clr-dropdown>
   </div>

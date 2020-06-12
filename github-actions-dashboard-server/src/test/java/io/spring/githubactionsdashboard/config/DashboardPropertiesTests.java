@@ -16,6 +16,7 @@
 package io.spring.githubactionsdashboard.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,9 @@ public class DashboardPropertiesTests {
 				Map<String, Object> map = new HashMap<>();
 				map.put("dashboard.views[0].workflows[0].owner", "owner0");
 				map.put("dashboard.views[0].workflows[0].name", "name0");
+				map.put("dashboard.views[0].workflows[0].dispatches[0].name", "dispatch0");
+				map.put("dashboard.views[0].workflows[0].dispatches[0].event-type", "command0");
+				map.put("dashboard.views[0].workflows[0].dispatches[0].client-payload.message", "message0");
 				context.getEnvironment().getPropertySources().addLast(new SystemEnvironmentPropertySource(
 					StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, map));
 			})
@@ -51,6 +55,10 @@ public class DashboardPropertiesTests {
 				assertThat(properties.getViews().get(0).getWorkflows().get(0).getName()).isEqualTo("name0");
 				assertThat(properties.getViews().get(0).getWorkflows().get(0).getBranches()).hasSize(1);
 				assertThat(properties.getViews().get(0).getWorkflows().get(0).getBranches().get(0)).isEqualTo("master");
+				assertThat(properties.getViews().get(0).getWorkflows().get(0).getDispatches()).hasSize(1);
+				assertThat(properties.getViews().get(0).getWorkflows().get(0).getDispatches().get(0).getName()).isEqualTo("dispatch0");
+				assertThat(properties.getViews().get(0).getWorkflows().get(0).getDispatches().get(0).getEventType()).isEqualTo("command0");
+				assertThat(properties.getViews().get(0).getWorkflows().get(0).getDispatches().get(0).getClientPayload()).containsOnly(entry("message", "message0"));
 			});
 	}
 

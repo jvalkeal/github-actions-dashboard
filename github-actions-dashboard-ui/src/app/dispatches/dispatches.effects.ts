@@ -1,0 +1,39 @@
+import { Injectable } from '@angular/core';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { map, exhaustMap, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { DispatchesService } from './dispatches.service';
+import * as DispatchesActions from './dispatches.actions';
+
+@Injectable()
+export class DispatchesEffects {
+
+  updateDispatches$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DispatchesActions.update),
+      exhaustMap((props) => this.dispatchesService.update(props.dispatch)
+        .pipe(
+          map(aVoid => DispatchesActions.ok({ dispatch: props.dispatch })),
+          catchError(() => of(DispatchesActions.error({ dispatch: props.dispatch })))
+        )
+      )
+    )
+  );
+
+  refreshDispatches$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DispatchesActions.refresh),
+      exhaustMap((props) => this.dispatchesService.load()
+        .pipe(
+          map(dispatches => DispatchesActions.refreshOk({ dispatches })),
+          catchError(() => of(DispatchesActions.refreshError()))
+        )
+      )
+    )
+  );
+
+  constructor(
+    private actions$: Actions,
+    private dispatchesService: DispatchesService
+  ) {}
+}

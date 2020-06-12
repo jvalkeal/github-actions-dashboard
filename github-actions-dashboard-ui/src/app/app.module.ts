@@ -22,6 +22,9 @@ import { ModalNewDashboardComponent } from './layout/modal-new-dashboard/modal-n
 import { DashboardEffects } from './dashboard/dashboard.effects';
 import { ModalAddWorkflowComponent } from './layout/modal-add-workflow/modal-add-workflow.component';
 import { ModalDeleteDashboardComponent } from './layout/modal-delete-dashboard/modal-delete-dashboard.component';
+import { DispatchesComponent } from './dispatches/dispatches/dispatches.component';
+import { ModalNewDispatchComponent } from './dispatches/modal-new-dispatch/modal-new-dispatch.component';
+import { DispatchesEffects } from './dispatches/dispatches.effects';
 
 @NgModule({
   declarations: [
@@ -34,7 +37,9 @@ import { ModalDeleteDashboardComponent } from './layout/modal-delete-dashboard/m
     LeftNaviComponent,
     ModalNewDashboardComponent,
     ModalAddWorkflowComponent,
-    ModalDeleteDashboardComponent
+    ModalDeleteDashboardComponent,
+    DispatchesComponent,
+    ModalNewDispatchComponent
   ],
   imports: [
     BrowserModule,
@@ -47,6 +52,7 @@ import { ModalDeleteDashboardComponent } from './layout/modal-delete-dashboard/m
     EffectsModule.forRoot([
       DashboardEffects,
       SettingsEffects,
+      DispatchesEffects,
       AuthEffects
     ]),
     StoreModule.forRoot(reducers, {
