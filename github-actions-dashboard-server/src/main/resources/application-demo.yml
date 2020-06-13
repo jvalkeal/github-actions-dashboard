@@ -48,10 +48,10 @@ dashboard:
           branches: [master, ghtest1]
           dispatches:
             - name: Say Hi Janne
-              eventType: github-actions-dashboard-command
+              eventType: ghad-command
               clientPayload:
                 message: Janne
             - name: Say Hi Dave
-              eventType: github-actions-dashboard-command
+              eventType: ghad-command
               clientPayload:
                 message: Dave
