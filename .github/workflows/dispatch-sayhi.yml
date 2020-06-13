@@ -2,7 +2,7 @@ name: Dispatch Say Hi
 
 on:
   repository_dispatch:
-    types: [github-actions-dashboard-command]
+    types: [ghad-command]
 
 jobs:
   build:
