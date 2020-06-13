@@ -1,0 +1,58 @@
+<clr-wizard #wizardlg
+  clrWizardSize="lg"
+  [(clrWizardOpen)]="show"
+  (clrWizardOnCancel)="doCancel()"
+  (clrWizardOnFinish)="doFinish()"
+  clrWizardSize="lg">
+
+  <clr-wizard-title>Add Dispatch</clr-wizard-title>
+  <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
+  <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
+  <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
+  <clr-wizard-button [type]="'finish'">Create</clr-wizard-button>
+
+  <clr-wizard-page [clrWizardPageNextDisabled]="!form1.valid">
+    <ng-template clrPageTitle>Name</ng-template>
+    <form clrForm [formGroup]="form1">
+      <clr-input-container>
+        <label>Name</label>
+        <input clrInput placeholder="Fill new name" [(ngModel)]="name" formControlName="name"/>
+        <clr-control-helper>Valid name</clr-control-helper>
+        <clr-control-error>Missing or duplicate name</clr-control-error>
+      </clr-input-container>
+    </form>
+  </clr-wizard-page>
+
+  <clr-wizard-page [clrWizardPageNextDisabled]="!form2.valid">
+    <ng-template clrPageTitle>Event Type</ng-template>
+    <form clrForm [formGroup]="form2">
+      <clr-input-container>
+        <label>Type</label>
+        <input clrInput placeholder="Fill new name" [(ngModel)]="type" formControlName="type"/>
+        <clr-control-helper>Valid type</clr-control-helper>
+        <clr-control-error>Missing or duplicate name</clr-control-error>
+      </clr-input-container>
+    </form>
+  </clr-wizard-page>
+
+  <clr-wizard-page [clrWizardPageNextDisabled]="!form3.valid">
+    <ng-template clrPageTitle>Client Payload</ng-template>
+    <form clrForm [formGroup]="form3">
+      <clr-textarea-container>
+        <label>Payload</label>
+        <textarea clrTextarea [(ngModel)]="payload" formControlName="payload"></textarea>
+        <clr-control-helper>Valid payload</clr-control-helper>
+        <clr-control-error>Invalid payload</clr-control-error>
+      </clr-textarea-container>
+    </form>
+  </clr-wizard-page>
+
+  <clr-wizard-page>
+    <ng-template clrPageTitle>Create</ng-template>
+    <div>You're about to create a new dispatch template for following settings:</div>
+    <div>Name: {{name}}</div>
+    <div>Event Type: {{type}}</div>
+    <div>Client Payload: {{payload}}</div>
+  </clr-wizard-page>
+
+</clr-wizard>

@@ -17,7 +17,9 @@ package io.spring.githubactionsdashboard.domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import io.spring.githubactionsdashboard.entity.RepositoryEntity;
@@ -35,6 +37,7 @@ public class Repository implements Comparable<Repository> {
 	private String url;
 	private List<Branch> branches = new ArrayList<>();
 	private List<PullRequest> pullRequests = new ArrayList<>();
+	private List<RepositoryDispatch> dispatches = new ArrayList<>();
 
 	public Repository() {
 	}
@@ -46,7 +49,8 @@ public class Repository implements Comparable<Repository> {
 		this.url = url;
 	}
 
-	public Repository(String owner, String name, String title, String url, List<Branch> branches, List<PullRequest> pullRequests) {
+	public Repository(String owner, String name, String title, String url, List<Branch> branches,
+			List<PullRequest> pullRequests, List<RepositoryDispatch> dispatches) {
 		this.owner = owner;
 		this.name = name;
 		this.title = title;
@@ -57,10 +61,14 @@ public class Repository implements Comparable<Repository> {
 		if (pullRequests != null) {
 			this.pullRequests = pullRequests;
 		}
+		if (dispatches != null) {
+			this.dispatches = dispatches;
+		}
 	}
 
-	public static Repository of(String owner, String name, String title, String url, List<Branch> branches, List<PullRequest> pullRequests) {
-		return new Repository(owner, name, title, url, branches, pullRequests);
+	public static Repository of(String owner, String name, String title, String url, List<Branch> branches,
+			List<PullRequest> pullRequests, List<RepositoryDispatch> dispatches) {
+		return new Repository(owner, name, title, url, branches, pullRequests, dispatches);
 	}
 
 	public static Repository of(String owner, String name, String title, String url) {
@@ -70,7 +78,7 @@ public class Repository implements Comparable<Repository> {
 	public static Repository of(RepositoryEntity entity) {
 		List<Branch> branches = (entity.getBranches() != null ? entity.getBranches() : Collections.<String>emptySet())
 				.stream().map(branchName -> Branch.of(branchName)).collect(Collectors.toList());
-		return new Repository(entity.getOwner(), entity.getRepository(), entity.getTitle(), null, branches, null);
+		return new Repository(entity.getOwner(), entity.getRepository(), entity.getTitle(), null, branches, null, null);
 	}
 
 	public Repository merge(Repository repository) {
@@ -88,6 +96,10 @@ public class Repository implements Comparable<Repository> {
 		}
 		getBranches().addAll(repository.getBranches());
 		getPullRequests().addAll(repository.getPullRequests());
+		Map<String, RepositoryDispatch> mergedDispatches = new HashMap<>();
+		getDispatches().stream().forEach(d -> mergedDispatches.put(d.getName(), d));
+		repository.getDispatches().stream().forEach(d -> mergedDispatches.put(d.getName(), d));
+		setDispatches(mergedDispatches.values().stream().collect(Collectors.toList()));
 		return this;
 	}
 
@@ -139,6 +151,14 @@ public class Repository implements Comparable<Repository> {
 		this.pullRequests = pullRequests;
 	}
 
+	public List<RepositoryDispatch> getDispatches() {
+		return dispatches;
+	}
+
+	public void setDispatches(List<RepositoryDispatch> dispatches) {
+		this.dispatches = dispatches;
+	}
+
 	@Override
 	public int compareTo(Repository o) {
 		if (getName() == null || o.getName() == null) {
@@ -188,6 +208,6 @@ public class Repository implements Comparable<Repository> {
 	@Override
 	public String toString() {
 		return "Repository [branches=" + branches + ", name=" + name + ", owner=" + owner + ", title=" + title
-				+ ", pullRequests=" + pullRequests + ", url=" + url + "]";
+				+ ", pullRequests=" + pullRequests + ", dispatches=" + dispatches + ", url=" + url + "]";
 	}
 }

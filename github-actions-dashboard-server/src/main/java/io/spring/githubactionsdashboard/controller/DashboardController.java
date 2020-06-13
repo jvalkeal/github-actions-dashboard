@@ -34,6 +34,7 @@ import io.spring.githubactionsdashboard.config.DashboardProperties.Workflow;
 import io.spring.githubactionsdashboard.domain.Branch;
 import io.spring.githubactionsdashboard.domain.Dashboard;
 import io.spring.githubactionsdashboard.domain.Repository;
+import io.spring.githubactionsdashboard.domain.RepositoryDispatch;
 import io.spring.githubactionsdashboard.entity.DashboardEntity;
 import io.spring.githubactionsdashboard.entity.RepositoryEntity;
 import io.spring.githubactionsdashboard.repository.DashboardRepository;
@@ -125,9 +126,11 @@ public class DashboardController {
 				List<Repository> repositories = view.getWorkflows().stream()
 						.map(workFlow -> {
 							List<Branch> branches = workFlow.getBranches().stream().map(b -> Branch.of(b, null)).collect(Collectors.toList());
-							return Repository.of(workFlow.getOwner(), workFlow.getName(), workFlow.getTitle(), repoUrl(workFlow), branches, null);
+							List<RepositoryDispatch> dispatches = workFlow.getDispatches().stream().map(d -> RepositoryDispatch.of(d.getName(), d.getEventType(), d.getClientPayload())).collect(Collectors.toList());
+							return Repository.of(workFlow.getOwner(), workFlow.getName(), workFlow.getTitle(), repoUrl(workFlow), branches, null, dispatches);
 						})
 						.collect(Collectors.toList());
+
 				return new Dashboard(view.getName(), view.getDescription(), repositories);
 			});
 	}

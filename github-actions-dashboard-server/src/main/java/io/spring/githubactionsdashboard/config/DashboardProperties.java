@@ -18,6 +18,7 @@ package io.spring.githubactionsdashboard.config;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -76,6 +77,7 @@ public class DashboardProperties {
 		private String name;
 		private String title;
 		private List<String> branches = new ArrayList<>(Arrays.asList("master"));
+		private List<Dispatch> dispatches = new ArrayList<>();
 
 		public String getOwner() {
 			return owner;
@@ -107,6 +109,45 @@ public class DashboardProperties {
 
 		public void setBranches(List<String> branches) {
 			this.branches = branches;
+		}
+
+		public List<Dispatch> getDispatches() {
+			return dispatches;
+		}
+
+		public void setDispatches(List<Dispatch> dispatches) {
+			this.dispatches = dispatches;
+		}
+	}
+
+	public static class Dispatch {
+
+		private String name;
+		private String eventType;
+		private Map<String, Object> clientPayload;
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getEventType() {
+			return eventType;
+		}
+
+		public void setEventType(String eventType) {
+			this.eventType = eventType;
+		}
+
+		public Map<String, Object> getClientPayload() {
+			return clientPayload;
+		}
+
+		public void setClientPayload(Map<String, Object> clientPayload) {
+			this.clientPayload = clientPayload;
 		}
 	}
 }

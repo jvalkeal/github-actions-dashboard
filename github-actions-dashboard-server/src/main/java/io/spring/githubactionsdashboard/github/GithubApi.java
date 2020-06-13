@@ -19,6 +19,7 @@ import java.util.List;
 
 import io.spring.githubactionsdashboard.config.DashboardProperties.Workflow;
 import io.spring.githubactionsdashboard.domain.Repository;
+import io.spring.githubactionsdashboard.domain.RepositoryDispatchRequest;
 import io.spring.githubactionsdashboard.domain.User;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -54,4 +55,14 @@ public interface GithubApi {
 	 * @return the info about repositories
 	 */
 	Flux<Repository> repositories(String query);
+
+	/**
+	 * Does a repository dispatch.
+	 *
+	 * @param user the user
+	 * @param repo the repo
+	 * @param request the request
+	 * @return mono for completion
+	 */
+	Mono<Void> dispatch(String user, String repo, RepositoryDispatchRequest request);
 }

@@ -1,3 +1,8 @@
+# For this local setup use:
+# docker run --name dashboard-postgres -d -p 5433:5432 -e POSTGRES_PASSWORD=spring -e POSTGRES_USER=spring -e POSTGRES_DB=dashboard postgres:10
+# docker stop dashboard-postgres
+# docker rm dashboard-postgres
+# docker exec -it dashboard-postgres psql -U spring -d dashboard
 spring:
   datasource:
     url: "jdbc:postgresql://localhost:5433/dashboard"

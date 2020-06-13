@@ -16,6 +16,7 @@
 package io.spring.githubactionsdashboard.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;
 import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
@@ -43,12 +45,16 @@ public class ApiConfiguration {
 
 	@Bean
 	WebClient webClient(ReactiveClientRegistrationRepository clientRegistrations,
-			ServerOAuth2AuthorizedClientRepository authorizedClients, ObjectMapper objectMapper) {
+			ServerOAuth2AuthorizedClientRepository authorizedClients, Jackson2ObjectMapperBuilder builder) {
 		// we expect to use github and passthrough authenticated client as is
 		ServerOAuth2AuthorizedClientExchangeFilterFunction oauth = new ServerOAuth2AuthorizedClientExchangeFilterFunction(
 				clientRegistrations, authorizedClients);
 		oauth.setDefaultOAuth2AuthorizedClient(true);
 		oauth.setDefaultClientRegistrationId("github");
+
+		// need to use snake_case with gh v3 api
+		ObjectMapper objectMapper = builder.build();
+		objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
 
 		// as we build WebClient here, need to tweak jackson for requests
 		ExchangeStrategies strategies = ExchangeStrategies.builder().codecs(configurer -> {
@@ -58,7 +64,17 @@ public class ApiConfiguration {
 					.jackson2JsonDecoder(new Jackson2JsonDecoder(objectMapper, MediaType.APPLICATION_JSON));
 		}).build();
 
-		return WebClient.builder().exchangeStrategies(strategies).filter(oauth).build();
+		// for wire debugging
+		// return WebClient.builder()
+		// 	.clientConnector(new ReactorClientHttpConnector(HttpClient.create().wiretap(true)))
+		// 	.exchangeStrategies(strategies)
+		// 	.filter(oauth)
+		// 	.build();
+
+		return WebClient.builder()
+			.exchangeStrategies(strategies)
+			.filter(oauth)
+			.build();
 	}
 
 	@Bean

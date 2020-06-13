@@ -46,3 +46,12 @@ dashboard:
           name: github-actions-dashboard
           title: Actions Dashboard
           branches: [master, ghtest1]
+          dispatches:
+            - name: Say Hi Janne
+              eventType: ghad-command
+              clientPayload:
+                message: Janne
+            - name: Say Hi Dave
+              eventType: ghad-command
+              clientPayload:
+                message: Dave

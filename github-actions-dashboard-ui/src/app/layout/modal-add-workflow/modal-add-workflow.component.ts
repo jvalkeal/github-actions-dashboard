@@ -6,7 +6,7 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { ClrWizard, ClrSelect } from '@clr/angular';
 import { State, getUserDashboards } from '../../dashboard/dashboard.reducer';
 import { ApiService, Repository, Branch } from '../../api/api.service';
-import { update, refreshCard } from '../../dashboard/dashboard.actions';
+import { update } from '../../dashboard/dashboard.actions';
 import { selectRouteParams } from '../../../app/reducers';
 
 /**
@@ -121,7 +121,8 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
             title: this.title,
             url: this.selectedRepository.url,
             branches: this.selectedBranches,
-            pullRequests: []
+            pullRequests: [],
+            dispatches: []
           }],
         },
       })

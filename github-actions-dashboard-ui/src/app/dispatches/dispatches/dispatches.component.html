@@ -1,0 +1,42 @@
+<div *ngIf="loading" class="clr-row clr-justify-content-center">
+  <span class="spinner">
+    Loading...
+  </span>
+</div>
+
+<div *ngIf="!loading">
+  <div class="clr-row">
+    <div>
+      <button class="btn btn-outline" (click)="refresh()">Refresh</button>
+    </div>
+    <div>
+      <button class="btn btn-outline" (click)="showCreateDispatch()">Create...</button>
+    </div>
+  </div>
+
+  <div>
+    <clr-datagrid>
+      <clr-dg-column>Name</clr-dg-column>
+      <clr-dg-column>Event Type</clr-dg-column>
+      <clr-dg-column>Client Payload</clr-dg-column>
+
+      <clr-dg-row
+        *clrDgItems="let dispatch of userDispatches|async"
+        [clrDgItem]="dispatch">
+
+        <clr-dg-action-overflow>
+          <button class="action-item" (click)="edit(dispatch)">Edit</button>
+          <button class="action-item" (click)="remove(dispatch)">Delete</button>
+        </clr-dg-action-overflow>
+
+        <clr-dg-cell>{{dispatch.name}}</clr-dg-cell>
+        <clr-dg-cell>{{dispatch.eventType}}</clr-dg-cell>
+        <clr-dg-cell>{{dispatch.clientPayload | json}}</clr-dg-cell>
+      </clr-dg-row>
+
+    </clr-datagrid>
+  </div>
+</div>
+
+<app-modal-new-dispatch></app-modal-new-dispatch>
+<app-modal-edit-dispatch></app-modal-edit-dispatch>

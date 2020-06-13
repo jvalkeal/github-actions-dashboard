@@ -4,11 +4,13 @@ import { environment } from '../../environments/environment';
 import * as fromAuth from '../auth/auth.reducer';
 import * as fromSettings from '../settings/settings.reducer';
 import * as fromDashboard from '../dashboard/dashboard.reducer';
+import * as fromDispatches from '../dispatches/dispatches.reducer';
 
 export interface State {
   [fromAuth.authFeatureKey]: fromAuth.AuthState;
   [fromSettings.settingsFeatureKey]: fromSettings.SettingsState;
   [fromDashboard.dashboardsFeatureKey]: fromDashboard.DashboardState;
+  [fromDispatches.dispatchesFeatureKey]: fromDispatches.DispatchesState;
   router: fromRouter.RouterReducerState<any>;
 }
 
@@ -16,6 +18,7 @@ export const reducers: ActionReducerMap<State> = {
   [fromAuth.authFeatureKey]: fromAuth.reducer,
   [fromSettings.settingsFeatureKey]: fromSettings.reducer,
   [fromDashboard.dashboardsFeatureKey]: fromDashboard.reducer,
+  [fromDispatches.dispatchesFeatureKey]: fromDispatches.reducer,
   router: fromRouter.routerReducer
 };
 
