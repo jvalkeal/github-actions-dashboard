@@ -1,8 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Repository, CheckRun, Card, ApiService } from '../../../api/api.service';
+import { Repository, CheckRun, Card, Dispatch } from '../../../api/api.service';
 import { State } from '../../dashboard.reducer';
 import { removeCard } from '../../dashboard.actions';
+import { DispatchesService } from 'src/app/dispatches/dispatches.service';
+import { Observable, of, forkJoin } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-action-card',
@@ -25,10 +28,11 @@ export class ActionCardComponent implements OnInit {
   prState: PrStates;
   branchState: PrStates;
   activePrCheckRuns = false;
+  userDispatches = this.dispatchesService.userDispatches();
 
   constructor(
     private store: Store<State>,
-    private api: ApiService
+    private dispatchesService: DispatchesService
   ) { }
 
   ngOnInit() {
@@ -48,6 +52,11 @@ export class ActionCardComponent implements OnInit {
 
   get title() {
     return this.card.repository.title || this.card.repository.name;
+  }
+
+  getAllDispatches(): Observable<Dispatch[]> {
+    return forkJoin([this.userDispatches.pipe(take(1)), of(this.workflow.dispatches)])
+      .pipe(map(([d1, d2]) => [...d1, ...d2]));
   }
 
   private calculatePrStates(workflow: Repository): PrStates {
@@ -149,8 +158,7 @@ export class ActionCardComponent implements OnInit {
   }
 
   dispatch(owner: string, name: string, eventType: string, clientPayload: any): void {
-    console.log('Dispatch', owner, name, eventType, clientPayload);
-    this.api.sendDispatch(owner, name, eventType, clientPayload).subscribe();
+    this.dispatchesService.dispatch(owner, name, eventType, clientPayload);
   }
 }
 

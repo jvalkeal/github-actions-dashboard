@@ -5,23 +5,11 @@
   (clrWizardOnFinish)="doFinish()"
   clrWizardSize="lg">
 
-  <clr-wizard-title>Add Dispatch</clr-wizard-title>
+  <clr-wizard-title>Modify {{name}} Dispatch</clr-wizard-title>
   <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
   <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
   <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
-  <clr-wizard-button [type]="'finish'">Create</clr-wizard-button>
-
-  <clr-wizard-page [clrWizardPageNextDisabled]="!form1.valid">
-    <ng-template clrPageTitle>Name</ng-template>
-    <form clrForm [formGroup]="form1">
-      <clr-input-container>
-        <label>Name</label>
-        <input clrInput placeholder="Fill new name" [(ngModel)]="name" formControlName="name"/>
-        <clr-control-helper>Valid name</clr-control-helper>
-        <clr-control-error>Missing or duplicate name</clr-control-error>
-      </clr-input-container>
-    </form>
-  </clr-wizard-page>
+  <clr-wizard-button [type]="'finish'">Update</clr-wizard-button>
 
   <clr-wizard-page [clrWizardPageNextDisabled]="!form2.valid">
     <ng-template clrPageTitle>Event Type</ng-template>
@@ -48,8 +36,8 @@
   </clr-wizard-page>
 
   <clr-wizard-page>
-    <ng-template clrPageTitle>Create</ng-template>
-    <div>You're about to create a new dispatch template for following settings:</div>
+    <ng-template clrPageTitle>Update</ng-template>
+    <div>You're about to update a dispatch template for following settings:</div>
     <div>Name: {{name}}</div>
     <div>Event Type: {{type}}</div>
     <div>Client Payload: {{payload}}</div>

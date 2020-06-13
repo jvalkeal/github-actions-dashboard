@@ -72,9 +72,7 @@ public class DefaultGithubApi implements GithubApi {
 	public Mono<Void> dispatch(String owner, String name, RepositoryDispatchRequest request) {
 		return this.webClient
 			.post()
-			.uri(uriBuilder -> uriBuilder
-				.path(V3_DISPATCH_API)
-				.build(owner, name))
+			.uri(V3_DISPATCH_API, uriBuilder -> uriBuilder.build(owner, name))
 			.bodyValue(request)
 			.exchange()
 			.then();

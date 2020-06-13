@@ -5,6 +5,8 @@ import { State, getUserDispatches } from '../dispatches.reducer';
 import * as DispatchesActions from '../dispatches.actions';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Dispatch } from 'src/app/api/api.service';
+import { ModalEditDispatchComponent } from '../modal-edit-dispatch/modal-edit-dispatch.component';
+import { DispatchesService } from '../dispatches.service';
 
 @Component({
   selector: 'app-dispatches',
@@ -14,7 +16,7 @@ import { Dispatch } from 'src/app/api/api.service';
 export class DispatchesComponent implements OnInit {
 
   loading = true;
-  userDispatches = this.store.pipe(select(getUserDispatches));
+  userDispatches = this.dispatchesService.userDispatches();
 
   @Effect({ dispatch: false })
   refreshCard$ = this.actions$.pipe(
@@ -27,9 +29,13 @@ export class DispatchesComponent implements OnInit {
   @ViewChild(ModalNewDispatchComponent)
   private modalCreateDispatch: ModalNewDispatchComponent;
 
+  @ViewChild(ModalEditDispatchComponent)
+  private modalEditDispatch: ModalEditDispatchComponent;
+
   constructor(
     private store: Store<State>,
-    private actions$: Actions
+    private actions$: Actions,
+    private dispatchesService: DispatchesService
   ) { }
 
   ngOnInit(): void {
@@ -42,8 +48,7 @@ export class DispatchesComponent implements OnInit {
   }
 
   edit(dispatch: Dispatch): void {
-    console.log('edit', dispatch);
-    this.modalCreateDispatch.edit(dispatch.name);
+    this.modalEditDispatch.open(dispatch.name, dispatch.eventType, JSON.stringify(dispatch.clientPayload));
   }
 
   change(dispatch: Dispatch): void {

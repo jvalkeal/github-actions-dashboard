@@ -40,7 +40,7 @@ function updateDispatches(dispatches: Dispatch[], dispatch: Dispatch): Dispatch[
   const to: Dispatch[] = [];
   dispatches.forEach(v => {
     if (v.name === dispatch.name) {
-      to.push({ name: v.name, eventType: dispatch.eventType, clientPayload: dispatch.clientPayload });
+      to.push({ name: v.name, eventType: dispatch.eventType, clientPayload: JSON.parse(dispatch.clientPayload) });
     } else {
       to.push({ name: v.name, eventType: v.eventType, clientPayload: v.clientPayload });
     }
@@ -56,7 +56,7 @@ export const reducer = createReducer(
   on(DispatchesActions.refreshOk, (state, props) => {
     return { dispatches: mergeDispatches(state.dispatches, props.dispatches) };
   }),
-  on(DispatchesActions.ok, (state, props) => {
+  on(DispatchesActions.updateOk, (state, props) => {
     return { dispatches: mergeDispatches(state.dispatches, [props.dispatch]) };
   }),
   on(DispatchesActions.removeOk, (state, props) => {

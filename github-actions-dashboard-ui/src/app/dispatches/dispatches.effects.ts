@@ -13,8 +13,12 @@ export class DispatchesEffects {
       ofType(DispatchesActions.update),
       exhaustMap((props) => this.dispatchesService.update(props.dispatch)
         .pipe(
-          map(aVoid => DispatchesActions.ok({ dispatch: props.dispatch })),
-          catchError(() => of(DispatchesActions.error({ dispatch: props.dispatch })))
+          map(aVoid => DispatchesActions.updateOk({
+              dispatch: { name: props.dispatch.name,
+              eventType: props.dispatch.eventType,
+              clientPayload: JSON.parse(props.dispatch.clientPayload)
+            }})),
+          catchError(() => of(DispatchesActions.updateError({ dispatch: props.dispatch })))
         )
       )
     )

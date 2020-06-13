@@ -3,20 +3,19 @@ import { Store, select } from '@ngrx/store';
 import { State, getUserDispatches } from '../dispatches.reducer';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ClrForm, ClrWizard } from '@clr/angular';
-import { update } from '../dispatches.actions';
+import { change } from '../dispatches.actions';
 
 @Component({
-  selector: 'app-modal-new-dispatch',
-  templateUrl: './modal-new-dispatch.component.html',
-  styleUrls: ['./modal-new-dispatch.component.css']
+  selector: 'app-modal-edit-dispatch',
+  templateUrl: './modal-edit-dispatch.component.html',
+  styleUrls: ['./modal-edit-dispatch.component.css']
 })
-export class ModalNewDispatchComponent implements OnInit {
+export class ModalEditDispatchComponent implements OnInit {
 
   show = false;
   name = '';
   type = '';
   payload = '';
-  form1: FormGroup;
   form2: FormGroup;
   form3: FormGroup;
   // userDispatches$ = this.store.pipe(select(getUserDispatches));
@@ -35,10 +34,6 @@ export class ModalNewDispatchComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.nameControl = new FormControl(this.name, Validators.required/*, existingNameValidator(this.userDashboards$)*/);
-    this.form1 = new FormGroup({
-      name: this.nameControl
-    });
     this.typeControl = new FormControl(this.type, Validators.required);
     this.form2 = new FormGroup({
       type: this.typeControl
@@ -49,8 +44,11 @@ export class ModalNewDispatchComponent implements OnInit {
     });
   }
 
-  open(): void {
+  open(name: string, eventType: string, clientPayload: string): void {
     this.show = true;
+    this.name = name;
+    this.type = eventType;
+    this.payload = clientPayload;
     this.clrForm.markAsTouched();
   }
 
@@ -60,7 +58,7 @@ export class ModalNewDispatchComponent implements OnInit {
 
   doFinish(): void {
     this.store.dispatch(
-      update({
+      change({
         dispatch: {
           name: this.name,
           eventType: this.type,
@@ -77,4 +75,5 @@ export class ModalNewDispatchComponent implements OnInit {
     this.type = '';
     this.payload = '';
   }
+
 }

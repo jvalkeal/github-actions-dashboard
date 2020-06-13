@@ -24,12 +24,12 @@ export const update = createAction(
   props<{ dispatch: Dispatch }>()
 );
 
-export const error = createAction(
+export const updateError = createAction(
   '[Dispatches] update error',
   props<{ dispatch: Dispatch }>()
 );
 
-export const ok = createAction(
+export const updateOk = createAction(
   '[Dispatches] update ok',
   props<{ dispatch: Dispatch }>()
 );

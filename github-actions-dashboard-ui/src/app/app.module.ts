@@ -25,6 +25,7 @@ import { ModalDeleteDashboardComponent } from './layout/modal-delete-dashboard/m
 import { DispatchesComponent } from './dispatches/dispatches/dispatches.component';
 import { ModalNewDispatchComponent } from './dispatches/modal-new-dispatch/modal-new-dispatch.component';
 import { DispatchesEffects } from './dispatches/dispatches.effects';
+import { ModalEditDispatchComponent } from './dispatches/modal-edit-dispatch/modal-edit-dispatch.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { DispatchesEffects } from './dispatches/dispatches.effects';
     ModalAddWorkflowComponent,
     ModalDeleteDashboardComponent,
     DispatchesComponent,
-    ModalNewDispatchComponent
+    ModalNewDispatchComponent,
+    ModalEditDispatchComponent
   ],
   imports: [
     BrowserModule,
