@@ -32,6 +32,30 @@ export class DispatchesEffects {
     )
   );
 
+  removeDispatches$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DispatchesActions.remove),
+      exhaustMap((props) => this.dispatchesService.remove(props.dispatch)
+        .pipe(
+          map(aVoid => DispatchesActions.removeOk({ dispatch: props.dispatch })),
+          catchError(() => of(DispatchesActions.removeError({ dispatch: props.dispatch })))
+        )
+      )
+    )
+  );
+
+  changeDispatches$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DispatchesActions.change),
+      exhaustMap((props) => this.dispatchesService.change(props.dispatch)
+        .pipe(
+          map(aVoid => DispatchesActions.changeOk({ dispatch: props.dispatch })),
+          catchError(() => of(DispatchesActions.changeError({ dispatch: props.dispatch })))
+        )
+      )
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private dispatchesService: DispatchesService

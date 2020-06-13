@@ -30,4 +30,13 @@ public interface RepositoryDispatchRepository extends CrudRepository<RepositoryD
 	 * @return list of user dispatch templates
 	 */
 	List<RepositoryDispatchEntity> findByUsername(String username);
+
+	/**
+	 * Get a user dispatch by name.
+	 *
+	 * @param username the username
+	 * @param name the name
+	 * @return user dispatch template
+	 */
+	RepositoryDispatchEntity findByUsernameAndName(String username, String name);
 }

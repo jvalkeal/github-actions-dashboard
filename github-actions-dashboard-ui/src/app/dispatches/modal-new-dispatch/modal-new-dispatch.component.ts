@@ -41,6 +41,11 @@ export class ModalNewDispatchComponent implements OnInit {
     this.show = true;
   }
 
+  edit(name: string): void {
+    this.name = name;
+    this.show = true;
+  }
+
   doCancel(): void {
     this.reset();
   }

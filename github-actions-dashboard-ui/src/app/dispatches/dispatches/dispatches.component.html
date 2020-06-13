@@ -23,6 +23,12 @@
       <clr-dg-row
         *clrDgItems="let dispatch of userDispatches|async"
         [clrDgItem]="dispatch">
+
+        <clr-dg-action-overflow>
+          <button class="action-item" (click)="edit(dispatch)">Edit</button>
+          <button class="action-item" (click)="remove(dispatch)">Delete</button>
+        </clr-dg-action-overflow>
+
         <clr-dg-cell>{{dispatch.name}}</clr-dg-cell>
         <clr-dg-cell>{{dispatch.eventType}}</clr-dg-cell>
         <clr-dg-cell>{{dispatch.clientPayload | json}}</clr-dg-cell>

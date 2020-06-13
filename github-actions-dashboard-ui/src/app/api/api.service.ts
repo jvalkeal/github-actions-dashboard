@@ -75,6 +75,24 @@ export class ApiService {
       );
   }
 
+  removeDispatch(dispatch: Dispatch): Observable<void> {
+    const params = new HttpParams().set('name', dispatch.name);
+    return this.http.delete<HttpResponse<string>>('/user/dispatches', { params })
+      .pipe(
+        map(r => undefined),
+        (catchError(() => EMPTY))
+      );
+  }
+
+  changeDispatch(dispatch: Dispatch): Observable<void> {
+    const params = new HttpParams().set('name', dispatch.name).set('eventType', dispatch.eventType);
+    return this.http.patch<HttpResponse<string>>('/user/dispatches', dispatch.clientPayload, { params })
+      .pipe(
+        map(r => undefined),
+        (catchError(() => EMPTY))
+      );
+  }
+
   searchRepositories(query: string): Observable<Repository[]> {
     const params = new HttpParams().set('query', query);
     return this.http.get<Repository[]>('/api/github/search/repository', { params })

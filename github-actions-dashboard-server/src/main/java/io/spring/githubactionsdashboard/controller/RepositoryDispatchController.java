@@ -83,6 +83,33 @@ public class RepositoryDispatchController {
 			.then();
 	}
 
+	@RequestMapping(method = RequestMethod.DELETE)
+	public Mono<Void> deleteDispatch(@AuthenticationPrincipal OAuth2User oauth2User, @RequestParam("name") String name) {
+		log.debug("Deleting dispatch request {}", name);
+		String username = oauth2User.getName();
+
+		return Mono.justOrEmpty(repository.findByUsernameAndName(username, name))
+			.doOnNext(dispatch -> {
+				repository.delete(dispatch);
+			})
+			.then();
+	}
+
+	@RequestMapping(method = RequestMethod.PATCH)
+	public Mono<Void> changeDispatch(@AuthenticationPrincipal OAuth2User oauth2User, @RequestParam("name") String name,
+			@RequestParam("eventType") String eventType, @RequestBody String clientPayload) {
+		log.debug("Deleting dispatch request {}", name);
+		String username = oauth2User.getName();
+
+		return Mono.justOrEmpty(repository.findByUsernameAndName(username, name))
+			.doOnNext(dispatch -> {
+				dispatch.setEventType(eventType);
+				dispatch.setClientPayload(clientPayload);
+				repository.save(dispatch);
+			})
+			.then();
+	}
+
 	private Map<String, Object> mapClientPayload(String payload) {
 		try {
 			TypeReference<HashMap<String, Object>> valueTypeRef = new TypeReference<HashMap<String, Object>>() {};

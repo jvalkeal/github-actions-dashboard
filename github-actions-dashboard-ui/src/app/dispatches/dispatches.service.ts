@@ -26,4 +26,12 @@ export class DispatchesService {
   update(dispatch: Dispatch): Observable<void> {
     return this.api.updateDispatch(dispatch);
   }
+
+  remove(dispatch: Dispatch): Observable<void> {
+    return this.api.removeDispatch(dispatch);
+  }
+
+  change(dispatch: Dispatch): Observable<void> {
+    return this.api.changeDispatch(dispatch);
+  }
 }

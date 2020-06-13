@@ -33,3 +33,33 @@ export const ok = createAction(
   '[Dispatches] update ok',
   props<{ dispatch: Dispatch }>()
 );
+
+export const remove = createAction(
+  '[Dispatches] remove',
+  props<{ dispatch: Dispatch }>()
+);
+
+export const removeError = createAction(
+  '[Dispatches] remove error',
+  props<{ dispatch: Dispatch }>()
+);
+
+export const removeOk = createAction(
+  '[Dispatches] remove ok',
+  props<{ dispatch: Dispatch }>()
+);
+
+export const change = createAction(
+  '[Dispatches] change',
+  props<{ dispatch: Dispatch }>()
+);
+
+export const changeError = createAction(
+  '[Dispatches] change error',
+  props<{ dispatch: Dispatch }>()
+);
+
+export const changeOk = createAction(
+  '[Dispatches] change ok',
+  props<{ dispatch: Dispatch }>()
+);

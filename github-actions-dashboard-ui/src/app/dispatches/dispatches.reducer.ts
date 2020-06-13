@@ -55,5 +55,14 @@ export const reducer = createReducer(
   }),
   on(DispatchesActions.refreshOk, (state, props) => {
     return { dispatches: mergeDispatches(state.dispatches, props.dispatches) };
+  }),
+  on(DispatchesActions.ok, (state, props) => {
+    return { dispatches: mergeDispatches(state.dispatches, [props.dispatch]) };
+  }),
+  on(DispatchesActions.removeOk, (state, props) => {
+    return { dispatches: state.dispatches.filter(d => d.name !== props.dispatch.name) };
+  }),
+  on(DispatchesActions.changeOk, (state, props) => {
+    return { dispatches: updateDispatches(state.dispatches, props.dispatch) };
   })
 );
