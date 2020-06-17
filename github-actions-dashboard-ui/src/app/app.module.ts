@@ -26,6 +26,8 @@ import { DispatchesComponent } from './dispatches/dispatches/dispatches.componen
 import { ModalNewDispatchComponent } from './dispatches/modal-new-dispatch/modal-new-dispatch.component';
 import { DispatchesEffects } from './dispatches/dispatches.effects';
 import { ModalEditDispatchComponent } from './dispatches/modal-edit-dispatch/modal-edit-dispatch.component';
+import { AlertsComponent } from './alerts/alerts/alerts.component';
+import { AlertsEffects } from './alerts/alerts.effects';
 
 @NgModule({
   declarations: [
@@ -41,7 +43,8 @@ import { ModalEditDispatchComponent } from './dispatches/modal-edit-dispatch/mod
     ModalDeleteDashboardComponent,
     DispatchesComponent,
     ModalNewDispatchComponent,
-    ModalEditDispatchComponent
+    ModalEditDispatchComponent,
+    AlertsComponent
   ],
   imports: [
     BrowserModule,
@@ -55,7 +58,8 @@ import { ModalEditDispatchComponent } from './dispatches/modal-edit-dispatch/mod
       DashboardEffects,
       SettingsEffects,
       DispatchesEffects,
-      AuthEffects
+      AuthEffects,
+      AlertsEffects
     ]),
     StoreModule.forRoot(reducers, {
       metaReducers,

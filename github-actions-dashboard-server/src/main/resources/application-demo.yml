@@ -55,3 +55,7 @@ dashboard:
               eventType: ghad-command
               clientPayload:
                 message: Dave
+        - owner: jvalkeal
+          name: doesnotexist
+          title: Non Exist Repo
+          branches: [master]

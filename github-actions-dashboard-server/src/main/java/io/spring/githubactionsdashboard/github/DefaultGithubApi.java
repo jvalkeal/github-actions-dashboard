@@ -16,6 +16,7 @@
 package io.spring.githubactionsdashboard.github;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -92,7 +93,7 @@ public class DefaultGithubApi implements GithubApi {
 						RepositoriesQuery.AsRepository r = ((RepositoriesQuery.AsRepository) n);
 						List<Branch> branches = r.refs().nodes().stream()
 							.map(refNode -> Branch.of(refNode.name)).collect(Collectors.toList());
-						repositories.add(new Repository(r.owner().login(), r.name, "", null, branches, null, null));
+						repositories.add(new Repository(r.owner().login(), r.name, "", null, branches, null, null, null));
 					}
 				});
 				return repositories;
@@ -127,47 +128,62 @@ public class DefaultGithubApi implements GithubApi {
 
 	private Flux<Repository> branchRepos(List<Workflow> workflows) {
 		return branchQueries(workflows)
-			.flatMap(wq -> Mono.zip(Mono.just(wq.workflow), githubGraphqlClient.query(wq.query)))
+			.flatMap(wq -> Mono.zip(
+				Mono.just(wq.workflow),
+				githubGraphqlClient.query(wq.query)
+					.map(data -> WorkflowBranchLastCommitStatusQueryResult.of(data))
+					// query resulter error so we pass it on to return some errors to a client
+					.onErrorResume(t -> Mono.just(WorkflowBranchLastCommitStatusQueryResult.of(t)))
+				)
+			)
 			.map(tuple -> {
-				BranchLastCommitStatusQuery.Data data = tuple.getT2();
-				log.debug("Branch query returned data {}", data);
+				BranchLastCommitStatusQuery.Data data = tuple.getT2().data;
+				Throwable error = tuple.getT2().throwable;
+				log.debug("Branch query returned data {}, error {}", data, error);
 				List<Branch> branches = new ArrayList<>();
-				Branch branch = Branch.of(data.repository().ref().name(),
-						(String) data.repository().url() + "/tree/" + data.repository().ref().name());
-				branches.add(branch);
-				BranchLastCommitStatusQuery.Target target = data.repository().ref().target();
-				if (target instanceof BranchLastCommitStatusQuery.AsCommit) {
-					BranchLastCommitStatusQuery.AsCommit asCommit = (BranchLastCommitStatusQuery.AsCommit)target;
-					asCommit.checkSuites().nodes().stream().forEach(n -> {
-						List<CheckRun> checkRuns = new ArrayList<>();
-						n.checkRuns().nodes().stream().forEach(node -> {
-							log.debug("Checkrun node {}", node);
-							CheckRun checkRun = CheckRun.of(node.name(), node.status().rawValue());
-							if (node.conclusion() != null) {
-								checkRun.setConclusion(node.conclusion().rawValue());
-							}
-							if (node.checkSuite() != null) {
-								checkRun.setUrl((String)node.checkSuite().url());
-							}
-							checkRuns.add(checkRun);
+
+				if (data != null) {
+					Branch branch = Branch.of(data.repository().ref().name(),
+							(String) data.repository().url() + "/tree/" + data.repository().ref().name());
+					branches.add(branch);
+					BranchLastCommitStatusQuery.Target target = data.repository().ref().target();
+					if (target instanceof BranchLastCommitStatusQuery.AsCommit) {
+						BranchLastCommitStatusQuery.AsCommit asCommit = (BranchLastCommitStatusQuery.AsCommit)target;
+						asCommit.checkSuites().nodes().stream().forEach(n -> {
+							List<CheckRun> checkRuns = new ArrayList<>();
+							n.checkRuns().nodes().stream().forEach(node -> {
+								log.debug("Checkrun node {}", node);
+								CheckRun checkRun = CheckRun.of(node.name(), node.status().rawValue());
+								if (node.conclusion() != null) {
+									checkRun.setConclusion(node.conclusion().rawValue());
+								}
+								if (node.checkSuite() != null) {
+									checkRun.setUrl((String)node.checkSuite().url());
+								}
+								checkRuns.add(checkRun);
+							});
+							log.debug("For branch {} setting checkruns {}", branch, checkRuns);
+							checkRuns.addAll(branch.getCheckRuns());
+							branch.setCheckRuns(checkRuns);
 						});
-						log.debug("For branch {} setting checkruns {}", branch, checkRuns);
-						checkRuns.addAll(branch.getCheckRuns());
-						branch.setCheckRuns(checkRuns);
-					});
+					}
 				}
+
 				List<RepositoryDispatch> dispatches = tuple.getT1().getDispatches().stream()
 						.map(d -> RepositoryDispatch.of(d.getName(), d.getEventType(), d.getClientPayload()))
 						.collect(Collectors.toList());
 				log.debug("Dispatches {}", dispatches);
-				return Repository.of(data.repository().owner().login(), data.repository().name(),
-						tuple.getT1().getTitle(), (String) data.repository().url(), branches, null, dispatches);
+
+				return Repository.of(tuple.getT1().getOwner(), tuple.getT1().getName(), tuple.getT1().getTitle(),
+					String.format("https://github.com/%s/%s", tuple.getT1().getOwner(), tuple.getT1().getName()),
+					branches, null, dispatches, error != null ? Arrays.asList(error.toString()) : null);
 			});
 	}
 
 	private Flux<Repository> prRepos(List<Workflow> workflows) {
 		return prQueries(workflows)
 			.flatMap(wq -> Mono.zip(Mono.just(wq.workflow), githubGraphqlClient.query(wq.query)))
+			.onErrorContinue((t,d) -> Flux.empty())
 			.map(tuple -> {
 				PrLastCommitStatusQuery.Data data = tuple.getT2();
 				List<PullRequest> pullRequests = new ArrayList<>();
@@ -200,7 +216,7 @@ public class DefaultGithubApi implements GithubApi {
 					pullRequests.add(pr);
 				});
 				return Repository.of(data.repository().owner().login(), data.repository().name(),
-						tuple.getT1().getTitle(), (String) data.repository().url(), null, pullRequests, null);
+						tuple.getT1().getTitle(), (String) data.repository().url(), null, pullRequests, null, null);
 			});
 	}
 
@@ -228,6 +244,24 @@ public class DefaultGithubApi implements GithubApi {
 					.owner(workflow.getOwner())
 					.name(workflow.getName())
 					.build()));
+	}
+
+	private static class WorkflowBranchLastCommitStatusQueryResult {
+		BranchLastCommitStatusQuery.Data data;
+		Throwable throwable;
+
+		WorkflowBranchLastCommitStatusQueryResult(BranchLastCommitStatusQuery.Data data, Throwable throwable) {
+			this.data = data;
+			this.throwable = throwable;
+		}
+
+		static WorkflowBranchLastCommitStatusQueryResult of(BranchLastCommitStatusQuery.Data data) {
+			return new WorkflowBranchLastCommitStatusQueryResult(data, null);
+		}
+
+		static WorkflowBranchLastCommitStatusQueryResult of(Throwable throwable) {
+			return new WorkflowBranchLastCommitStatusQueryResult(null, throwable);
+		}
 	}
 
 	private static class WorkflowBranchLastCommitStatusQuery {

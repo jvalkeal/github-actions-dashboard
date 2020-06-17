@@ -38,6 +38,7 @@ public class Repository implements Comparable<Repository> {
 	private List<Branch> branches = new ArrayList<>();
 	private List<PullRequest> pullRequests = new ArrayList<>();
 	private List<RepositoryDispatch> dispatches = new ArrayList<>();
+	private List<String> errors = new ArrayList<>();
 
 	public Repository() {
 	}
@@ -50,7 +51,7 @@ public class Repository implements Comparable<Repository> {
 	}
 
 	public Repository(String owner, String name, String title, String url, List<Branch> branches,
-			List<PullRequest> pullRequests, List<RepositoryDispatch> dispatches) {
+			List<PullRequest> pullRequests, List<RepositoryDispatch> dispatches, List<String> errors) {
 		this.owner = owner;
 		this.name = name;
 		this.title = title;
@@ -64,11 +65,14 @@ public class Repository implements Comparable<Repository> {
 		if (dispatches != null) {
 			this.dispatches = dispatches;
 		}
+		if (errors != null) {
+			this.errors = errors;
+		}
 	}
 
 	public static Repository of(String owner, String name, String title, String url, List<Branch> branches,
-			List<PullRequest> pullRequests, List<RepositoryDispatch> dispatches) {
-		return new Repository(owner, name, title, url, branches, pullRequests, dispatches);
+			List<PullRequest> pullRequests, List<RepositoryDispatch> dispatches, List<String> errors) {
+		return new Repository(owner, name, title, url, branches, pullRequests, dispatches, errors);
 	}
 
 	public static Repository of(String owner, String name, String title, String url) {
@@ -78,7 +82,7 @@ public class Repository implements Comparable<Repository> {
 	public static Repository of(RepositoryEntity entity) {
 		List<Branch> branches = (entity.getBranches() != null ? entity.getBranches() : Collections.<String>emptySet())
 				.stream().map(branchName -> Branch.of(branchName)).collect(Collectors.toList());
-		return new Repository(entity.getOwner(), entity.getRepository(), entity.getTitle(), null, branches, null, null);
+		return new Repository(entity.getOwner(), entity.getRepository(), entity.getTitle(), null, branches, null, null, null);
 	}
 
 	public Repository merge(Repository repository) {
@@ -100,6 +104,7 @@ public class Repository implements Comparable<Repository> {
 		getDispatches().stream().forEach(d -> mergedDispatches.put(d.getName(), d));
 		repository.getDispatches().stream().forEach(d -> mergedDispatches.put(d.getName(), d));
 		setDispatches(mergedDispatches.values().stream().collect(Collectors.toList()));
+		getErrors().addAll(repository.getErrors());
 		return this;
 	}
 
@@ -157,6 +162,14 @@ public class Repository implements Comparable<Repository> {
 
 	public void setDispatches(List<RepositoryDispatch> dispatches) {
 		this.dispatches = dispatches;
+	}
+
+	public List<String> getErrors() {
+		return errors;
+	}
+
+	public void setErrors(List<String> errors) {
+		this.errors = errors;
 	}
 
 	@Override

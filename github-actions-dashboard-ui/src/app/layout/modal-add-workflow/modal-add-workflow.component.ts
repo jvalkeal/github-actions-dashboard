@@ -122,7 +122,8 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
             url: this.selectedRepository.url,
             branches: this.selectedBranches,
             pullRequests: [],
-            dispatches: []
+            dispatches: [],
+            errors: []
           }],
         },
       })

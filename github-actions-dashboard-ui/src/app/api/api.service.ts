@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { Observable, of, EMPTY } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 import { State } from '../reducers';
 import { unauthorised } from '../auth/auth.actions';
+import { AlertsService } from '../alerts/alerts.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,8 @@ export class ApiService {
 
   constructor(
     private http: HttpClient,
-    private store: Store<State>
+    private store: Store<State>,
+    private alertsService: AlertsService
   ) {}
 
   getGlobalDashboards(): Observable<Dashboard[]> {
@@ -107,6 +109,19 @@ export class ApiService {
   getGlobalWorkflow(name: string): Observable<Repository[]> {
     return this.http.get<Repository[]>('/api/github/dashboard/global/' + name)
       .pipe(
+        tap(repos => {
+          repos.forEach(repo => {
+            repo.errors.forEach(error => {
+              this.alertsService.add({
+                id: `repository-${name}`,
+                alertType: 'warning',
+                text: `Unable to access repo ${repo.url}, maybe you need to login to org.`,
+                fixCommand: 'login-to-repo',
+                fixCommandRepo: repo.url
+              });
+            });
+          });
+        }),
         (catchError(() => {
           this.store.dispatch(unauthorised());
           return EMPTY;
@@ -225,6 +240,7 @@ export interface Repository {
   branches: Branch[];
   pullRequests: PullRequest[];
   dispatches: Dispatch[];
+  errors: string[];
 }
 
 export interface Card {

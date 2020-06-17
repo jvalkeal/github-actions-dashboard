@@ -1,0 +1,14 @@
+<clr-alerts>
+
+  <clr-alert *ngFor="let alert of alerts|async" [clrAlertType]="alert.alertType" [clrAlertAppLevel]="true" (clrAlertClosedChange)="onClose(alert)">
+    <clr-alert-item>
+      <span class="alert-text">
+        {{alert.text}}
+      </span>
+      <div class="alert-actions">
+        <button *ngIf="alert.fixCommand" class="btn alert-action" (click)="fixCommand(alert)">Open Repo</button>
+      </div>
+    </clr-alert-item>
+  </clr-alert>
+
+</clr-alerts>
