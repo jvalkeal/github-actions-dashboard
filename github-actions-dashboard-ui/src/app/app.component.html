@@ -1,5 +1,5 @@
 <clr-main-container>
-  <app-alerts></app-alerts>
+  <app-alerts *ngIf="loggedIn$|async"></app-alerts>
   <clr-header class="header header-6">
     <div class="branding">
       <a href="" (click)="goHome()" class="nav-link">
