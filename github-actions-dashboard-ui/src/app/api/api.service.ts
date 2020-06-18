@@ -113,7 +113,7 @@ export class ApiService {
           repos.forEach(repo => {
             repo.errors.forEach(error => {
               this.alertsService.add({
-                id: `repository-${name}`,
+                id: `repository-${repo.url}`,
                 alertType: 'warning',
                 text: `Unable to access repo ${repo.url}, maybe you need to login to org.`,
                 fixCommand: 'login-to-repo',
@@ -132,6 +132,19 @@ export class ApiService {
   getUserWorkflow(name: string): Observable<Repository[]> {
     return this.http.get<Repository[]>('/api/github/dashboard/user/' + name)
       .pipe(
+        tap(repos => {
+          repos.forEach(repo => {
+            repo.errors.forEach(error => {
+              this.alertsService.add({
+                id: `repository-${repo.url}`,
+                alertType: 'warning',
+                text: `Unable to access repo ${repo.url}, maybe you need to login to org.`,
+                fixCommand: 'login-to-repo',
+                fixCommandRepo: repo.url
+              });
+            });
+          });
+        }),
         (catchError(() => {
           this.store.dispatch(unauthorised());
           return EMPTY;
