@@ -53,6 +53,9 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.refreshCard$) {
+      this.refreshCard$.unsubscribe();
+    }
     if (this.timerSub) {
       this.timerSub.unsubscribe();
     }
