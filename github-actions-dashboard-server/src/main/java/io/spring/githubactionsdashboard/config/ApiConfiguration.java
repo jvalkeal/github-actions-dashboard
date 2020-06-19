@@ -15,6 +15,7 @@
  */
 package io.spring.githubactionsdashboard.config;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
@@ -55,6 +56,7 @@ public class ApiConfiguration {
 		// need to use snake_case with gh v3 api
 		ObjectMapper objectMapper = builder.build();
 		objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+		objectMapper.setSerializationInclusion(Include.NON_NULL);
 
 		// as we build WebClient here, need to tweak jackson for requests
 		ExchangeStrategies strategies = ExchangeStrategies.builder().codecs(configurer -> {

@@ -29,6 +29,9 @@ public class RepositoryDispatch {
 	private String eventType;
 	private Map<String, Object> clientPayload;
 
+	public RepositoryDispatch() {
+	}
+
 	public RepositoryDispatch(String name, String eventType, Map<String, Object> clientPayload) {
 		this.name = name;
 		this.eventType = eventType;

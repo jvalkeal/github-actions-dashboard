@@ -16,6 +16,7 @@
 package io.spring.githubactionsdashboard.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -65,19 +67,24 @@ public class RepositoryDispatchController {
 	public Flux<RepositoryDispatch> getDispatches(@AuthenticationPrincipal OAuth2User oauth2User) {
 		return Flux
 			.fromIterable(this.repository.findByUsername(oauth2User.getName()))
-			.map(dispatch -> RepositoryDispatch.of(dispatch.getName(), dispatch.getEventType(), mapClientPayload(dispatch.getClientPayload())));
+			.map(dispatch -> RepositoryDispatch.of(
+				dispatch.getName(),
+				dispatch.getEventType(),
+				mapClientPayload(dispatch.getClientPayload())));
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
 	public Mono<Void> saveDispatch(@AuthenticationPrincipal OAuth2User oauth2User, @RequestParam("name") String name,
-			@RequestParam("eventType") String eventType, @RequestBody String clientPayload) {
+			@RequestParam("eventType") String eventType, @RequestBody(required = false) String clientPayload) {
 		log.debug("Saving dispatch request {} {} {}", name, eventType, clientPayload);
 		String username = oauth2User.getName();
 
-		Mono<Map<String, RepositoryDispatchEntity>> left = Mono.fromSupplier(() -> this.repository.findByUsername(username))
+		Mono<Map<String, RepositoryDispatchEntity>> left = Mono.fromSupplier(() ->
+				this.repository.findByUsername(username))
 			.map(list -> list.stream().collect(Collectors.toMap(i -> i.getName(), i -> i)));
 
-		Mono<Map<String, RepositoryDispatchEntity>> right = Flux.just(RepositoryDispatchEntity.of(username, name, eventType, clientPayload))
+		Mono<Map<String, RepositoryDispatchEntity>> right = Flux.just(
+				RepositoryDispatchEntity.of(username, name, eventType, clientPayload))
 			.collectMap(s -> s.getName(), s -> s);
 
 		return Mono.zip(left, right)
@@ -117,6 +124,9 @@ public class RepositoryDispatchController {
 	}
 
 	private Map<String, Object> mapClientPayload(String payload) {
+		if (!StringUtils.hasText(payload)) {
+			return null;
+		}
 		try {
 			TypeReference<HashMap<String, Object>> valueTypeRef = new TypeReference<HashMap<String, Object>>() {};
 			return objectMapper.readValue(payload, valueTypeRef);
