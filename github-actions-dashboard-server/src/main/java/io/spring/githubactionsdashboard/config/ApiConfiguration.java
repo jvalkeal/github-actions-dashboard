@@ -23,6 +23,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -31,8 +32,10 @@ import org.springframework.security.oauth2.client.web.reactive.function.client.S
 import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.Builder;
 
 import io.spring.githubactionsdashboard.github.GithubGraphqlClient;
+import reactor.netty.http.client.HttpClient;
 
 /**
  * Generic configs for api usage.
@@ -46,7 +49,8 @@ public class ApiConfiguration {
 
 	@Bean
 	WebClient webClient(ReactiveClientRegistrationRepository clientRegistrations,
-			ServerOAuth2AuthorizedClientRepository authorizedClients, Jackson2ObjectMapperBuilder builder) {
+			ServerOAuth2AuthorizedClientRepository authorizedClients, Jackson2ObjectMapperBuilder builder,
+			DashboardProperties dashboardProperties) {
 		// we expect to use github and passthrough authenticated client as is
 		ServerOAuth2AuthorizedClientExchangeFilterFunction oauth = new ServerOAuth2AuthorizedClientExchangeFilterFunction(
 				clientRegistrations, authorizedClients);
@@ -66,17 +70,15 @@ public class ApiConfiguration {
 					.jackson2JsonDecoder(new Jackson2JsonDecoder(objectMapper, MediaType.APPLICATION_JSON));
 		}).build();
 
-		// for wire debugging
-		// return WebClient.builder()
-		// 	.clientConnector(new ReactorClientHttpConnector(HttpClient.create().wiretap(true)))
-		// 	.exchangeStrategies(strategies)
-		// 	.filter(oauth)
-		// 	.build();
-
-		return WebClient.builder()
+		Builder webClientBuilder = WebClient.builder();
+		if (dashboardProperties.getServer().isWirelog()) {
+			webClientBuilder = webClientBuilder
+					.clientConnector(new ReactorClientHttpConnector(HttpClient.create().wiretap(true)));
+		}
+		webClientBuilder = webClientBuilder
 			.exchangeStrategies(strategies)
-			.filter(oauth)
-			.build();
+			.filter(oauth);
+		return webClientBuilder.build();
 	}
 
 	@Bean

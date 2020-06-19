@@ -62,6 +62,22 @@ public class DashboardPropertiesTests {
 			});
 	}
 
+	@Test
+	public void serverSettings() {
+		this.contextRunner
+			.withInitializer(context -> {
+				Map<String, Object> map = new HashMap<>();
+				map.put("dashboard.server.wirelog", "true");
+				context.getEnvironment().getPropertySources().addLast(new SystemEnvironmentPropertySource(
+					StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, map));
+			})
+			.withUserConfiguration(Config1.class)
+			.run((context) -> {
+				DashboardProperties properties = context.getBean(DashboardProperties.class);
+				assertThat(properties.getServer().isWirelog()).isTrue();
+			});
+	}
+
 	@EnableConfigurationProperties({ DashboardProperties.class })
 	private static class Config1 {
 	}

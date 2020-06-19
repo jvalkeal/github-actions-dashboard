@@ -31,6 +31,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class DashboardProperties {
 
 	private List<View> views = new ArrayList<>();
+	private Server server = new Server();
 
 	public List<View> getViews() {
 		return views;
@@ -38,6 +39,28 @@ public class DashboardProperties {
 
 	public void setViews(List<View> views) {
 		this.views = views;
+	}
+
+	public Server getServer() {
+		return server;
+	}
+
+	public void setServer(Server server) {
+		this.server = server;
+	}
+
+	public static class Server {
+
+		/** Where applicable enable netty wirelogs */
+		private boolean wirelog;
+
+		public boolean isWirelog() {
+			return wirelog;
+		}
+
+		public void setWirelog(boolean wirelog) {
+			this.wirelog = wirelog;
+		}
 	}
 
 	public static class View {
