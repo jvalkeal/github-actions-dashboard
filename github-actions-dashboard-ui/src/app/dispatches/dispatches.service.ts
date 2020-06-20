@@ -6,6 +6,7 @@ import { ApiService, Dispatch } from '../api/api.service';
 import { getUserDispatches } from './dispatches.reducer';
 import { load, update } from './dispatches.actions';
 import * as fromRoot from '../reducers';
+import * as DispatchesActions from './dispatches.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,10 @@ export class DispatchesService {
 
   dispatch(owner: string, name: string, eventType: string, clientPayload: any): void {
     this.api.sendDispatch(owner, name, eventType, clientPayload).subscribe();
+  }
+
+  refresh(): void {
+    this.store.dispatch(DispatchesActions.refresh());
   }
 
   load(): Observable<Dispatch[]> {
