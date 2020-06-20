@@ -1,6 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import {
+  FormGroup, FormControl, Validators, AsyncValidatorFn, AbstractControl, ValidationErrors
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
+import { Observable, of } from 'rxjs';
 import { ClrForm, ClrWizard } from '@clr/angular';
 import { State } from '../dispatches.reducer';
 import { change } from '../dispatches.actions';
@@ -36,7 +39,7 @@ export class ModalEditDispatchComponent implements OnInit {
     this.form2 = new FormGroup({
       type: this.typeControl
     });
-    this.payloadControl = new FormControl(this.payload);
+    this.payloadControl = new FormControl(this.payload, { asyncValidators: this.validJsonValidator() });
     this.form3 = new FormGroup({
       payload: this.payloadControl
     });
@@ -74,4 +77,18 @@ export class ModalEditDispatchComponent implements OnInit {
     this.payloadControl.setValue('');
   }
 
+  private validJsonValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
+      if (control.value === null || control.value === '') {
+        return of(null);
+      } else {
+        try {
+          JSON.parse(control.value);
+          return of(null);
+        } catch (error) {
+          return of({ invalidJson: control.value });
+        }
+      }
+    };
+  }
 }

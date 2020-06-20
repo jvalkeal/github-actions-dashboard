@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService, Dispatch } from '../api/api.service';
 import { getUserDispatches } from './dispatches.reducer';
-import { load } from './dispatches.actions';
+import { load, update } from './dispatches.actions';
 import * as fromRoot from '../reducers';
 
 @Injectable({
@@ -34,6 +34,10 @@ export class DispatchesService {
 
   update(dispatch: Dispatch): Observable<void> {
     return this.api.updateDispatch(dispatch);
+  }
+
+  updateAction(dispatch: Dispatch): void {
+    this.store.dispatch(update({dispatch}));
   }
 
   remove(dispatch: Dispatch): Observable<void> {

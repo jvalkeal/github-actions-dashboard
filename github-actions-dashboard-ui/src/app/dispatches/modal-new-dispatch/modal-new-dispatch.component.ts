@@ -1,9 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import {
+  FormGroup, FormControl, Validators, AsyncValidatorFn, AbstractControl, ValidationErrors
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
+import { Observable, of } from 'rxjs';
 import { ClrForm, ClrWizard } from '@clr/angular';
+import { take, map } from 'rxjs/operators';
 import { State } from '../dispatches.reducer';
-import { update } from '../dispatches.actions';
+import { DispatchesService } from '../dispatches.service';
+import { Dispatch } from '../../api/api.service';
 
 @Component({
   selector: 'app-modal-new-dispatch',
@@ -30,11 +35,14 @@ export class ModalNewDispatchComponent implements OnInit {
   private wizard: ClrWizard;
 
   constructor(
-    private store: Store<State>
+    private dispatchesService: DispatchesService
   ) { }
 
   ngOnInit(): void {
-    this.nameControl = new FormControl(this.name, Validators.required/*, existingNameValidator(this.userDashboards$)*/);
+    this.nameControl = new FormControl(
+      this.name,
+      Validators.required,
+      this.existingNameValidator(this.dispatchesService.userDispatches()));
     this.form1 = new FormGroup({
       name: this.nameControl
     });
@@ -42,7 +50,7 @@ export class ModalNewDispatchComponent implements OnInit {
     this.form2 = new FormGroup({
       type: this.typeControl
     });
-    this.payloadControl = new FormControl(this.payload);
+    this.payloadControl = new FormControl(this.payload, { asyncValidators: this.validJsonValidator() });
     this.form3 = new FormGroup({
       payload: this.payloadControl
     });
@@ -58,15 +66,11 @@ export class ModalNewDispatchComponent implements OnInit {
   }
 
   doFinish(): void {
-    this.store.dispatch(
-      update({
-        dispatch: {
-          name: this.name,
-          eventType: this.type,
-          clientPayload: this.payload
-        }
-      })
-    );
+    this.dispatchesService.updateAction({
+      name: this.name,
+      eventType: this.type,
+      clientPayload: this.payload
+    });
     this.reset();
   }
 
@@ -75,5 +79,35 @@ export class ModalNewDispatchComponent implements OnInit {
     this.nameControl.setValue('');
     this.typeControl.setValue('');
     this.payloadControl.setValue('');
+  }
+
+  private existingNameValidator(dispatches: Observable<Dispatch[]>): AsyncValidatorFn {
+    return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
+      if (control.value === null || control.value === 0) {
+        // this validator only checks if value exists
+        return of(null);
+      } else {
+        // check if given name is already in a state
+        return dispatches.pipe(
+          take(1),
+          map(d => d.some(item => item.name === control.value) ? { duplicateName: control.value } : null)
+        );
+      }
+    };
+  }
+
+  private validJsonValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
+      if (control.value === null || control.value === '') {
+        return of(null);
+      } else {
+        try {
+          JSON.parse(control.value);
+          return of(null);
+        } catch (error) {
+          return of({ invalidJson: control.value });
+        }
+      }
+    };
   }
 }
