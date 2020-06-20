@@ -6,7 +6,7 @@ import { User } from '../../api/api.service';
 import { AuthService } from '../../auth/auth.service';
 import { SettingsService } from '../../settings/settings.service';
 import { DashboardService } from '../../dashboard/dashboard.service';
-import { DispatchesService } from 'src/app/dispatches/dispatches.service';
+import { DispatchesService } from '../../dispatches/dispatches.service';
 
 @Component({
   selector: 'app-user-header-action',
