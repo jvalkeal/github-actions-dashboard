@@ -18,7 +18,6 @@ export class ModalEditDispatchComponent implements OnInit {
   payload = '';
   form2: FormGroup;
   form3: FormGroup;
-  private nameControl: FormControl;
   private typeControl: FormControl;
   private payloadControl: FormControl;
 
@@ -44,11 +43,11 @@ export class ModalEditDispatchComponent implements OnInit {
   }
 
   open(name: string, eventType: string, clientPayload: string): void {
-    this.show = true;
     this.name = name;
-    this.type = eventType;
-    this.payload = clientPayload;
+    this.typeControl.setValue(eventType);
+    this.payloadControl.setValue(clientPayload);
     this.clrForm.markAsTouched();
+    this.show = true;
   }
 
   doCancel(): void {
@@ -71,8 +70,8 @@ export class ModalEditDispatchComponent implements OnInit {
   private reset(): void {
     this.wizard.reset();
     this.name = '';
-    this.type = '';
-    this.payload = '';
+    this.typeControl.setValue('');
+    this.payloadControl.setValue('');
   }
 
 }

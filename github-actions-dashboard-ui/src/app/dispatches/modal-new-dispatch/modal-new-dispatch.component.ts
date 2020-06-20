@@ -72,8 +72,8 @@ export class ModalNewDispatchComponent implements OnInit {
 
   private reset(): void {
     this.wizard.reset();
-    this.name = '';
-    this.type = '';
-    this.payload = '';
+    this.nameControl.setValue('');
+    this.typeControl.setValue('');
+    this.payloadControl.setValue('');
   }
 }
