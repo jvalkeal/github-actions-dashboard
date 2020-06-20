@@ -28,6 +28,7 @@ import { DispatchesEffects } from './dispatches/dispatches.effects';
 import { ModalEditDispatchComponent } from './dispatches/modal-edit-dispatch/modal-edit-dispatch.component';
 import { AlertsComponent } from './alerts/alerts/alerts.component';
 import { AlertsEffects } from './alerts/alerts.effects';
+import { ModalSendDispatchComponent } from './dispatches/modal-send-dispatch/modal-send-dispatch.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { AlertsEffects } from './alerts/alerts.effects';
     DispatchesComponent,
     ModalNewDispatchComponent,
     ModalEditDispatchComponent,
-    AlertsComponent
+    AlertsComponent,
+    ModalSendDispatchComponent
   ],
   imports: [
     BrowserModule,

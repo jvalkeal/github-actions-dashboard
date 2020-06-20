@@ -83,7 +83,7 @@ export class ModalNewDispatchComponent implements OnInit {
 
   private existingNameValidator(dispatches: Observable<Dispatch[]>): AsyncValidatorFn {
     return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
-      if (control.value === null || control.value === 0) {
+      if (control.value === null || control.value === 0 || control.value === undefined) {
         // this validator only checks if value exists
         return of(null);
       } else {

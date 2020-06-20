@@ -79,7 +79,7 @@ export class ModalEditDispatchComponent implements OnInit {
 
   private validJsonValidator(): AsyncValidatorFn {
     return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
-      if (control.value === null || control.value === '') {
+      if (control.value === null || control.value === '' || control.value === undefined) {
         return of(null);
       } else {
         try {

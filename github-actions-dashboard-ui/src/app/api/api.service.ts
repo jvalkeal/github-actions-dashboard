@@ -50,8 +50,9 @@ export class ApiService {
   }
 
   sendDispatch(owner: string, name: string, eventType: string, clientPayload: any): Observable<void> {
+    const p = typeof clientPayload === 'string' ? JSON.parse(clientPayload) : clientPayload;
     const params = new HttpParams().set('owner', owner).set('name', name);
-    return this.http.post<HttpResponse<string>>('/api/github/dispatch', { eventType, clientPayload}, { params })
+    return this.http.post<HttpResponse<string>>('/api/github/dispatch', { eventType, clientPayload: p }, { params })
       .pipe(
         map(r => undefined),
         (catchError(() => EMPTY))

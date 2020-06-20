@@ -1,0 +1,24 @@
+<clr-modal [(clrModalOpen)]="show">
+  <h3 class="modal-title">Send Dispatch</h3>
+
+  <div class="modal-body">
+    <form clrForm [formGroup]="form">
+      <clr-input-container>
+        <label>Type</label>
+        <input clrInput placeholder="Fill new name" [(ngModel)]="type" formControlName="type"/>
+        <clr-control-helper>Valid type</clr-control-helper>
+        <clr-control-error>Invalid type</clr-control-error>
+      </clr-input-container>
+      <clr-textarea-container>
+        <label>Payload</label>
+        <textarea clrTextarea [(ngModel)]="payload" formControlName="payload"></textarea>
+        <clr-control-helper>Valid payload</clr-control-helper>
+        <clr-control-error>Invalid payload</clr-control-error>
+      </clr-textarea-container>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="cancel()">Cancel</button>
+    <button type="button" class="btn btn-primary" [disabled]="!form.valid" (click)="submit()">Ok</button>
+  </div>
+</clr-modal>

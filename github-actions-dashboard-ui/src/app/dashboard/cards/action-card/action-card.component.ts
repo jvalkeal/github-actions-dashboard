@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, of, forkJoin } from 'rxjs';
 import { map, take } from 'rxjs/operators';
@@ -6,6 +6,7 @@ import { Repository, CheckRun, Card, Dispatch } from '../../../api/api.service';
 import { State } from '../../dashboard.reducer';
 import { removeCard } from '../../dashboard.actions';
 import { DispatchesService } from 'src/app/dispatches/dispatches.service';
+import { ModalSendDispatchComponent } from 'src/app/dispatches/modal-send-dispatch/modal-send-dispatch.component';
 
 @Component({
   selector: 'app-action-card',
@@ -29,6 +30,9 @@ export class ActionCardComponent implements OnInit {
   branchState: PrStates;
   activePrCheckRuns = false;
   userDispatches = this.dispatchesService.userDispatches();
+
+  @ViewChild(ModalSendDispatchComponent)
+  private dispatchComponent: ModalSendDispatchComponent;
 
   constructor(
     private store: Store<State>,
@@ -158,7 +162,7 @@ export class ActionCardComponent implements OnInit {
   }
 
   dispatch(owner: string, name: string, eventType: string, clientPayload: any): void {
-    this.dispatchesService.dispatch(owner, name, eventType, clientPayload);
+    this.dispatchComponent.open(owner, name, eventType, JSON.stringify(clientPayload));
   }
 }
 
