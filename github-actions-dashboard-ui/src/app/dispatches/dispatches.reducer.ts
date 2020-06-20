@@ -40,7 +40,10 @@ function updateDispatches(dispatches: Dispatch[], dispatch: Dispatch): Dispatch[
   const to: Dispatch[] = [];
   dispatches.forEach(v => {
     if (v.name === dispatch.name) {
-      to.push({ name: v.name, eventType: dispatch.eventType, clientPayload: JSON.parse(dispatch.clientPayload) });
+      to.push({
+        name: v.name,
+        eventType: dispatch.eventType,
+        clientPayload: dispatch.clientPayload ? JSON.parse(dispatch.clientPayload) : undefined });
     } else {
       to.push({ name: v.name, eventType: v.eventType, clientPayload: v.clientPayload });
     }

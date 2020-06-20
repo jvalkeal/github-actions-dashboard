@@ -16,7 +16,7 @@ export class DispatchesEffects {
           map(aVoid => DispatchesActions.updateOk({
               dispatch: { name: props.dispatch.name,
               eventType: props.dispatch.eventType,
-              clientPayload: JSON.parse(props.dispatch.clientPayload)
+              clientPayload: props.dispatch.clientPayload ? JSON.parse(props.dispatch.clientPayload) : undefined
             }})),
           catchError(() => of(DispatchesActions.updateError({ dispatch: props.dispatch })))
         )

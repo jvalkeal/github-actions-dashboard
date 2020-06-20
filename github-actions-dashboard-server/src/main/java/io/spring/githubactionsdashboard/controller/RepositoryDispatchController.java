@@ -110,7 +110,7 @@ public class RepositoryDispatchController {
 
 	@RequestMapping(method = RequestMethod.PATCH)
 	public Mono<Void> changeDispatch(@AuthenticationPrincipal OAuth2User oauth2User, @RequestParam("name") String name,
-			@RequestParam("eventType") String eventType, @RequestBody String clientPayload) {
+			@RequestParam("eventType") String eventType, @RequestBody(required = false) String clientPayload) {
 		log.debug("Deleting dispatch request {}", name);
 		String username = oauth2User.getName();
 

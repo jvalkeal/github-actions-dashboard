@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,6 +47,13 @@ import reactor.netty.http.client.HttpClient;
 @Configuration
 @EnableConfigurationProperties(DashboardProperties.class)
 public class ApiConfiguration {
+
+	@Bean
+	Jackson2ObjectMapperBuilderCustomizer mapperCustomizer() {
+		return customizer -> {
+			customizer.serializationInclusion(Include.NON_NULL);
+		};
+	}
 
 	@Bean
 	WebClient webClient(ReactiveClientRegistrationRepository clientRegistrations,
