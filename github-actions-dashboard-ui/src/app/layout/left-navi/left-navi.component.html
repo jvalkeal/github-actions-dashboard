@@ -29,10 +29,11 @@
   </clr-vertical-nav-group>
 
   <div class="nav-divider"></div>
-  <a clrVerticalNavLink routerLinkActive="active" routerLink="./settings">
-    <clr-icon shape="cog" clrVerticalNavIcon></clr-icon>
-    Settings
+  <a clrVerticalNavLink routerLinkActive="active" routerLink="./dispatches">
+    <clr-icon shape="dot-circle" clrVerticalNavIcon></clr-icon>
+    Dispatches
   </a>
+  <div class="nav-divider"></div>
   <a clrVerticalNavLink (click)="showNewDashboard()" style="cursor: pointer;">
     <clr-icon shape="new" clrVerticalNavIcon></clr-icon>
     New Dashboard...
@@ -45,9 +46,10 @@
     <clr-icon shape="add-text" clrVerticalNavIcon></clr-icon>
     Add Workflow...
   </a>
-  <a clrVerticalNavLink routerLinkActive="active" routerLink="./dispatches">
-    <clr-icon shape="dot-circle" clrVerticalNavIcon></clr-icon>
-    Dispatches
+  <div class="nav-divider"></div>
+  <a clrVerticalNavLink routerLinkActive="active" routerLink="./settings">
+    <clr-icon shape="cog" clrVerticalNavIcon></clr-icon>
+    Settings
   </a>
 </clr-vertical-nav>
 <app-modal-new-dashboard></app-modal-new-dashboard>
