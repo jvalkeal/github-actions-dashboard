@@ -1,5 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientModule } from '@angular/common/http';
+import { StoreModule } from '@ngrx/store';
+import { ClarityModule } from '@clr/angular';
+import { AppRoutingModule } from '../../app-routing.module';
 import { UserHeaderActionComponent } from './user-header-action.component';
 
 describe('UserHeaderActionComponent', () => {
@@ -8,7 +11,15 @@ describe('UserHeaderActionComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserHeaderActionComponent ]
+      imports: [
+        ClarityModule,
+        AppRoutingModule,
+        HttpClientModule,
+        StoreModule.forRoot({})
+      ],
+      declarations: [
+        UserHeaderActionComponent
+      ]
     })
     .compileComponents();
   }));

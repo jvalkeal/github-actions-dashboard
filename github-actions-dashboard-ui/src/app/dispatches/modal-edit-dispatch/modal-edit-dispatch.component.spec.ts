@@ -1,4 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { StoreModule } from '@ngrx/store';
+import { ClarityModule } from '@clr/angular';
 import { ModalEditDispatchComponent } from './modal-edit-dispatch.component';
 
 describe('ModalEditDispatchComponent', () => {
@@ -7,7 +9,13 @@ describe('ModalEditDispatchComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ModalEditDispatchComponent ]
+      imports: [
+        ClarityModule,
+        StoreModule.forRoot({})
+      ],
+      declarations: [
+        ModalEditDispatchComponent
+      ]
     })
     .compileComponents();
   }));

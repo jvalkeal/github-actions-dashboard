@@ -1,4 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientModule } from '@angular/common/http';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { ClarityModule } from '@clr/angular';
 import { DispatchesComponent } from './dispatches.component';
 
 describe('DispatchesComponent', () => {
@@ -7,7 +11,15 @@ describe('DispatchesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DispatchesComponent ]
+      imports: [
+        ClarityModule,
+        HttpClientModule,
+        StoreModule.forRoot({}),
+        EffectsModule.forRoot([])
+      ],
+      declarations: [
+        DispatchesComponent
+      ]
     })
     .compileComponents();
   }));

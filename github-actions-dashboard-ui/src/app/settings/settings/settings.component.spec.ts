@@ -1,16 +1,41 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { HttpClientModule } from '@angular/common/http';
+import { StoreModule } from '@ngrx/store';
+import { ClarityModule } from '@clr/angular';
 import { SettingsComponent } from './settings.component';
+import * as fromSettings from '../settings.reducer';
 
 describe('SettingsComponent', () => {
   let component: SettingsComponent;
   let fixture: ComponentFixture<SettingsComponent>;
+  let mockStore: MockStore;
+
+  const initialState = {
+    [fromSettings.settingsFeatureKey]: {
+      settings: [
+        { name: fromSettings.refreshKey, value: fromSettings.refreshDefault },
+        { name: fromSettings.themeActiveKey, value: fromSettings.themeActiveDefault }
+      ]
+    }
+  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SettingsComponent ]
+      imports: [
+        HttpClientModule,
+        ClarityModule,
+        StoreModule.forRoot({})
+      ],
+      providers: [
+        provideMockStore({ initialState })
+      ],
+      declarations: [
+        SettingsComponent
+      ]
     })
     .compileComponents();
+    mockStore = TestBed.inject(MockStore);
   }));
 
   beforeEach(() => {
