@@ -12,8 +12,6 @@ export class AuthEffects {
     this.actions$.pipe(
       ofType(AuthActions.unauthorised),
       tap(action => {
-        this.authService.isLoggedIn = false;
-        this.authService.userLoggedIn.next({});
         this.router.navigate(['/home']);
     })
     ),

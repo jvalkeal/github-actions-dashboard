@@ -1,22 +1,19 @@
-<div >
-
-    <div *ngIf="!userLoggedIn.name" >
-        <a href="/oauth2/authorization/github" class="nav-link nav-icon-text">
-            Log In with Github
-        </a>
-    </div>
-
-    <div *ngIf="userLoggedIn.name" class="header-actions">
-        <clr-dropdown>
-            <img src="{{userLoggedIn.avatar}}" width="30px" height="30px">
-            <button class="nav-text" clrDropdownTrigger aria-label="open user profile">
-                {{userLoggedIn.name}}
-                <clr-icon shape="caret down"></clr-icon>
-            </button>
-            <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
-                <a (click)="logout()" clrDropdownItem>Log out</a>
-            </clr-dropdown-menu>
-        </clr-dropdown>
-    </div>
-
+<div>
+  <div *ngIf="!(userLoggedIn|async)?.name" >
+    <a href="/oauth2/authorization/github" class="nav-link nav-icon-text">
+      Log In with Github
+    </a>
+  </div>
+  <div *ngIf="(userLoggedIn|async)?.name" class="header-actions">
+    <clr-dropdown>
+      <img src="{{(userLoggedIn|async).avatar}}" width="30px" height="30px">
+      <button class="nav-text" clrDropdownTrigger aria-label="open user profile">
+        {{(userLoggedIn|async).name}}
+        <clr-icon shape="caret down"></clr-icon>
+      </button>
+      <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
+        <a (click)="logout()" clrDropdownItem>Log out</a>
+      </clr-dropdown-menu>
+    </clr-dropdown>
+  </div>
 </div>

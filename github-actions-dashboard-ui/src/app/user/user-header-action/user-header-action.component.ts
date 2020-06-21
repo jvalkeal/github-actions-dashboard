@@ -16,7 +16,7 @@ import { DispatchesService } from '../../dispatches/dispatches.service';
 export class UserHeaderActionComponent implements OnInit, OnDestroy {
 
   private subs: Subscription[] = [];
-  public userLoggedIn: User = {};
+  userLoggedIn = this.authService.loggedInUser();
 
   constructor(
     private authService: AuthService,
@@ -27,9 +27,6 @@ export class UserHeaderActionComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.subs.push(this.authService.userLoggedIn.subscribe(user => {
-      this.userLoggedIn = user;
-    }));
     this.login();
   }
 
