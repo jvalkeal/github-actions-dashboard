@@ -39,18 +39,28 @@
         <clr-dg-cell>{{repository.owner}}</clr-dg-cell>
         <clr-dg-cell>{{repository.name}}</clr-dg-cell>
       </clr-dg-row>
-      <clr-dg-footer>{{(repositories|async)?.length || 0}} repositories</clr-dg-footer>
+      <clr-dg-footer>
+        <clr-dg-pagination #pagination1 [clrDgPageSize]="10">
+            {{pagination1.firstItem + 1}} - {{pagination1.lastItem + 1}}
+            of {{pagination1.totalItems}} repositories
+        </clr-dg-pagination>
+      </clr-dg-footer>
     </clr-datagrid>
   </clr-wizard-page>
 
-  <clr-wizard-page>
+  <clr-wizard-page (clrWizardPageOnLoad)="onBranches()" >
     <ng-template clrPageTitle>Branches</ng-template>
-    <clr-datagrid class="datagrid-compact" [(clrDgSelected)]="selectedBranches">
+    <clr-datagrid class="datagrid-compact" [(clrDgSelected)]="selectedBranches" [clrDgLoading]="loading" >
       <clr-dg-column>Name</clr-dg-column>
       <clr-dg-row *clrDgItems="let branch of branches" [clrDgItem]="branch">
         <clr-dg-cell>{{branch.name}}</clr-dg-cell>
       </clr-dg-row>
-      <clr-dg-footer>{{branches.length || 0}} branches</clr-dg-footer>
+      <clr-dg-footer>
+        <clr-dg-pagination #pagination2 [clrDgPageSize]="10">
+            {{pagination2.firstItem + 1}} - {{pagination2.lastItem + 1}}
+            of {{pagination2.totalItems}} branches
+        </clr-dg-pagination>
+      </clr-dg-footer>
     </clr-datagrid>
   </clr-wizard-page>
 

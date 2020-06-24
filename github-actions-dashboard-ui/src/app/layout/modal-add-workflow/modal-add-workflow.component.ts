@@ -26,6 +26,8 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
   repositories: Observable<Repository[]>;
   private selectedRepositoryLocal: Repository;
   selectedBranches: Branch[] = [];
+  branches: Branch[] = [];
+  loading = false;
 
   get selectedRepository() {
     return this.selectedRepositoryLocal;
@@ -36,10 +38,6 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
     if (selectedRepository) {
       this.title = selectedRepository.name;
     }
-  }
-
-  get branches(): Branch[] {
-    return this.selectedRepositoryLocal?.branches || [];
   }
 
   private currentUserCardName = this.store.pipe(select(selectRouteParams)).pipe(
@@ -64,7 +62,10 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
   private titleControl: FormControl;
   form: FormGroup;
 
-  constructor(private api: ApiService, private store: Store<State>) {}
+  constructor(
+    private api: ApiService,
+    private store: Store<State>
+  ) {}
 
   ngOnInit(): void {
     this.titleControl = new FormControl(this.title, Validators.required);
@@ -81,10 +82,14 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
     this.searchSubjectSub = this.searchSubject
       .pipe(
         debounceTime(500),
-        map((search) => this.api.searchRepositories(search))
+        map((search) => {
+          this.loading = true;
+          return this.api.searchRepositories(search);
+        })
       )
       .subscribe((repositories) => {
         this.repositories = repositories;
+        this.loading = false;
       });
   }
 
@@ -95,6 +100,10 @@ export class ModalAddWorkflowComponent implements OnInit, OnDestroy {
     if (this.searchSubjectSub) {
       this.searchSubjectSub.unsubscribe();
     }
+  }
+
+  onBranches(): void {
+    this.branches = this?.selectedRepositoryLocal?.branches || [];
   }
 
   open(): void {
