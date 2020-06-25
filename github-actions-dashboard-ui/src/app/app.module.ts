@@ -21,7 +21,6 @@ import { AuthEffects } from './auth/auth.effects';
 import { ModalNewDashboardComponent } from './layout/modal-new-dashboard/modal-new-dashboard.component';
 import { DashboardEffects } from './dashboard/dashboard.effects';
 import { ModalAddWorkflowComponent } from './layout/modal-add-workflow/modal-add-workflow.component';
-import { ModalDeleteDashboardComponent } from './layout/modal-delete-dashboard/modal-delete-dashboard.component';
 import { DispatchesComponent } from './dispatches/dispatches/dispatches.component';
 import { ModalNewDispatchComponent } from './dispatches/modal-new-dispatch/modal-new-dispatch.component';
 import { DispatchesEffects } from './dispatches/dispatches.effects';
@@ -41,7 +40,6 @@ import { ModalSendDispatchComponent } from './dispatches/modal-send-dispatch/mod
     LeftNaviComponent,
     ModalNewDashboardComponent,
     ModalAddWorkflowComponent,
-    ModalDeleteDashboardComponent,
     DispatchesComponent,
     ModalNewDispatchComponent,
     ModalEditDispatchComponent,

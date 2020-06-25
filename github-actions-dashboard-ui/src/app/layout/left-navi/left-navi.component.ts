@@ -3,7 +3,6 @@ import { Store, select } from '@ngrx/store';
 import { State, getGlobalDashboards, getUserDashboards } from '../../dashboard/dashboard.reducer';
 import { ModalNewDashboardComponent } from '../modal-new-dashboard/modal-new-dashboard.component';
 import { ModalAddWorkflowComponent } from '../modal-add-workflow/modal-add-workflow.component';
-import { ModalDeleteDashboardComponent } from '../modal-delete-dashboard/modal-delete-dashboard.component';
 
 @Component({
   selector: 'app-left-navi',
@@ -22,9 +21,6 @@ export class LeftNaviComponent implements OnInit {
   @ViewChild(ModalAddWorkflowComponent)
   private modalAddWorkflow: ModalAddWorkflowComponent;
 
-  @ViewChild(ModalDeleteDashboardComponent)
-  private modalDeleteDashboard: ModalDeleteDashboardComponent;
-
   constructor(
     private store: Store<State>
   ) {}
@@ -38,9 +34,5 @@ export class LeftNaviComponent implements OnInit {
 
   showAddWorkflow(): void {
     this.modalAddWorkflow.open();
-  }
-
-  showDeleteDashboard(): void {
-    this.modalDeleteDashboard.open();
   }
 }

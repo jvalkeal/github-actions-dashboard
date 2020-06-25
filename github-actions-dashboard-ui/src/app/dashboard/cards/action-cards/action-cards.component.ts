@@ -3,13 +3,14 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Subscription, timer, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map, tap, take } from 'rxjs/operators';
 import { ApiService, Repository, Card, CheckRun, PullRequest } from '../../../api/api.service';
 import { State, getRefreshSetting } from '../../../settings/settings.reducer';
 import { getCards } from '../../dashboard.reducer';
 import { setCards } from '../../dashboard.actions';
 import { PrStates } from '../action-card/action-card.component';
 import * as DashboardActions from '../../dashboard.actions';
+import { selectRouteParams } from '../../../../app/reducers';
 
 @Component({
   selector: 'app-action-cards',
@@ -41,6 +42,8 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
     private actions$: Actions,
   ) {}
 
+  cardType = this.store.pipe(select(selectRouteParams)).pipe(tap(params => {console.log('XX', params);}),map(params => params.type));
+
   ngOnInit() {
     this.refreshSub = combineLatest([
       this.route.params,
@@ -70,6 +73,17 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
 
   refreshCards(): void {
     this.store.dispatch(DashboardActions.refreshCard({}));
+  }
+
+  deleteDashboard(): void {
+    this.store.pipe(select(selectRouteParams)).pipe(
+      take(1),
+      tap(params => {
+        if (params.id) {
+          this.store.dispatch(DashboardActions.remove({ dashboard: { name: params.id, description: '', repositories: []} }));
+        }
+      })
+    ).subscribe();
   }
 
   public checkRunStyle(checkRun: CheckRun): string {
