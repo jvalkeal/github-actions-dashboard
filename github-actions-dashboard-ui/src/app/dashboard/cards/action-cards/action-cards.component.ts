@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Subscription, timer, combineLatest } from 'rxjs';
@@ -40,9 +40,10 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
     private store: Store<State>,
     private route: ActivatedRoute,
     private actions$: Actions,
+    private router: Router
   ) {}
 
-  cardType = this.store.pipe(select(selectRouteParams)).pipe(tap(params => {console.log('XX', params);}),map(params => params.type));
+  cardType = this.store.pipe(select(selectRouteParams)).pipe(map(params => params.type));
 
   ngOnInit() {
     this.refreshSub = combineLatest([
@@ -84,6 +85,10 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
         }
       })
     ).subscribe();
+  }
+
+  addWorkflow(): void {
+    this.router.navigate(['addworkflow'], {relativeTo: this.route});
   }
 
   public checkRunStyle(checkRun: CheckRun): string {

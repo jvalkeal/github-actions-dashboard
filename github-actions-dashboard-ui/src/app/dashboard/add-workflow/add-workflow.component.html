@@ -1,0 +1,78 @@
+<h1>Add Workflow</h1>
+<div>
+  <form clrStepper [formGroup]="form" (ngSubmit)="submit()">
+
+    <clr-stepper-panel formGroupName="repository">
+      <clr-step-title>Repository</clr-step-title>
+      <clr-step-content *clrIfExpanded>
+        <clr-input-container>
+          <label>Query</label>
+          <input #query clrInput placeholder="spring user:spring-projects" formControlName="query" [(ngModel)]="name" (keyup)="onKey(query.value)"/>
+        </clr-input-container>
+        <clr-datagrid class="datagrid-compact" [(clrDgSingleSelected)]="selectedRepository">
+          <clr-dg-column>Owner</clr-dg-column>
+          <clr-dg-column>Name</clr-dg-column>
+          <clr-dg-row *clrDgItems="let repository of repositories|async" [clrDgItem]="repository">
+            <clr-dg-cell>{{repository.owner}}</clr-dg-cell>
+            <clr-dg-cell>{{repository.name}}</clr-dg-cell>
+          </clr-dg-row>
+          <clr-dg-footer>
+            <clr-dg-pagination #pagination1 [clrDgPageSize]="10">
+                {{pagination1.firstItem + 1}} - {{pagination1.lastItem + 1}}
+                of {{pagination1.totalItems}} repositories
+            </clr-dg-pagination>
+          </clr-dg-footer>
+        </clr-datagrid>
+        <button clrStepButton="next" (click)="onBranches()">next</button>
+      </clr-step-content>
+    </clr-stepper-panel>
+
+    <clr-stepper-panel formGroupName="branch">
+      <clr-step-title>Branch</clr-step-title>
+      <clr-step-content *clrIfExpanded>
+        <clr-datagrid class="datagrid-compact" [(clrDgSelected)]="selectedBranches" [clrDgLoading]="loading" >
+          <clr-dg-column>Name</clr-dg-column>
+          <clr-dg-row *clrDgItems="let branch of branches" [clrDgItem]="branch">
+            <clr-dg-cell>{{branch.name}}</clr-dg-cell>
+          </clr-dg-row>
+          <clr-dg-footer>
+            <clr-dg-pagination #pagination2 [clrDgPageSize]="10">
+                {{pagination2.firstItem + 1}} - {{pagination2.lastItem + 1}}
+                of {{pagination2.totalItems}} branches
+            </clr-dg-pagination>
+          </clr-dg-footer>
+        </clr-datagrid>
+        <button clrStepButton="next">next</button>
+      </clr-step-content>
+    </clr-stepper-panel>
+
+    <clr-stepper-panel formGroupName="card">
+      <clr-step-title>Card</clr-step-title>
+      <clr-step-content *clrIfExpanded>
+        <clr-input-container>
+          <label>Title</label>
+          <input clrInput formControlName="title" [(ngModel)]="title" required/>
+          <clr-control-helper>Valid title</clr-control-helper>
+          <clr-control-error>Missing title</clr-control-error>
+        </clr-input-container>
+        <button clrStepButton="next">next</button>
+      </clr-step-content>
+    </clr-stepper-panel>
+
+    <clr-stepper-panel formGroupName="summary">
+      <clr-step-title>Summary</clr-step-title>
+      <clr-step-content *clrIfExpanded>
+        <div>You're about to create a new workflow for following settings:</div>
+        <div>Dashboard: {{dashboardName}}</div>
+        <div>Title: {{title}}</div>
+        <div *ngIf="selectedRepository">Repository: {{selectedRepository.owner}}/{{selectedRepository.name}}</div>
+        <div *ngIf="selectedBranches.length > 0">
+          Branches:
+          <span *ngFor="let branch of selectedBranches">{{branch.name}}&nbsp;</span>
+        </div>
+        <button clrStepButton="submit">submit</button>
+      </clr-step-content>
+    </clr-stepper-panel>
+
+  </form>
+</div>

@@ -20,7 +20,6 @@ import { LeftNaviComponent } from './layout/left-navi/left-navi.component';
 import { AuthEffects } from './auth/auth.effects';
 import { ModalNewDashboardComponent } from './layout/modal-new-dashboard/modal-new-dashboard.component';
 import { DashboardEffects } from './dashboard/dashboard.effects';
-import { ModalAddWorkflowComponent } from './layout/modal-add-workflow/modal-add-workflow.component';
 import { DispatchesComponent } from './dispatches/dispatches/dispatches.component';
 import { ModalNewDispatchComponent } from './dispatches/modal-new-dispatch/modal-new-dispatch.component';
 import { DispatchesEffects } from './dispatches/dispatches.effects';
@@ -28,6 +27,7 @@ import { ModalEditDispatchComponent } from './dispatches/modal-edit-dispatch/mod
 import { AlertsComponent } from './alerts/alerts/alerts.component';
 import { AlertsEffects } from './alerts/alerts.effects';
 import { ModalSendDispatchComponent } from './dispatches/modal-send-dispatch/modal-send-dispatch.component';
+import { AddWorkflowComponent } from './dashboard/add-workflow/add-workflow.component';
 
 @NgModule({
   declarations: [
@@ -39,12 +39,12 @@ import { ModalSendDispatchComponent } from './dispatches/modal-send-dispatch/mod
     SettingsComponent,
     LeftNaviComponent,
     ModalNewDashboardComponent,
-    ModalAddWorkflowComponent,
     DispatchesComponent,
     ModalNewDispatchComponent,
     ModalEditDispatchComponent,
     AlertsComponent,
-    ModalSendDispatchComponent
+    ModalSendDispatchComponent,
+    AddWorkflowComponent
   ],
   imports: [
     BrowserModule,
