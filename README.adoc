@@ -50,3 +50,12 @@ $ java -jar github-actions-dashboard-server/build/libs/github-actions-dashboard-
 You may see thigs like:
 
 image::docs/images/gh-actions-dashboard-1.png[gh-actions-dashboard-1]
+
+=== Dev
+
+When upgrading a bundled github graphql schema and as we rely on preview api, take it with:
+
+[source, bash]
+----
+$ curl -H "Authorization: bearer <token>" -H "Accept: application/vnd.github.antiope-preview+json" https://api.github.com/graphql
+----
