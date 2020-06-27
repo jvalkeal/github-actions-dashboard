@@ -25,8 +25,19 @@ export class AppComponent implements OnInit {
     take(1),
     map(action => action.settings.find(s => s.name === themeActiveKey)?.value),
     tap(theme => {
-      if (theme === 'dark') {
-        this.toggleDarkTheme();
+      if (theme) {
+        this.themeService.switchTheme(theme);
+      }
+    })
+  ).subscribe();
+
+  @Effect({ dispatch: false })
+  updatedSettings$ = this.actions$.pipe(
+    ofType(SettingsActions.ok),
+    map(action => action.setting),
+    tap(setting => {
+      if (setting.name === themeActiveKey && setting.value) {
+        this.themeService.switchTheme(setting.value);
       }
     })
   ).subscribe();
@@ -39,16 +50,6 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-  }
-
-  public toggleDarkTheme() {
-    if (this.darkThemeIsActive) {
-      this.themeService.switchTheme('default');
-      this.darkThemeIsActive = false;
-    } else {
-      this.themeService.switchTheme('dark');
-      this.darkThemeIsActive = true;
-    }
   }
 
   public goHome(): boolean {
