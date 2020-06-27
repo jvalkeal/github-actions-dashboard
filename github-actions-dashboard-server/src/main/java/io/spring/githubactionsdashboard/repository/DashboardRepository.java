@@ -39,4 +39,6 @@ public interface DashboardRepository extends CrudRepository<DashboardEntity, Lon
 	 * @return user dashboard
 	 */
 	DashboardEntity findByUsernameAndName(String username, String name);
+
+	// List<DashboardEntity> findByTeamNames(Collection<String> teamNames);
 }

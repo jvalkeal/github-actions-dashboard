@@ -120,6 +120,45 @@ public class DashboardController {
 			.then();
 	}
 
+	/**
+	 * Gets all teams {@link Dashboard}'s visible to a user.
+	 *
+	 * @param oauth2User the user
+	 * @return team dashboars
+	 */
+	@RequestMapping(path = "/team", method = RequestMethod.GET)
+	@ResponseBody
+	public Flux<Dashboard> getTeamDashboards(@AuthenticationPrincipal OAuth2User oauth2User) {
+		return Flux.empty();
+	}
+
+	/**
+	 * Save a given team {@link Dashboard}.
+	 *
+	 * @param oauth2User the user
+	 * @param id the team id
+	 * @param dashboard the dashboard
+	 * @return Mono for completion
+	 */
+	@RequestMapping(path = "/team", method = RequestMethod.POST)
+	public Mono<Void> saveTeamDashboard(@AuthenticationPrincipal OAuth2User oauth2User,
+			@RequestParam("id") Integer id, @RequestBody Dashboard dashboard) {
+		return Mono.empty();
+	}
+
+	/**
+	 * Delete a given team {@link Dashboard}.
+	 *
+	 * @param oauth2User the user
+	 * @param name the dashboard name
+	 * @return Mono for completion
+	 */
+	@RequestMapping(path = "/team", method = RequestMethod.DELETE)
+	public Mono<Void> deleteTeamDashboard(@AuthenticationPrincipal OAuth2User oauth2User,
+			@RequestParam("name") String name) {
+		return Mono.empty();
+	}
+
 	private Flux<Dashboard> globals() {
 		return Flux.fromIterable(properties.getViews())
 			.map(view -> {
