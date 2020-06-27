@@ -133,6 +133,10 @@ export class AddWorkflowComponent implements OnInit, OnDestroy {
         },
       })
     );
-    this.router.navigate(['..'], {relativeTo: this.route, skipLocationChange: true});
+    this.back();
+  }
+
+  back(): void {
+    this.router.navigate(['..'], {relativeTo: this.route, skipLocationChange: false});
   }
 }
