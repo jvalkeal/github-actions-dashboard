@@ -332,7 +332,7 @@ export const darkTheme: Theme = {
     */
     '--clr-modal-close-color': 'hsl(203, 16%, 72%)',
     '--clr-modal-bg-color': 'hsl(198, 28%, 18%)',
-    '--clr-modal-backdrop-color': 'hsla(0, 0, 0, 0.85)',
+    '--clr-modal-backdrop-color': 'hsla(0, 0%, 0%, 0.85)',
 
     /***************
     * Nav
