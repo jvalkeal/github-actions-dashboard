@@ -1,4 +1,4 @@
-query UserTeams(){
+query UserTeams {
   viewer {
     organizations(first: 100) {
       nodes {
@@ -8,6 +8,7 @@ query UserTeams(){
             name
             databaseId
             slug
+            combinedSlug
           }
         }
       }

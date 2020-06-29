@@ -30,14 +30,16 @@ public class Dashboard {
 
 	private String name;
 	private String description;
+	private String team;
 	private List<Repository> repositories;
 
 	public Dashboard() {
 	}
 
-	public Dashboard(String name, String description, List<Repository> repositories) {
+	public Dashboard(String name, String description, String team, List<Repository> repositories) {
 		this.name = name;
 		this.description = description;
+		this.team = team;
 		this.repositories = repositories;
 	}
 
@@ -48,7 +50,7 @@ public class Dashboard {
 	 * @return a dashboard out from dashboard entity
 	 */
 	public static Dashboard of(DashboardEntity dashboard) {
-		return new Dashboard(dashboard.getName(), dashboard.getDescription(),
+		return new Dashboard(dashboard.getName(), dashboard.getDescription(), dashboard.getTeam(),
 				StreamSupport.stream(dashboard.getRepositories().spliterator(), false).map(Repository::of)
 						.collect(Collectors.toList()));
 	}
@@ -67,6 +69,14 @@ public class Dashboard {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getTeam() {
+		return team;
+	}
+
+	public void setTeam(String team) {
+		this.team = team;
 	}
 
 	public List<Repository> getRepositories() {

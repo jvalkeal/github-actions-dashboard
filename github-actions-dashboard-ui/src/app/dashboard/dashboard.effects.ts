@@ -24,6 +24,18 @@ export class DashboardEffects {
     )
   );
 
+  saveTeamDashboards$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DashboardActions.saveTeam),
+      exhaustMap((action) => this.dashboardService.saveTeam(action.team, action.dashboard)
+        .pipe(
+          map(aVoid => DashboardActions.ok({dashboard: action.dashboard})),
+          catchError(() => of(DashboardActions.error({dashboard: action.dashboard})))
+        )
+      )
+    )
+  );
+
   updateDashboards$ = createEffect(() =>
     this.actions$.pipe(
       ofType(DashboardActions.update),

@@ -16,6 +16,7 @@
 package io.spring.githubactionsdashboard.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -35,8 +36,10 @@ import io.spring.githubactionsdashboard.domain.Branch;
 import io.spring.githubactionsdashboard.domain.Dashboard;
 import io.spring.githubactionsdashboard.domain.Repository;
 import io.spring.githubactionsdashboard.domain.RepositoryDispatch;
+import io.spring.githubactionsdashboard.domain.Team;
 import io.spring.githubactionsdashboard.entity.DashboardEntity;
 import io.spring.githubactionsdashboard.entity.RepositoryEntity;
+import io.spring.githubactionsdashboard.github.GithubApi;
 import io.spring.githubactionsdashboard.repository.DashboardRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -48,10 +51,12 @@ public class DashboardController {
 	private final static Logger log = LoggerFactory.getLogger(DashboardController.class);
 	private final DashboardRepository repository;
 	private final DashboardProperties properties;
+	private final GithubApi api;
 
-	public DashboardController(DashboardRepository repository, DashboardProperties properties) {
+	public DashboardController(DashboardRepository repository, DashboardProperties properties, GithubApi api) {
 		this.repository = repository;
 		this.properties = properties;
+		this.api = api;
 	}
 
 	/**
@@ -129,7 +134,10 @@ public class DashboardController {
 	@RequestMapping(path = "/team", method = RequestMethod.GET)
 	@ResponseBody
 	public Flux<Dashboard> getTeamDashboards(@AuthenticationPrincipal OAuth2User oauth2User) {
-		return Flux.empty();
+		return this.api.teams()
+			.collectMap(team -> team.getCombinedSlug())
+			.flatMapMany(teamMap -> Flux.fromIterable(repository.findByTeamIn(teamMap.keySet())))
+			.map(Dashboard::of);
 	}
 
 	/**
@@ -142,8 +150,25 @@ public class DashboardController {
 	 */
 	@RequestMapping(path = "/team", method = RequestMethod.POST)
 	public Mono<Void> saveTeamDashboard(@AuthenticationPrincipal OAuth2User oauth2User,
-			@RequestParam("id") Integer id, @RequestBody Dashboard dashboard) {
-		return Mono.empty();
+			@RequestParam("team") String team, @RequestBody Dashboard dashboard) {
+		return Mono.just(dashboard)
+			.map(d -> {
+				DashboardEntity entity = this.repository.findByTeamAndName(dashboard.getName(), team);
+				log.debug("Existing entity {}", entity);
+				if (entity == null) {
+					entity = DashboardEntity.from(dashboard);
+					log.debug("Created new entity {}", entity);
+				} else {
+					entity.setRepositories(dashboard.getRepositories().stream().map(RepositoryEntity::from).collect(Collectors.toSet()));
+					log.debug("Updated entity {}", entity);
+				}
+				return entity;
+			})
+			.doOnNext(e -> {
+				e.setUsername(oauth2User.getName());
+				this.repository.save(e);
+			})
+			.then();
 	}
 
 	/**
@@ -170,7 +195,7 @@ public class DashboardController {
 						})
 						.collect(Collectors.toList());
 
-				return new Dashboard(view.getName(), view.getDescription(), repositories);
+				return new Dashboard(view.getName(), view.getDescription(), null, repositories);
 			});
 	}
 

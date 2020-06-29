@@ -6,12 +6,14 @@ import { HomeComponent } from './home/home.component';
 import { SettingsComponent } from './settings/settings/settings.component';
 import { DispatchesComponent } from './dispatches/dispatches/dispatches.component';
 import { AddWorkflowComponent } from './dashboard/add-workflow/add-workflow.component';
+import { AddDashboardComponent } from './dashboard/add-dashboard/add-dashboard.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/home'},
   { path: 'cards/:type/:id', component: ActionCardsComponent, canActivate: [AuthGuard] },
   { path: 'cards/:type/:id/addworkflow', component: AddWorkflowComponent, canActivate: [AuthGuard] },
   { path: 'home', component: HomeComponent },
+  { path: 'adddashboard', component: AddDashboardComponent, canActivate: [AuthGuard] },
   { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
   { path: 'dispatches', component: DispatchesComponent, canActivate: [AuthGuard] },
   { path: '**', component: HomeComponent }

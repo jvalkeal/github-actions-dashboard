@@ -1,7 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { State, getGlobalDashboards, getUserDashboards } from '../../dashboard/dashboard.reducer';
-import { ModalNewDashboardComponent } from '../modal-new-dashboard/modal-new-dashboard.component';
+import {
+  State, getGlobalDashboards, getUserDashboards, getTeamDashboards
+} from '../../dashboard/dashboard.reducer';
 
 @Component({
   selector: 'app-left-navi',
@@ -12,19 +13,13 @@ export class LeftNaviComponent implements OnInit {
 
   globalDashboards = this.store.pipe(select(getGlobalDashboards));
   userDashboards = this.store.pipe(select(getUserDashboards));
+  teamDashboards = this.store.pipe(select(getTeamDashboards));
   collapsible = true;
-
-  @ViewChild(ModalNewDashboardComponent)
-  private modal: ModalNewDashboardComponent;
 
   constructor(
     private store: Store<State>
   ) {}
 
   ngOnInit(): void {
-  }
-
-  showNewDashboard(): void {
-    this.modal.open();
   }
 }

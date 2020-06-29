@@ -11,6 +11,11 @@ export const loadUser = createAction(
   props<{ dashboards: Dashboard[] }>()
 );
 
+export const loadTeam = createAction(
+  '[Dashboard] load team',
+  props<{ dashboards: Dashboard[] }>()
+);
+
 export const remove = createAction(
   '[Dashboard] remove',
   props<{ dashboard: Dashboard }>()
@@ -54,6 +59,11 @@ export const removeError = createAction(
 export const save = createAction(
   '[Dashboard] save',
   props<{ dashboard: Dashboard }>()
+);
+
+export const saveTeam = createAction(
+  '[Dashboard] save team',
+  props<{ team: string, dashboard: Dashboard }>()
 );
 
 export const update = createAction(

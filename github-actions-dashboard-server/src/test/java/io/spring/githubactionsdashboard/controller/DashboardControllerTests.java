@@ -60,7 +60,7 @@ public class DashboardControllerTests {
 			.mutateWith(mockOAuth2Login())
 			.post()
 			.uri("/user/dashboards/user")
-			.bodyValue(new Dashboard("foo", "bar", new ArrayList<>()))
+			.bodyValue(new Dashboard("foo", "bar", null, new ArrayList<>()))
 			.exchange()
 			.expectStatus().is2xxSuccessful();
 

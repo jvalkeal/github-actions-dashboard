@@ -202,6 +202,8 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
             return this.api.getGlobalWorkflow(params.id);
           } else if (params.type === 'user') {
             return this.api.getUserWorkflow(params.id);
+          } else if (params.type === 'team') {
+            return this.api.getTeamWorkflow(params.id);
           }
         }),
         map<Repository[], Card[]>(repositories => {

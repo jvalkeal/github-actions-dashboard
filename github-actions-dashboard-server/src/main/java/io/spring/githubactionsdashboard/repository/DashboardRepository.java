@@ -15,6 +15,7 @@
  */
 package io.spring.githubactionsdashboard.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
@@ -40,5 +41,20 @@ public interface DashboardRepository extends CrudRepository<DashboardEntity, Lon
 	 */
 	DashboardEntity findByUsernameAndName(String username, String name);
 
-	// List<DashboardEntity> findByTeamNames(Collection<String> teamNames);
+	/**
+	 * Get dashboard by team id's.
+	 *
+	 * @param teams the team id's
+	 * @return list of team dashboards
+	 */
+	List<DashboardEntity> findByTeamIn(Collection<String> teams);
+
+	/**
+	 * Get dashboard by team and name.
+	 *
+	 * @param team the team name
+	 * @param name the dashboard name
+	 * @return team dashboard
+	 */
+	DashboardEntity findByTeamAndName(String team, String name);
 }

@@ -8,6 +8,7 @@ export const dashboardsFeatureKey = 'dashboards';
 export interface DashboardState {
   global: Dashboard[];
   user: Dashboard[];
+  team: Dashboard[];
   cards: Card[];
 }
 
@@ -23,6 +24,10 @@ export const getUserDashboards = (state: State) => {
   return state[dashboardsFeatureKey].user;
 };
 
+export const getTeamDashboards = (state: State) => {
+  return state[dashboardsFeatureKey].team;
+};
+
 export const getUserDashboard = createSelector(
   getUserDashboards,
   (dashboards: Dashboard[], props: {search: string}) => dashboards.find(({name}) => name === props.search)
@@ -35,6 +40,7 @@ export const getCards = (state: State) => {
 const initialState: DashboardState = {
   global: [],
   user: [],
+  team: [],
   cards: []
 };
 
@@ -69,6 +75,7 @@ export const reducer = createReducer(
     return {
       global: state.global,
       user: mergeDashboards(state.user, [dashboard.dashboard]),
+      team: state.team,
       cards: state.cards
     };
   }),
@@ -76,6 +83,7 @@ export const reducer = createReducer(
     return {
       global: state.global,
       user: removeDashboard(state.user, dashboard.dashboard),
+      team: state.team,
       cards: state.cards
     };
   }),
@@ -83,6 +91,7 @@ export const reducer = createReducer(
     return {
       global: mergeDashboards(state.global, dashboards.dashboards),
       user: state.user,
+      team: state.team,
       cards: state.cards
     };
   }),
@@ -90,6 +99,15 @@ export const reducer = createReducer(
     return {
       global: state.global,
       user: mergeDashboards(state.user, dashboards.dashboards),
+      team: state.team,
+      cards: state.cards
+    };
+  }),
+  on(DashboardActions.loadTeam, (state, dashboards) => {
+    return {
+      global: state.global,
+      user: state.user,
+      team: mergeDashboards(state.team, dashboards.dashboards),
       cards: state.cards
     };
   }),
@@ -97,6 +115,7 @@ export const reducer = createReducer(
     return {
       global: state.global,
       user: state.user,
+      team: state.team,
       cards: props.cards
     };
   }),
@@ -104,6 +123,7 @@ export const reducer = createReducer(
     return {
       global: state.global,
       user: state.user,
+      team: state.team,
       cards: state.cards.filter(c =>
         !(c.repository.owner === props.card.repository.owner && c.repository.name === props.card.repository.name)
       )
