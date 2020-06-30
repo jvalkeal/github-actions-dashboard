@@ -80,7 +80,7 @@ public class DashboardController {
 	@ResponseBody
 	public Flux<Dashboard> getUserDashboards(@AuthenticationPrincipal OAuth2User oauth2User) {
 		return Flux
-			.fromIterable(this.repository.findByUsername(oauth2User.getName()))
+			.fromIterable(this.repository.findByUsernameAndTeamIsNull(oauth2User.getName()))
 			.map(Dashboard::of);
 	}
 
@@ -96,13 +96,13 @@ public class DashboardController {
 		return Mono.just(dashboard)
 			.map(d -> {
 				DashboardEntity entity = this.repository.findByUsernameAndName(oauth2User.getName(), dashboard.getName());
-				log.debug("Existing entity {}", entity);
+				log.debug("Existing user dashboard entity {}", entity);
 				if (entity == null) {
 					entity = DashboardEntity.from(dashboard);
-					log.debug("Created new entity {}", entity);
+					log.debug("Created user dashboard new entity {}", entity);
 				} else {
 					entity.setRepositories(dashboard.getRepositories().stream().map(RepositoryEntity::from).collect(Collectors.toSet()));
-					log.debug("Updated entity {}", entity);
+					log.debug("Updated user dashboard entity {}", entity);
 				}
 				return entity;
 			})
@@ -153,14 +153,14 @@ public class DashboardController {
 			@RequestParam("team") String team, @RequestBody Dashboard dashboard) {
 		return Mono.just(dashboard)
 			.map(d -> {
-				DashboardEntity entity = this.repository.findByTeamAndName(dashboard.getName(), team);
-				log.debug("Existing entity {}", entity);
+				DashboardEntity entity = this.repository.findByTeamAndName(team, dashboard.getName());
+				log.debug("Existing team dashboard entity {}", entity);
 				if (entity == null) {
 					entity = DashboardEntity.from(dashboard);
-					log.debug("Created new entity {}", entity);
+					log.debug("Created team dashboard new entity {}", entity);
 				} else {
 					entity.setRepositories(dashboard.getRepositories().stream().map(RepositoryEntity::from).collect(Collectors.toSet()));
-					log.debug("Updated entity {}", entity);
+					log.debug("Updated team dashboard entity {}", entity);
 				}
 				return entity;
 			})

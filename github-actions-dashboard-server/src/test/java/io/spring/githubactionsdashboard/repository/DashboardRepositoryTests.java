@@ -59,7 +59,7 @@ public class DashboardRepositoryTests {
 		dashboardEntities = StreamSupport.stream(repository.findAll().spliterator(), false).collect(Collectors.toList());
 		assertThat(dashboardEntities).hasSize(2);
 
-		assertThat(repository.findByUsername("user1")).hasSize(2);
+		assertThat(repository.findByUsernameAndTeamIsNull("user1")).hasSize(2);
 		assertThat(repository.findByUsernameAndName("user1", "name1")).isNotNull();
 		assertThat(repository.findByUsernameAndName("user1", "name2")).isNotNull();
 		assertThat(repository.findByUsernameAndName("user1", "name3")).isNull();

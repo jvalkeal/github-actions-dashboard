@@ -6,7 +6,7 @@ import { map, exhaustMap, catchError, switchMap } from 'rxjs/operators';
 import { DashboardService } from '../../app/dashboard/dashboard.service';
 import * as DashboardActions from './dashboard.actions';
 import { State } from '../reducers';
-import { getUserDashboard } from './dashboard.reducer';
+import { getUserDashboard, getTeamDashboard } from './dashboard.reducer';
 import { Dashboard, Repository } from '../api/api.service';
 
 @Injectable()
@@ -29,7 +29,7 @@ export class DashboardEffects {
       ofType(DashboardActions.saveTeam),
       exhaustMap((action) => this.dashboardService.saveTeam(action.team, action.dashboard)
         .pipe(
-          map(aVoid => DashboardActions.ok({dashboard: action.dashboard})),
+          map(aVoid => DashboardActions.saveTeamOk({dashboard: action.dashboard})),
           catchError(() => of(DashboardActions.error({dashboard: action.dashboard})))
         )
       )
@@ -63,6 +63,43 @@ export class DashboardEffects {
         .pipe(
           switchMap(aVoid => [
             DashboardActions.ok({dashboard}),
+            DashboardActions.refreshCard({})
+          ]),
+          catchError(() => of(DashboardActions.error({dashboard})))
+        )
+      )
+    )
+  );
+
+  updateTeamDashboards$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DashboardActions.updateTeam),
+      switchMap((action) => {
+        return this.store.pipe(
+          select(getTeamDashboard, {search: action.dashboard.name})).pipe(
+            map(ud => {
+              console.log('XXX ud', ud);
+              const toMap = new Map<string, Repository>();
+              ud.repositories.forEach(v => toMap.set(v.name, v));
+              action.dashboard.repositories.forEach(v => toMap.set(v.name, v));
+              const repositories: Repository[] = [];
+              toMap.forEach((v, k) => {
+                repositories.push(v);
+              });
+              const dashboard: Dashboard = {
+                name: ud.name,
+                description: ud.description,
+                team: ud.team,
+                repositories
+              };
+              return dashboard;
+            })
+        );
+      }),
+      exhaustMap((dashboard) => this.dashboardService.saveTeam(dashboard.team, dashboard)
+        .pipe(
+          switchMap(aVoid => [
+            DashboardActions.saveTeamOk({dashboard}),
             DashboardActions.refreshCard({})
           ]),
           catchError(() => of(DashboardActions.error({dashboard})))

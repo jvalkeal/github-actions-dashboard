@@ -33,7 +33,8 @@
       <a *ngFor="let d of teamDashboards|async"
         clrVerticalNavLink
         routerLinkActive="active"
-        routerLink="/cards/team/{{d.name}}">
+        routerLink="/cards/team/{{d.name}}"
+        [queryParams]="{team: d.team}">
         {{d.name}}
       </a>
     </clr-vertical-nav-group-children>

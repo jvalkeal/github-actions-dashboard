@@ -71,6 +71,11 @@ export const update = createAction(
   props<{ dashboard: Dashboard }>()
 );
 
+export const updateTeam = createAction(
+  '[Dashboard] update team',
+  props<{ dashboard: Dashboard }>()
+);
+
 export const error = createAction(
   '[Dashboard] update error',
   props<{ dashboard: Dashboard }>()
@@ -78,5 +83,10 @@ export const error = createAction(
 
 export const ok = createAction(
   '[Dashboard] update ok',
+  props<{ dashboard: Dashboard }>()
+);
+
+export const saveTeamOk = createAction(
+  '[Dashboard] save team ok',
   props<{ dashboard: Dashboard }>()
 );

@@ -33,6 +33,11 @@ export const getUserDashboard = createSelector(
   (dashboards: Dashboard[], props: {search: string}) => dashboards.find(({name}) => name === props.search)
 );
 
+export const getTeamDashboard = createSelector(
+  getTeamDashboards,
+  (dashboards: Dashboard[], props: {search: string}) => dashboards.find(({name}) => name === props.search)
+);
+
 export const getCards = (state: State) => {
   return state[dashboardsFeatureKey].cards;
 };
@@ -76,6 +81,14 @@ export const reducer = createReducer(
       global: state.global,
       user: mergeDashboards(state.user, [dashboard.dashboard]),
       team: state.team,
+      cards: state.cards
+    };
+  }),
+  on(DashboardActions.saveTeamOk, (state, dashboard) => {
+    return {
+      global: state.global,
+      user: state.user,
+      team: mergeDashboards(state.team, [dashboard.dashboard]),
       cards: state.cards
     };
   }),

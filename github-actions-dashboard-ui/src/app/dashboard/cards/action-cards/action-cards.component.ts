@@ -10,7 +10,7 @@ import { getCards } from '../../dashboard.reducer';
 import { setCards } from '../../dashboard.actions';
 import { PrStates } from '../action-card/action-card.component';
 import * as DashboardActions from '../../dashboard.actions';
-import { selectRouteParams } from '../../../../app/reducers';
+import { selectRouteParams, selectQueryParams } from '../../../../app/reducers';
 
 @Component({
   selector: 'app-action-cards',
@@ -44,6 +44,7 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
   ) {}
 
   cardType = this.store.pipe(select(selectRouteParams)).pipe(map(params => params.type));
+  team = this.store.pipe(select(selectQueryParams)).pipe(map(params => params.team));
 
   ngOnInit() {
     this.refreshSub = combineLatest([
@@ -203,7 +204,10 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
           } else if (params.type === 'user') {
             return this.api.getUserWorkflow(params.id);
           } else if (params.type === 'team') {
-            return this.api.getTeamWorkflow(params.id);
+            return  this.team.pipe(
+              switchMap(t => this.api.getTeamWorkflow(params.id, t))
+            );
+            // return this.api.getTeamWorkflow(params.id, '');
           }
         }),
         map<Repository[], Card[]>(repositories => {

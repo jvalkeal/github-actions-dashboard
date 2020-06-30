@@ -169,8 +169,9 @@ export class ApiService {
       );
   }
 
-  getTeamWorkflow(name: string): Observable<Repository[]> {
-    return this.http.get<Repository[]>('/api/github/dashboard/team/' + name)
+  getTeamWorkflow(name: string, team: string): Observable<Repository[]> {
+    const params = new HttpParams().set('team', team);
+    return this.http.get<Repository[]>('/api/github/dashboard/team/' + name, { params })
       .pipe(
         tap(repos => {
           repos.forEach(repo => {
