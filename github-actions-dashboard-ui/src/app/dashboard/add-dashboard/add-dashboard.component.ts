@@ -54,7 +54,7 @@ export class AddDashboardComponent implements OnInit {
         team: this.selectedTeam.combinedSlug,
         dashboard: { name: this.name, team: this.selectedTeam.combinedSlug, description: '', repositories: []}
       }));
-      this.router.navigate(['/cards/team/' + this.name]);
+      this.router.navigate(['/cards/team/' + this.name], { queryParams: {team: this.selectedTeam.combinedSlug}});
     } else {
       this.store.dispatch(save({
         dashboard: { name: this.name, description: '', repositories: []}

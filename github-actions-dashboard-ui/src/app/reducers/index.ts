@@ -34,7 +34,8 @@ export const {
   selectCurrentRoute,
   selectRouteParam,
   selectRouteParams,
-  selectQueryParams
+  selectQueryParams,
+  selectRouteData
 } = fromRouter.getSelectors(selectRouter);
 
 function logger(reducer: ActionReducer<State>): ActionReducer<State> {

@@ -122,12 +122,10 @@ public class GithubApiController {
 
 	@RequestMapping(path = "/dashboard/team/{name}")
 	@ResponseBody
-	public Flux<Repository> dashboardTeam(@PathVariable("name") String name, @RequestParam("team") String team, @AuthenticationPrincipal OAuth2User oauth2User) {
+	public Flux<Repository> dashboardTeam(@PathVariable("name") String name, @RequestParam("team") String team,
+			@AuthenticationPrincipal OAuth2User oauth2User) {
 		String username = oauth2User.getName();
 		log.debug("Getting repositories for team {} name {} with user {}", team, name, username);
-
-		// dashboardRepository.findByTeamAndName(team, name)
-
 		return Mono.fromSupplier(() -> dashboardRepository.findByTeamAndName(team, name))
 			.flatMap(e -> {
 				List<Workflow> workflows = e.getRepositories().stream().map(re -> {
@@ -143,6 +141,5 @@ public class GithubApiController {
 				return Mono.just(workflows);
 			})
 			.flatMapMany(workflows -> this.api.branchAndPrWorkflows(workflows));
-		// return Flux.empty();
 	}
 }

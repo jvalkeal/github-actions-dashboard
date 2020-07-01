@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Store, select } from '@ngrx/store';
+import { Store, select, createSelector } from '@ngrx/store';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Subscription, timer, combineLatest } from 'rxjs';
 import { switchMap, map, tap, take } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { getCards } from '../../dashboard.reducer';
 import { setCards } from '../../dashboard.actions';
 import { PrStates } from '../action-card/action-card.component';
 import * as DashboardActions from '../../dashboard.actions';
-import { selectRouteParams, selectQueryParams } from '../../../../app/reducers';
+import { selectRouteParams, selectQueryParams, selectRouteData } from '../../../../app/reducers';
 
 @Component({
   selector: 'app-action-cards',
@@ -78,14 +78,38 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
   }
 
   deleteDashboard(): void {
-    this.store.pipe(select(selectRouteParams)).pipe(
+    // const asdf = select(selectRouteData).pipe(t);
+    // const xxx = this.store.pipe(select(selectRouteParams, selectQueryParams)).pipe(tap( p1,p2 => {} ));
+
+    const xxx1 = createSelector(selectRouteParams, selectQueryParams, (r, q) => {
+      return { id: r.id, team: q.team};
+    } );
+    // const xxx2 = this.store.pipe(select(xxx1)).pipe(tap(d => {
+    //   const ddd = d.foo;
+    // }));
+
+    this.store.pipe(select(xxx1)).pipe(
       take(1),
       tap(params => {
         if (params.id) {
-          this.store.dispatch(DashboardActions.remove({ dashboard: { name: params.id, description: '', repositories: []} }));
+          if (params.team) {
+            this.store.dispatch(DashboardActions.removeTeam({ team: params.team, dashboard: { name: params.id, description: '', repositories: []} }));
+          } else {
+            this.store.dispatch(DashboardActions.remove({ dashboard: { name: params.id, description: '', repositories: []} }));
+          }
         }
       })
     ).subscribe();
+
+
+    // this.store.pipe(select(selectRouteParams)).pipe(
+    //   take(1),
+    //   tap(params => {
+    //     if (params.id) {
+    //       this.store.dispatch(DashboardActions.remove({ dashboard: { name: params.id, description: '', repositories: []} }));
+    //     }
+    //   })
+    // ).subscribe();
   }
 
   addWorkflow(): void {

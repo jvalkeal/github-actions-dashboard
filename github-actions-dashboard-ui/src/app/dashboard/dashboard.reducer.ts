@@ -100,6 +100,14 @@ export const reducer = createReducer(
       cards: state.cards
     };
   }),
+  on(DashboardActions.removeTeamOk, (state, dashboard) => {
+    return {
+      global: state.global,
+      user: state.user,
+      team: removeDashboard(state.team, dashboard.dashboard),
+      cards: state.cards
+    };
+  }),
   on(DashboardActions.loadGlobal, (state, dashboards) => {
     return {
       global: mergeDashboards(state.global, dashboards.dashboards),

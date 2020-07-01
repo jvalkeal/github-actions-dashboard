@@ -180,8 +180,13 @@ public class DashboardController {
 	 */
 	@RequestMapping(path = "/team", method = RequestMethod.DELETE)
 	public Mono<Void> deleteTeamDashboard(@AuthenticationPrincipal OAuth2User oauth2User,
-			@RequestParam("name") String name) {
-		return Mono.empty();
+			@RequestParam("name") String name, @RequestParam("team") String team) {
+		log.debug("Deleting team dashboard {} {}", name, team);
+		return Mono.defer(() -> Mono.justOrEmpty(this.repository.findByTeamAndName(team, name)))
+			.doOnNext(e -> {
+				this.repository.delete(e);
+			})
+			.then();
 	}
 
 	private Flux<Dashboard> globals() {

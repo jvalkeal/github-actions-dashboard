@@ -65,6 +65,15 @@ export class ApiService {
       );
   }
 
+  removeTeamDashboard(team: string ,dashboard: Dashboard): Observable<void> {
+    const params = new HttpParams().set('name', dashboard.name).set('team', team);
+    return this.http.delete<HttpResponse<string>>('/user/dashboards/team', { params })
+      .pipe(
+        map(r => undefined),
+        (catchError(() => EMPTY))
+      );
+  }
+
   sendDispatch(owner: string, name: string, eventType: string, clientPayload: any): Observable<void> {
     const p = typeof clientPayload === 'string' ? JSON.parse(clientPayload) : clientPayload;
     const params = new HttpParams().set('owner', owner).set('name', name);

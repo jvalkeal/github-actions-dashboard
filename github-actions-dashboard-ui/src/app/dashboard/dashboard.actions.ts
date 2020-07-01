@@ -21,6 +21,16 @@ export const remove = createAction(
   props<{ dashboard: Dashboard }>()
 );
 
+export const removeTeam = createAction(
+  '[Dashboard] remove team',
+  props<{ team: string, dashboard: Dashboard }>()
+);
+
+export const removeTeamOk = createAction(
+  '[Dashboard] remove team',
+  props<{ team: string, dashboard: Dashboard }>()
+);
+
 export const removeCard = createAction(
   '[Dashboard] remove card',
   props<{ dashboard: Dashboard, card: Card }>()

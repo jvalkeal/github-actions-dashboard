@@ -120,6 +120,18 @@ export class DashboardEffects {
     )
   );
 
+  removeTeamDashboards$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DashboardActions.removeTeam),
+      exhaustMap((dashboard) => this.dashboardService.removeTeam(dashboard.team, dashboard.dashboard)
+        .pipe(
+          map(aVoid => DashboardActions.removeTeamOk({team: dashboard.team, dashboard: dashboard.dashboard})),
+          catchError(() => of(DashboardActions.removeError({dashboard: dashboard.dashboard})))
+        )
+      )
+    )
+  );
+
   @Effect({ dispatch: true })
   removeCard$ = this.actions$.pipe(
     ofType(DashboardActions.removeCard),

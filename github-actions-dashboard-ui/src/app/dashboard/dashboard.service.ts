@@ -49,6 +49,10 @@ export class DashboardService {
     return this.api.removeDashboard(dashboard);
   }
 
+  removeTeam(team: string, dashboard: Dashboard): Observable<void> {
+    return this.api.removeTeamDashboard(team, dashboard);
+  }
+
   teams(): Observable<Team[]> {
     return this.api.getTeams();
   }
