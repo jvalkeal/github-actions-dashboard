@@ -113,7 +113,7 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
   }
 
   addWorkflow(): void {
-    this.router.navigate(['addworkflow'], {relativeTo: this.route});
+    this.router.navigate(['addworkflow'], {relativeTo: this.route, queryParamsHandling: 'merge'});
   }
 
   public checkRunStyle(checkRun: CheckRun): string {
