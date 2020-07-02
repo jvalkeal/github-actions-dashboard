@@ -53,10 +53,10 @@ function mergeDashboards(left: Dashboard[], right: Dashboard[]): Dashboard[] {
   const to = [];
   const toMap = new Map<string, Dashboard>();
   left.forEach(v => {
-    toMap.set(v.name, v);
+    toMap.set(v.name + (v.team ? v.team : ''), v);
   });
   right.forEach(v => {
-    toMap.set(v.name, v);
+    toMap.set(v.name + (v.team ? v.team : ''), v);
   });
   toMap.forEach((v, k) => {
     to.push(v);
@@ -67,8 +67,14 @@ function mergeDashboards(left: Dashboard[], right: Dashboard[]): Dashboard[] {
 function removeDashboard(dashboards: Dashboard[], dashboard: Dashboard): Dashboard[] {
   const to = [];
   dashboards.forEach( (item, index) => {
-    if (item.name !== dashboard.name) {
-      to.push(item);
+    if (item.team) {
+      if (item.name + (item.team ? item.team : '') !== dashboard.name + (dashboard.team ? dashboard.team : '')) {
+        to.push(item);
+      }
+    } else {
+      if (item.name !== dashboard.name) {
+        to.push(item);
+      }
     }
   });
   return to;

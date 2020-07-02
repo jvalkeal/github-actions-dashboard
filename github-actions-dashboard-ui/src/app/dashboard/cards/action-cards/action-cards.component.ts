@@ -93,7 +93,7 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
       tap(params => {
         if (params.id) {
           if (params.team) {
-            this.store.dispatch(DashboardActions.removeTeam({ team: params.team, dashboard: { name: params.id, description: '', repositories: []} }));
+            this.store.dispatch(DashboardActions.removeTeam({ team: params.team, dashboard: { team: params.team, name: params.id, description: '', repositories: []} }));
           } else {
             this.store.dispatch(DashboardActions.remove({ dashboard: { name: params.id, description: '', repositories: []} }));
           }
