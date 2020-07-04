@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { User } from '../../api/api.service';
 import { AuthService } from '../../auth/auth.service';
 import { SettingsService } from '../../settings/settings.service';
 import { DashboardService } from '../../dashboard/dashboard.service';
@@ -40,6 +39,7 @@ export class UserHeaderActionComponent implements OnInit, OnDestroy {
       this.settingsService.load().pipe(take(1)).subscribe();
       this.dashboardService.loadGlobal().pipe(take(1)).subscribe();
       this.dashboardService.loadUser().pipe(take(1)).subscribe();
+      this.dashboardService.loadTeam().pipe(take(1)).subscribe();
       this.dispatchesService.refresh();
     }));
   }

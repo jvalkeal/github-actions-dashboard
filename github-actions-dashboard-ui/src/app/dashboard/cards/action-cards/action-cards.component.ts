@@ -10,7 +10,8 @@ import { getCards } from '../../dashboard.reducer';
 import { setCards } from '../../dashboard.actions';
 import { PrStates } from '../action-card/action-card.component';
 import * as DashboardActions from '../../dashboard.actions';
-import { selectRouteParams } from '../../../../app/reducers';
+import { selectRouteParams, selectQueryParams } from '../../../../app/reducers';
+import { selectCardsRouteIdAndTeam } from '../../../reducers/router.selectors';
 
 @Component({
   selector: 'app-action-cards',
@@ -22,6 +23,9 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
   cards = this.store.pipe(select(getCards));
   cardsActive = true;
   loading = false;
+  cardType = this.store.pipe(select(selectRouteParams)).pipe(map(params => params.type));
+  team = this.store.pipe(select(selectQueryParams)).pipe(map(params => params.team));
+
   private timerSub: Subscription;
   private refreshSub: Subscription;
   private refreshSetting = this.store.pipe(select(getRefreshSetting));
@@ -42,8 +46,6 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
     private actions$: Actions,
     private router: Router
   ) {}
-
-  cardType = this.store.pipe(select(selectRouteParams)).pipe(map(params => params.type));
 
   ngOnInit() {
     this.refreshSub = combineLatest([
@@ -77,18 +79,30 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
   }
 
   deleteDashboard(): void {
-    this.store.pipe(select(selectRouteParams)).pipe(
+    this.store.pipe(select(selectCardsRouteIdAndTeam)).pipe(
       take(1),
       tap(params => {
         if (params.id) {
-          this.store.dispatch(DashboardActions.remove({ dashboard: { name: params.id, description: '', repositories: []} }));
+          if (params.team) {
+            this.store.dispatch(DashboardActions.removeTeam(
+              { team: params.team,
+                dashboard: { team: params.team, name: params.id, description: '', repositories: [] }
+              }
+            ));
+          } else {
+            this.store.dispatch(DashboardActions.remove(
+              {
+                dashboard: { name: params.id, description: '', repositories: [] }
+              }
+            ));
+          }
         }
       })
     ).subscribe();
   }
 
   addWorkflow(): void {
-    this.router.navigate(['addworkflow'], {relativeTo: this.route});
+    this.router.navigate(['addworkflow'], {relativeTo: this.route, queryParamsHandling: 'merge'});
   }
 
   public checkRunStyle(checkRun: CheckRun): string {
@@ -202,6 +216,10 @@ export class ActionCardsComponent implements OnInit, OnDestroy {
             return this.api.getGlobalWorkflow(params.id);
           } else if (params.type === 'user') {
             return this.api.getUserWorkflow(params.id);
+          } else if (params.type === 'team') {
+            return  this.team.pipe(
+              switchMap(t => this.api.getTeamWorkflow(params.id, t))
+            );
           }
         }),
         map<Repository[], Card[]>(repositories => {

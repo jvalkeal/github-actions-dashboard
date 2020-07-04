@@ -20,6 +20,7 @@ import java.util.List;
 import io.spring.githubactionsdashboard.config.DashboardProperties.Workflow;
 import io.spring.githubactionsdashboard.domain.Repository;
 import io.spring.githubactionsdashboard.domain.RepositoryDispatchRequest;
+import io.spring.githubactionsdashboard.domain.Team;
 import io.spring.githubactionsdashboard.domain.User;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -65,4 +66,11 @@ public interface GithubApi {
 	 * @return mono for completion
 	 */
 	Mono<Void> dispatch(String user, String repo, RepositoryDispatchRequest request);
+
+	/**
+	 * Get teams user belongs to.
+	 *
+	 * @return the user teams
+	 */
+	Flux<Team> teams();
 }

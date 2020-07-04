@@ -9,8 +9,8 @@
   <div class="clr-row clr-justify-content-between clr-align-items-center">
     <div>
       <button class="btn btn-outline" (click)="refreshCards()">Refresh</button>
-      <button *ngIf="(cardType|async) === 'user'" class="btn btn-outline" (click)="deleteDashboard()">Delete</button>
-      <button *ngIf="(cardType|async) === 'user'" class="btn btn-outline" (click)="addWorkflow()">Add Workflow</button>
+      <button *ngIf="(cardType|async) !== 'global'" class="btn btn-outline" (click)="deleteDashboard()">Delete</button>
+      <button *ngIf="(cardType|async) !== 'global'" class="btn btn-outline" (click)="addWorkflow()">Add Workflow</button>
     </div>
     <div>
       <a style="display: flex; cursor: pointer;">

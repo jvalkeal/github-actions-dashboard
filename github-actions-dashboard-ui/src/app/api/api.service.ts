@@ -32,6 +32,13 @@ export class ApiService {
       );
   }
 
+  getTeamDashboards(): Observable<Dashboard[]> {
+    return this.http.get<Dashboard[]>('/user/dashboards/team')
+      .pipe(
+        (catchError(() => EMPTY))
+      );
+  }
+
   saveDashboard(dashboard: Dashboard): Observable<void> {
     return this.http.post<HttpResponse<string>>('/user/dashboards/user', dashboard)
       .pipe(
@@ -43,6 +50,24 @@ export class ApiService {
   removeDashboard(dashboard: Dashboard): Observable<void> {
     const params = new HttpParams().set('name', dashboard.name);
     return this.http.delete<HttpResponse<string>>('/user/dashboards/user', { params })
+      .pipe(
+        map(r => undefined),
+        (catchError(() => EMPTY))
+      );
+  }
+
+  saveTeamDashboard(team: string, dashboard: Dashboard): Observable<void> {
+    const params = new HttpParams().set('team', team);
+    return this.http.post<HttpResponse<string>>('/user/dashboards/team', dashboard, { params })
+      .pipe(
+        map(r => undefined),
+        (catchError(() => EMPTY))
+      );
+  }
+
+  removeTeamDashboard(team: string ,dashboard: Dashboard): Observable<void> {
+    const params = new HttpParams().set('name', dashboard.name).set('team', team);
+    return this.http.delete<HttpResponse<string>>('/user/dashboards/team', { params })
       .pipe(
         map(r => undefined),
         (catchError(() => EMPTY))
@@ -153,6 +178,30 @@ export class ApiService {
       );
   }
 
+  getTeamWorkflow(name: string, team: string): Observable<Repository[]> {
+    const params = new HttpParams().set('team', team);
+    return this.http.get<Repository[]>('/api/github/dashboard/team/' + name, { params })
+      .pipe(
+        tap(repos => {
+          repos.forEach(repo => {
+            repo.errors.forEach(error => {
+              this.alertsService.add({
+                id: `repository-${repo.url}`,
+                alertType: 'warning',
+                text: `Unable to access repo ${repo.url}, maybe you need to login to org.`,
+                fixCommand: 'login-to-repo',
+                fixCommandRepo: repo.url
+              });
+            });
+          });
+        }),
+        (catchError(() => {
+          this.store.dispatch(unauthorised());
+          return EMPTY;
+        }))
+      );
+  }
+
   getWorkflows(): Observable<Repository[]> {
     return this.http.get<Repository[]>('/api/github/workflows').pipe((catchError(() => EMPTY)));
   }
@@ -195,6 +244,10 @@ export class ApiService {
     );
   }
 
+  getTeams(): Observable<Team[]> {
+    const response = this.http.get<Team[]>('/api/github/teams');
+    return response.pipe(map(data => data));
+  }
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
@@ -213,6 +266,11 @@ export class ApiService {
     //   'Something bad happened; please try again later.');
   }
 
+}
+
+export interface Team {
+  name: string;
+  combinedSlug: string;
 }
 
 export interface Setting {
@@ -266,6 +324,7 @@ export interface Card {
 export interface Dashboard {
   name: string;
   description: string;
+  team?: string;
   repositories: Repository[];
 }
 

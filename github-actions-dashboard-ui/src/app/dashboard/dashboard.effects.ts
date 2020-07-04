@@ -6,7 +6,7 @@ import { map, exhaustMap, catchError, switchMap } from 'rxjs/operators';
 import { DashboardService } from '../../app/dashboard/dashboard.service';
 import * as DashboardActions from './dashboard.actions';
 import { State } from '../reducers';
-import { getUserDashboard } from './dashboard.reducer';
+import { getUserDashboard, getTeamDashboard } from './dashboard.reducer';
 import { Dashboard, Repository } from '../api/api.service';
 
 @Injectable()
@@ -18,6 +18,18 @@ export class DashboardEffects {
       exhaustMap((action) => this.dashboardService.save(action.dashboard)
         .pipe(
           map(aVoid => DashboardActions.ok({dashboard: action.dashboard})),
+          catchError(() => of(DashboardActions.error({dashboard: action.dashboard})))
+        )
+      )
+    )
+  );
+
+  saveTeamDashboards$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DashboardActions.saveTeam),
+      exhaustMap((action) => this.dashboardService.saveTeam(action.team, action.dashboard)
+        .pipe(
+          map(aVoid => DashboardActions.saveTeamOk({dashboard: action.dashboard})),
           catchError(() => of(DashboardActions.error({dashboard: action.dashboard})))
         )
       )
@@ -59,12 +71,60 @@ export class DashboardEffects {
     )
   );
 
+  updateTeamDashboards$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DashboardActions.updateTeam),
+      switchMap((action) => {
+        return this.store.pipe(
+          select(getTeamDashboard, {search: action.dashboard.name})).pipe(
+            map(ud => {
+              const toMap = new Map<string, Repository>();
+              ud.repositories.forEach(v => toMap.set(v.name, v));
+              action.dashboard.repositories.forEach(v => toMap.set(v.name, v));
+              const repositories: Repository[] = [];
+              toMap.forEach((v, k) => {
+                repositories.push(v);
+              });
+              const dashboard: Dashboard = {
+                name: ud.name,
+                description: ud.description,
+                team: ud.team,
+                repositories
+              };
+              return dashboard;
+            })
+        );
+      }),
+      exhaustMap((dashboard) => this.dashboardService.saveTeam(dashboard.team, dashboard)
+        .pipe(
+          switchMap(aVoid => [
+            DashboardActions.saveTeamOk({dashboard}),
+            DashboardActions.refreshCard({})
+          ]),
+          catchError(() => of(DashboardActions.error({dashboard})))
+        )
+      )
+    )
+  );
+
   removeDashboards$ = createEffect(() =>
     this.actions$.pipe(
       ofType(DashboardActions.remove),
       exhaustMap((dashboard) => this.dashboardService.remove(dashboard.dashboard)
         .pipe(
           map(aVoid => DashboardActions.removeOk({dashboard: dashboard.dashboard})),
+          catchError(() => of(DashboardActions.removeError({dashboard: dashboard.dashboard})))
+        )
+      )
+    )
+  );
+
+  removeTeamDashboards$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DashboardActions.removeTeam),
+      exhaustMap((dashboard) => this.dashboardService.removeTeam(dashboard.team, dashboard.dashboard)
+        .pipe(
+          map(aVoid => DashboardActions.removeTeamOk({team: dashboard.team, dashboard: dashboard.dashboard})),
           catchError(() => of(DashboardActions.removeError({dashboard: dashboard.dashboard})))
         )
       )

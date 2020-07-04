@@ -35,6 +35,7 @@ import io.spring.githubactionsdashboard.domain.PullRequest;
 import io.spring.githubactionsdashboard.domain.Repository;
 import io.spring.githubactionsdashboard.domain.RepositoryDispatch;
 import io.spring.githubactionsdashboard.domain.RepositoryDispatchRequest;
+import io.spring.githubactionsdashboard.domain.Team;
 import io.spring.githubactionsdashboard.domain.User;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -123,6 +124,21 @@ public class DefaultGithubApi implements GithubApi {
 				});
 				Collections.sort(repos);
 				return Flux.fromIterable(repos);
+			});
+	}
+
+	@Override
+	public Flux<Team> teams() {
+		UserTeamsQuery query = UserTeamsQuery.builder().build();
+		return githubGraphqlClient.query(query)
+			.flatMapMany(data -> {
+				List<Team> teams = new ArrayList<>();
+				data.viewer().organizations().nodes().forEach(orgNode -> {
+					orgNode.teams().nodes().forEach(teamNode -> {
+						teams.add(new Team(teamNode.name(), teamNode.combinedSlug(), teamNode.databaseId()));
+					});
+				});
+				return Flux.fromIterable(teams);
 			});
 	}
 
