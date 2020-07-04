@@ -37,7 +37,7 @@
       <clr-step-content *clrIfExpanded>
         <clr-input-container>
           <label>Name</label>
-          <input clrInput formControlName="name" [(ngModel)]="name" required />
+          <input clrInput formControlName="name" required />
           <clr-control-helper>Valid name</clr-control-helper>
           <clr-control-error *clrIfError="'required'">Missing dashboard name</clr-control-error>
           <clr-control-error *clrIfError="'duplicateUserDashboardName'">Duplicate user dashboard name</clr-control-error>

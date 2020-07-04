@@ -126,8 +126,6 @@ export class AddWorkflowComponent implements OnInit, OnDestroy {
   }
 
   submit(): void {
-    console.log('XXX sub', this.type);
-    console.log('XXX dashboardName', this.dashboardName);
     if (this.type === 'user') {
       this.store.dispatch(
         update({
@@ -153,7 +151,6 @@ export class AddWorkflowComponent implements OnInit, OnDestroy {
           dashboard: {
             name: this.dashboardName,
             description: '',
-            // team: '',
             repositories: [{
               owner: this.selectedRepository.owner,
               name: this.selectedRepository.name,

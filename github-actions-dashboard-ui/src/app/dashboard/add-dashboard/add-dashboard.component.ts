@@ -21,7 +21,6 @@ import { DashboardService } from '../dashboard.service';
 export class AddDashboardComponent implements OnInit {
 
   form: FormGroup;
-  name = '';
   loading = false;
   selectedTeamx: Team;
   teams = this.dashboardService.teams();
@@ -41,6 +40,10 @@ export class AddDashboardComponent implements OnInit {
     return this.selectedTeamx;
   }
 
+  get name(): string {
+    return this.nameControl.value;
+  }
+
   private nameControl: FormControl;
 
   constructor(
@@ -52,7 +55,7 @@ export class AddDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.nameControl = new FormControl(
-      this.name,
+      '',
       Validators.required,
       existingNameValidator(this.userDashboards$, this.teamDashboards$, () => this.selectedTeam));
     this.form = this.formBuilder.group({
@@ -70,14 +73,14 @@ export class AddDashboardComponent implements OnInit {
     if (this.selectedTeam) {
       this.store.dispatch(saveTeam({
         team: this.selectedTeam.combinedSlug,
-        dashboard: { name: this.name, team: this.selectedTeam.combinedSlug, description: '', repositories: []}
+        dashboard: { name: this.nameControl.value, team: this.selectedTeam.combinedSlug, description: '', repositories: []}
       }));
-      this.router.navigate(['/cards/team/' + this.name], { queryParams: {team: this.selectedTeam.combinedSlug}});
+      this.router.navigate(['/cards/team/' + this.nameControl.value], { queryParams: {team: this.selectedTeam.combinedSlug}});
     } else {
       this.store.dispatch(save({
-        dashboard: { name: this.name, description: '', repositories: []}
+        dashboard: { name: this.nameControl.value, description: '', repositories: []}
       }));
-      this.router.navigate(['/cards/user/' + this.name]);
+      this.router.navigate(['/cards/user/' + this.nameControl.value]);
     }
   }
 }
