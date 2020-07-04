@@ -193,7 +193,10 @@ public class DashboardController {
 				List<Repository> repositories = view.getWorkflows().stream()
 						.map(workFlow -> {
 							List<Branch> branches = workFlow.getBranches().stream().map(b -> Branch.of(b, null)).collect(Collectors.toList());
-							List<RepositoryDispatch> dispatches = workFlow.getDispatches().stream().map(d -> RepositoryDispatch.of(d.getName(), d.getEventType(), d.getClientPayload())).collect(Collectors.toList());
+							List<RepositoryDispatch> dispatches = workFlow.getDispatches().stream()
+									.map(d -> RepositoryDispatch.of(d.getName(), null, d.getEventType(),
+											d.getClientPayload()))
+									.collect(Collectors.toList());
 							return Repository.of(workFlow.getOwner(), workFlow.getName(), workFlow.getTitle(), repoUrl(workFlow), branches, null, dispatches, null);
 						})
 						.collect(Collectors.toList());

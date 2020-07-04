@@ -2,13 +2,12 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   FormGroup, FormControl, Validators, AsyncValidatorFn, AbstractControl, ValidationErrors
 } from '@angular/forms';
-import { Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { ClrForm, ClrWizard } from '@clr/angular';
 import { take, map } from 'rxjs/operators';
-import { State } from '../dispatches.reducer';
 import { DispatchesService } from '../dispatches.service';
-import { Dispatch } from '../../api/api.service';
+import { Dispatch, Team } from '../../api/api.service';
+import { ChooseTeamComponent } from 'src/app/shared/choose-team/choose-team.component';
 
 @Component({
   selector: 'app-modal-new-dispatch',
@@ -34,6 +33,13 @@ export class ModalNewDispatchComponent implements OnInit {
   @ViewChild(ClrWizard)
   private wizard: ClrWizard;
 
+  @ViewChild(ChooseTeamComponent, {static: true})
+  private chooseTeam: ChooseTeamComponent;
+
+  get selectedTeam(): Team {
+    return this.chooseTeam?.selectedTeam;
+  }
+
   constructor(
     private dispatchesService: DispatchesService
   ) { }
@@ -56,6 +62,10 @@ export class ModalNewDispatchComponent implements OnInit {
     });
   }
 
+  loadTeams(): void {
+    this.chooseTeam.loadTeams();
+  }
+
   open(): void {
     this.show = true;
     this.clrForm.markAsTouched();
@@ -68,6 +78,7 @@ export class ModalNewDispatchComponent implements OnInit {
   doFinish(): void {
     this.dispatchesService.updateAction({
       name: this.name,
+      team: this.chooseTeam?.selectedTeam?.combinedSlug,
       eventType: this.type,
       clientPayload: this.payload
     });

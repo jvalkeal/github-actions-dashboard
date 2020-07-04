@@ -15,6 +15,7 @@
  */
 package io.spring.githubactionsdashboard.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
@@ -35,7 +36,7 @@ public interface RepositoryDispatchRepository extends CrudRepository<RepositoryD
 	 * @param username the username
 	 * @return list of user dispatch templates
 	 */
-	List<RepositoryDispatchEntity> findByUsername(String username);
+	List<RepositoryDispatchEntity> findByUsernameAndTeamIsNull(String username);
 
 	/**
 	 * Get a user dispatch by name.
@@ -44,5 +45,22 @@ public interface RepositoryDispatchRepository extends CrudRepository<RepositoryD
 	 * @param name the name
 	 * @return user dispatch template
 	 */
-	RepositoryDispatchEntity findByUsernameAndName(String username, String name);
+	RepositoryDispatchEntity findByUsernameAndNameAndTeamIsNull(String username, String name);
+
+	/**
+	 * Get dispatches by team id's.
+	 *
+	 * @param teams the team id's
+	 * @return list of team dispatches
+	 */
+	List<RepositoryDispatchEntity> findByTeamIn(Collection<String> teams);
+
+	/**
+	 * Get dispatch by team and name.
+	 *
+	 * @param team the team name
+	 * @param name the name
+	 * @return team dispatch
+	 */
+	RepositoryDispatchEntity findByTeamAndName(String team, String name);
 }

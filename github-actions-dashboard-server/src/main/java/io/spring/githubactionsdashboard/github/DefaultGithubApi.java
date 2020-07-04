@@ -186,7 +186,7 @@ public class DefaultGithubApi implements GithubApi {
 				}
 
 				List<RepositoryDispatch> dispatches = tuple.getT1().getDispatches().stream()
-						.map(d -> RepositoryDispatch.of(d.getName(), d.getEventType(), d.getClientPayload()))
+						.map(d -> RepositoryDispatch.of(d.getName(), null, d.getEventType(), d.getClientPayload()))
 						.collect(Collectors.toList());
 				log.debug("Dispatches {}", dispatches);
 

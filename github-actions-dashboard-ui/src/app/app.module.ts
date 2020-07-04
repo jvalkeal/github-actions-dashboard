@@ -28,6 +28,7 @@ import { AlertsEffects } from './alerts/alerts.effects';
 import { ModalSendDispatchComponent } from './dispatches/modal-send-dispatch/modal-send-dispatch.component';
 import { AddWorkflowComponent } from './dashboard/add-workflow/add-workflow.component';
 import { AddDashboardComponent } from './dashboard/add-dashboard/add-dashboard.component';
+import { ChooseTeamComponent } from './shared/choose-team/choose-team.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { AddDashboardComponent } from './dashboard/add-dashboard/add-dashboard.c
     AlertsComponent,
     ModalSendDispatchComponent,
     AddWorkflowComponent,
-    AddDashboardComponent
+    AddDashboardComponent,
+    ChooseTeamComponent
   ],
   imports: [
     BrowserModule,

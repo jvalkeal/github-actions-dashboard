@@ -42,10 +42,15 @@ function updateDispatches(dispatches: Dispatch[], dispatch: Dispatch): Dispatch[
     if (v.name === dispatch.name) {
       to.push({
         name: v.name,
+        team: v.team,
         eventType: dispatch.eventType,
         clientPayload: dispatch.clientPayload ? JSON.parse(dispatch.clientPayload) : undefined });
     } else {
-      to.push({ name: v.name, eventType: v.eventType, clientPayload: v.clientPayload });
+      to.push({
+        name: v.name,
+        team: v.team,
+        eventType: v.eventType,
+        clientPayload: v.clientPayload });
     }
   });
   return to;

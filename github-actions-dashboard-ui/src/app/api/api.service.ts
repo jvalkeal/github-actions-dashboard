@@ -95,7 +95,10 @@ export class ApiService {
   }
 
   updateDispatch(dispatch: Dispatch): Observable<void> {
-    const params = new HttpParams().set('name', dispatch.name).set('eventType', dispatch.eventType);
+    let params = new HttpParams().set('name', dispatch.name).set('eventType', dispatch.eventType);
+    if (dispatch.team) {
+      params = params.set('team', dispatch.team);
+    }
     return this.http.post<HttpResponse<string>>('/user/dispatches', dispatch.clientPayload, { params })
       .pipe(
         map(r => undefined),
@@ -104,7 +107,10 @@ export class ApiService {
   }
 
   removeDispatch(dispatch: Dispatch): Observable<void> {
-    const params = new HttpParams().set('name', dispatch.name);
+    let params = new HttpParams().set('name', dispatch.name);
+    if (dispatch.team) {
+      params = params.set('team', dispatch.team);
+    }
     return this.http.delete<HttpResponse<string>>('/user/dispatches', { params })
       .pipe(
         map(r => undefined),
@@ -300,6 +306,7 @@ export interface Branch {
 
 export interface Dispatch {
   name: string;
+  team?: string;
   eventType: string;
   clientPayload: any;
 }
