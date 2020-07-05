@@ -23,6 +23,12 @@
     </form>
   </clr-wizard-page>
 
+  <clr-wizard-page (clrWizardPageOnLoad)="loadTeams()">
+    <ng-template clrPageTitle>Team</ng-template>
+    <div>Selecting a team makes a team dispatch, otherwise it's only visible to a user.</div>
+    <app-choose-team></app-choose-team>
+  </clr-wizard-page>
+
   <clr-wizard-page [clrWizardPageNextDisabled]="!form2.valid">
     <ng-template clrPageTitle>Event Type</ng-template>
     <form clrForm [formGroup]="form2">
@@ -51,6 +57,7 @@
     <ng-template clrPageTitle>Create</ng-template>
     <div>You're about to create a new dispatch template for following settings:</div>
     <div>Name: {{name}}</div>
+    <div *ngIf="selectedTeam">Team: {{selectedTeam.combinedSlug}}</div>
     <div>Event Type: {{type}}</div>
     <div>Client Payload: {{payload}}</div>
   </clr-wizard-page>

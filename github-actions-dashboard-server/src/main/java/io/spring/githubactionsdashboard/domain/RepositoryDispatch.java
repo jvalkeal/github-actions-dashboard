@@ -26,20 +26,22 @@ import java.util.Map;
 public class RepositoryDispatch {
 
 	private String name;
+	private String team;
 	private String eventType;
 	private Map<String, Object> clientPayload;
 
 	public RepositoryDispatch() {
 	}
 
-	public RepositoryDispatch(String name, String eventType, Map<String, Object> clientPayload) {
+	public RepositoryDispatch(String name, String team, String eventType, Map<String, Object> clientPayload) {
 		this.name = name;
+		this.team = team;
 		this.eventType = eventType;
 		this.clientPayload = clientPayload;
 	}
 
-	public static RepositoryDispatch of(String name, String eventType, Map<String, Object> clientPayload) {
-		return new RepositoryDispatch(name, eventType, clientPayload);
+	public static RepositoryDispatch of(String name, String team, String eventType, Map<String, Object> clientPayload) {
+		return new RepositoryDispatch(name, team, eventType, clientPayload);
 	}
 
 	public String getName() {
@@ -48,6 +50,14 @@ public class RepositoryDispatch {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getTeam() {
+		return team;
+	}
+
+	public void setTeam(String team) {
+		this.team = team;
 	}
 
 	public String getEventType() {
@@ -69,6 +79,6 @@ public class RepositoryDispatch {
 	@Override
 	public String toString() {
 		return "RepositoryDispatch [clientPayload=" + clientPayload + ", eventType=" + eventType + ", name=" + name
-				+ "]";
+				+ ", team=" + team + "]";
 	}
 }

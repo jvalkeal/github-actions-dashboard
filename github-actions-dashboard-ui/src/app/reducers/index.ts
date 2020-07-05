@@ -33,7 +33,9 @@ export const selectRouter = createFeatureSelector<
 export const {
   selectCurrentRoute,
   selectRouteParam,
-  selectRouteParams
+  selectRouteParams,
+  selectQueryParams,
+  selectRouteData
 } = fromRouter.getSelectors(selectRouter);
 
 function logger(reducer: ActionReducer<State>): ActionReducer<State> {

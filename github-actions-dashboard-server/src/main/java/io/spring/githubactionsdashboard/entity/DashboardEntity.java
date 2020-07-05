@@ -36,6 +36,9 @@ public class DashboardEntity extends AbstractUserEntity {
 	@Column(name = "name")
 	private String name;
 
+	@Column(name = "team")
+	private String team;
+
 	@Column(name = "description")
 	private String description;
 
@@ -49,14 +52,15 @@ public class DashboardEntity extends AbstractUserEntity {
 	public DashboardEntity() {
 	}
 
-	public DashboardEntity(String name, String description, Set<RepositoryEntity> repositories) {
+	public DashboardEntity(String name, String description, String team, Set<RepositoryEntity> repositories) {
 		this.name = name;
 		this.description = description;
+		this.team = team;
 		this.repositories = repositories;
 	}
 
 	public static DashboardEntity from(Dashboard dashboard) {
-		return new DashboardEntity(dashboard.getName(), dashboard.getDescription(),
+		return new DashboardEntity(dashboard.getName(), dashboard.getDescription(), dashboard.getTeam(),
 				dashboard.getRepositories().stream().map(RepositoryEntity::from).collect(Collectors.toSet()));
 	}
 
@@ -66,6 +70,14 @@ public class DashboardEntity extends AbstractUserEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public void setTeam(String team) {
+		this.team = team;
+	}
+
+	public String getTeam() {
+		return team;
 	}
 
 	public String getDescription() {
@@ -86,7 +98,7 @@ public class DashboardEntity extends AbstractUserEntity {
 
 	@Override
 	public String toString() {
-		return "DashboardEntity [description=" + description + ", name=" + name + ", repositories=" + repositories
-				+ "]";
+		return "DashboardEntity [description=" + description + ", name=" + name + ", team=" + team + ", repositories="
+				+ repositories + "]";
 	}
 }

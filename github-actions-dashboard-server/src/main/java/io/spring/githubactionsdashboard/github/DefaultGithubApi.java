@@ -35,6 +35,7 @@ import io.spring.githubactionsdashboard.domain.PullRequest;
 import io.spring.githubactionsdashboard.domain.Repository;
 import io.spring.githubactionsdashboard.domain.RepositoryDispatch;
 import io.spring.githubactionsdashboard.domain.RepositoryDispatchRequest;
+import io.spring.githubactionsdashboard.domain.Team;
 import io.spring.githubactionsdashboard.domain.User;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -126,6 +127,21 @@ public class DefaultGithubApi implements GithubApi {
 			});
 	}
 
+	@Override
+	public Flux<Team> teams() {
+		UserTeamsQuery query = UserTeamsQuery.builder().build();
+		return githubGraphqlClient.query(query)
+			.flatMapMany(data -> {
+				List<Team> teams = new ArrayList<>();
+				data.viewer().organizations().nodes().forEach(orgNode -> {
+					orgNode.teams().nodes().forEach(teamNode -> {
+						teams.add(new Team(teamNode.name(), teamNode.combinedSlug(), teamNode.databaseId()));
+					});
+				});
+				return Flux.fromIterable(teams);
+			});
+	}
+
 	private Flux<Repository> branchRepos(List<Workflow> workflows) {
 		return branchQueries(workflows)
 			.flatMap(wq -> Mono.zip(
@@ -170,7 +186,7 @@ public class DefaultGithubApi implements GithubApi {
 				}
 
 				List<RepositoryDispatch> dispatches = tuple.getT1().getDispatches().stream()
-						.map(d -> RepositoryDispatch.of(d.getName(), d.getEventType(), d.getClientPayload()))
+						.map(d -> RepositoryDispatch.of(d.getName(), null, d.getEventType(), d.getClientPayload()))
 						.collect(Collectors.toList());
 				log.debug("Dispatches {}", dispatches);
 

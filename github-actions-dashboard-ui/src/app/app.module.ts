@@ -18,7 +18,6 @@ import { SettingsComponent } from './settings/settings/settings.component';
 import { SettingsEffects } from './settings/settings.effects';
 import { LeftNaviComponent } from './layout/left-navi/left-navi.component';
 import { AuthEffects } from './auth/auth.effects';
-import { ModalNewDashboardComponent } from './layout/modal-new-dashboard/modal-new-dashboard.component';
 import { DashboardEffects } from './dashboard/dashboard.effects';
 import { DispatchesComponent } from './dispatches/dispatches/dispatches.component';
 import { ModalNewDispatchComponent } from './dispatches/modal-new-dispatch/modal-new-dispatch.component';
@@ -28,6 +27,8 @@ import { AlertsComponent } from './alerts/alerts/alerts.component';
 import { AlertsEffects } from './alerts/alerts.effects';
 import { ModalSendDispatchComponent } from './dispatches/modal-send-dispatch/modal-send-dispatch.component';
 import { AddWorkflowComponent } from './dashboard/add-workflow/add-workflow.component';
+import { AddDashboardComponent } from './dashboard/add-dashboard/add-dashboard.component';
+import { ChooseTeamComponent } from './shared/choose-team/choose-team.component';
 
 @NgModule({
   declarations: [
@@ -38,13 +39,14 @@ import { AddWorkflowComponent } from './dashboard/add-workflow/add-workflow.comp
     ActionCardComponent,
     SettingsComponent,
     LeftNaviComponent,
-    ModalNewDashboardComponent,
     DispatchesComponent,
     ModalNewDispatchComponent,
     ModalEditDispatchComponent,
     AlertsComponent,
     ModalSendDispatchComponent,
-    AddWorkflowComponent
+    AddWorkflowComponent,
+    AddDashboardComponent,
+    ChooseTeamComponent
   ],
   imports: [
     BrowserModule,

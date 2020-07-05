@@ -11,9 +11,24 @@ export const loadUser = createAction(
   props<{ dashboards: Dashboard[] }>()
 );
 
+export const loadTeam = createAction(
+  '[Dashboard] load team',
+  props<{ dashboards: Dashboard[] }>()
+);
+
 export const remove = createAction(
   '[Dashboard] remove',
   props<{ dashboard: Dashboard }>()
+);
+
+export const removeTeam = createAction(
+  '[Dashboard] remove team',
+  props<{ team: string, dashboard: Dashboard }>()
+);
+
+export const removeTeamOk = createAction(
+  '[Dashboard] remove team',
+  props<{ team: string, dashboard: Dashboard }>()
 );
 
 export const removeCard = createAction(
@@ -56,8 +71,18 @@ export const save = createAction(
   props<{ dashboard: Dashboard }>()
 );
 
+export const saveTeam = createAction(
+  '[Dashboard] save team',
+  props<{ team: string, dashboard: Dashboard }>()
+);
+
 export const update = createAction(
   '[Dashboard] update',
+  props<{ dashboard: Dashboard }>()
+);
+
+export const updateTeam = createAction(
+  '[Dashboard] update team',
   props<{ dashboard: Dashboard }>()
 );
 
@@ -68,5 +93,10 @@ export const error = createAction(
 
 export const ok = createAction(
   '[Dashboard] update ok',
+  props<{ dashboard: Dashboard }>()
+);
+
+export const saveTeamOk = createAction(
+  '[Dashboard] save team ok',
   props<{ dashboard: Dashboard }>()
 );

@@ -17,6 +17,7 @@
   <div>
     <clr-datagrid>
       <clr-dg-column>Name</clr-dg-column>
+      <clr-dg-column>Team</clr-dg-column>
       <clr-dg-column>Event Type</clr-dg-column>
       <clr-dg-column>Client Payload</clr-dg-column>
 
@@ -30,6 +31,7 @@
         </clr-dg-action-overflow>
 
         <clr-dg-cell>{{dispatch.name}}</clr-dg-cell>
+        <clr-dg-cell>{{dispatch.team}}</clr-dg-cell>
         <clr-dg-cell>{{dispatch.eventType}}</clr-dg-cell>
         <clr-dg-cell>{{dispatch.clientPayload | json}}</clr-dg-cell>
       </clr-dg-row>

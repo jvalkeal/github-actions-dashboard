@@ -20,12 +20,17 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import io.spring.githubactionsdashboard.domain.Dashboard;
+import io.spring.githubactionsdashboard.domain.Team;
+import io.spring.githubactionsdashboard.github.GithubApi;
+import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 @AutoConfigureWebTestClient
@@ -38,6 +43,9 @@ public class DashboardControllerTests {
 
 	@Autowired
 	private DashboardController controller;
+
+	@MockBean
+	private GithubApi api;
 
 	@Test
 	public void testGlobal() {
@@ -60,7 +68,7 @@ public class DashboardControllerTests {
 			.mutateWith(mockOAuth2Login())
 			.post()
 			.uri("/user/dashboards/user")
-			.bodyValue(new Dashboard("foo", "bar", new ArrayList<>()))
+			.bodyValue(new Dashboard("foo", "bar", null, new ArrayList<>()))
 			.exchange()
 			.expectStatus().is2xxSuccessful();
 
@@ -83,6 +91,57 @@ public class DashboardControllerTests {
 			.mutateWith(mockOAuth2Login())
 			.get()
 			.uri("/user/dashboards/user")
+			.exchange()
+			.expectStatus().is2xxSuccessful()
+			.expectBodyList(Dashboard.class).hasSize(0);
+	}
+
+	@Test
+	public void testTeamDashboards() {
+		Mockito.when(api.teams()).thenReturn(Flux.just(Team.of("team1", "team1", 0)));
+
+		this.client
+			.mutateWith(mockOAuth2Login())
+			.get()
+			.uri("/user/dashboards/team")
+			.exchange()
+			.expectStatus().is2xxSuccessful()
+			.expectBodyList(Dashboard.class).hasSize(0);
+
+		this.client
+			.mutateWith(mockOAuth2Login())
+			.post()
+			.uri(builder -> builder
+				.path("/user/dashboards/team")
+				.queryParam("team", "team1")
+				.build())
+			.bodyValue(new Dashboard("foo", "bar", "team1", new ArrayList<>()))
+			.exchange()
+			.expectStatus().is2xxSuccessful();
+
+		this.client
+			.mutateWith(mockOAuth2Login())
+			.get()
+			.uri("/user/dashboards/team")
+			.exchange()
+			.expectStatus().is2xxSuccessful()
+			.expectBodyList(Dashboard.class).hasSize(1);
+
+		this.client
+			.mutateWith(mockOAuth2Login())
+			.delete()
+			.uri(builder -> builder
+				.path("/user/dashboards/team")
+				.queryParam("name", "foo")
+				.queryParam("team", "team1")
+				.build())
+			.exchange()
+			.expectStatus().is2xxSuccessful();
+
+		this.client
+			.mutateWith(mockOAuth2Login())
+			.get()
+			.uri("/user/dashboards/team")
 			.exchange()
 			.expectStatus().is2xxSuccessful()
 			.expectBodyList(Dashboard.class).hasSize(0);

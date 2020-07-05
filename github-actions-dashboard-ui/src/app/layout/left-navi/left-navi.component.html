@@ -10,7 +10,6 @@
         routerLink="/cards/global/{{d.name}}">
         {{d.name}}
       </a>
-
     </clr-vertical-nav-group-children>
   </clr-vertical-nav-group>
 
@@ -24,7 +23,20 @@
         routerLink="/cards/user/{{d.name}}">
         {{d.name}}
       </a>
+    </clr-vertical-nav-group-children>
+  </clr-vertical-nav-group>
 
+  <clr-vertical-nav-group routerLinkActive="active">
+    <clr-icon shape="employee-group" clrVerticalNavIcon></clr-icon>
+    Team Dashboards
+    <clr-vertical-nav-group-children>
+      <a *ngFor="let d of teamDashboards|async"
+        clrVerticalNavLink
+        routerLinkActive="active"
+        routerLink="/cards/team/{{d.name}}"
+        [queryParams]="{team: d.team}">
+        {{d.name}}
+      </a>
     </clr-vertical-nav-group-children>
   </clr-vertical-nav-group>
 
@@ -34,9 +46,9 @@
     Dispatches
   </a>
   <div class="nav-divider"></div>
-  <a clrVerticalNavLink (click)="showNewDashboard()" style="cursor: pointer;">
+  <a clrVerticalNavLink routerLinkActive="active" routerLink="./adddashboard">
     <clr-icon shape="new" clrVerticalNavIcon></clr-icon>
-    New Dashboard...
+    Add Dashboard
   </a>
   <div class="nav-divider"></div>
   <a clrVerticalNavLink routerLinkActive="active" routerLink="./settings">
@@ -44,4 +56,3 @@
     Settings
   </a>
 </clr-vertical-nav>
-<app-modal-new-dashboard></app-modal-new-dashboard>

@@ -38,18 +38,22 @@ public class RepositoryDispatchEntity extends AbstractUserEntity {
 	@Column(name = "client_payload")
 	private String clientPayload;
 
+	@Column(name = "team")
+	private String team;
+
 	public RepositoryDispatchEntity() {
 	}
 
-	public RepositoryDispatchEntity(String username, String name, String eventType, String clientPayload) {
+	public RepositoryDispatchEntity(String username, String name, String team, String eventType, String clientPayload) {
 		super(username);
 		this.name = name;
+		this.team = team;
 		this.eventType = eventType;
 		this.clientPayload = clientPayload;
 	}
 
-	public static RepositoryDispatchEntity of(String username, String name, String eventType, String clientPayload) {
-		return new RepositoryDispatchEntity(username, name, eventType, clientPayload);
+	public static RepositoryDispatchEntity of(String username, String name, String team, String eventType, String clientPayload) {
+		return new RepositoryDispatchEntity(username, name, team, eventType, clientPayload);
 	}
 
 	public String getName() {
@@ -58,6 +62,14 @@ public class RepositoryDispatchEntity extends AbstractUserEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getTeam() {
+		return team;
+	}
+
+	public void setTeam(String team) {
+		this.team = team;
 	}
 
 	public String getEventType() {
@@ -79,6 +91,6 @@ public class RepositoryDispatchEntity extends AbstractUserEntity {
 	@Override
 	public String toString() {
 		return "RepositoryDispatchEntity [clientPayload=" + clientPayload + ", eventType=" + eventType + ", name="
-				+ name + "]";
+				+ name + ", team=" + team + "]";
 	}
 }

@@ -1,0 +1,61 @@
+<h1>Add Dashboard</h1>
+<div>
+  <form clrStepper [formGroup]="form" (ngSubmit)="submit()">
+
+    <clr-stepper-panel formGroupName="team">
+      <clr-step-title>Team</clr-step-title>
+      <clr-step-content *clrIfExpanded>
+        <div>Selecting a team makes a team dashboard, otherwise it's only visible to a user.</div>
+
+        <clr-datagrid class="datagrid-compact" [(clrDgSingleSelected)]="selectedTeam" [clrDgLoading]="loading" >
+          <clr-dg-column>
+            Name
+            <clr-dg-string-filter [clrDgStringFilter]="teamNameFilter"></clr-dg-string-filter>
+          </clr-dg-column>
+          <clr-dg-column>
+            Id
+            <clr-dg-string-filter [clrDgStringFilter]="teamSlugFilter"></clr-dg-string-filter>
+          </clr-dg-column>
+          <clr-dg-row *clrDgItems="let team of teams|async" [clrDgItem]="team">
+            <clr-dg-cell>{{team.name}}</clr-dg-cell>
+            <clr-dg-cell>{{team.combinedSlug}}</clr-dg-cell>
+          </clr-dg-row>
+          <clr-dg-footer>
+            <clr-dg-pagination #pagination2 [clrDgPageSize]="10">
+                {{pagination2.firstItem + 1}} - {{pagination2.lastItem + 1}}
+                of {{pagination2.totalItems}} teams
+            </clr-dg-pagination>
+          </clr-dg-footer>
+        </clr-datagrid>
+
+        <button clrStepButton="next">next</button>
+      </clr-step-content>
+    </clr-stepper-panel>
+
+    <clr-stepper-panel formGroupName="name">
+      <clr-step-title>Card</clr-step-title>
+      <clr-step-content *clrIfExpanded>
+        <clr-input-container>
+          <label>Name</label>
+          <input clrInput formControlName="name" required />
+          <clr-control-helper>Valid name</clr-control-helper>
+          <clr-control-error *clrIfError="'required'">Missing dashboard name</clr-control-error>
+          <clr-control-error *clrIfError="'duplicateUserDashboardName'">Duplicate user dashboard name</clr-control-error>
+          <clr-control-error *clrIfError="'duplicateTeamDashboardName'">Duplicate team dashboard name</clr-control-error>
+        </clr-input-container>
+        <button clrStepButton="next">next</button>
+      </clr-step-content>
+    </clr-stepper-panel>
+
+    <clr-stepper-panel formGroupName="summary">
+      <clr-step-title>Summary</clr-step-title>
+      <clr-step-content *clrIfExpanded>
+        <div>You're about to create a new dashboard with following settings:</div>
+        <div>Name: {{name}}</div>
+        <div *ngIf="selectedTeam">Team: {{selectedTeam.name}}</div>
+        <button clrStepButton="submit">submit</button>
+      </clr-step-content>
+    </clr-stepper-panel>
+
+  </form>
+</div>

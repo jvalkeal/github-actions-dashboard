@@ -17,6 +17,7 @@ export class ModalEditDispatchComponent implements OnInit {
 
   show = false;
   name = '';
+  team: string;
   type = '';
   payload = '';
   form2: FormGroup;
@@ -45,8 +46,9 @@ export class ModalEditDispatchComponent implements OnInit {
     });
   }
 
-  open(name: string, eventType: string, clientPayload: string): void {
+  open(name: string, team: string, eventType: string, clientPayload: string): void {
     this.name = name;
+    this.team = team;
     this.typeControl.setValue(eventType);
     this.payloadControl.setValue(clientPayload);
     this.clrForm.markAsTouched();
@@ -62,6 +64,7 @@ export class ModalEditDispatchComponent implements OnInit {
       change({
         dispatch: {
           name: this.name,
+          team: this.team,
           eventType: this.type,
           clientPayload: this.payload
         }

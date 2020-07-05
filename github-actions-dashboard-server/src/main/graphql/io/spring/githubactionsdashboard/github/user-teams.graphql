@@ -1,0 +1,17 @@
+query UserTeams {
+  viewer {
+    organizations(first: 100) {
+      nodes {
+        login
+        teams(first: 100) {
+          nodes {
+            name
+            databaseId
+            slug
+            combinedSlug
+          }
+        }
+      }
+    }
+  }
+}

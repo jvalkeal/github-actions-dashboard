@@ -2,11 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Store, select } from '@ngrx/store';
-import { Subject, Observable, Subscription } from 'rxjs';
+import { Subject, Observable, Subscription, of } from 'rxjs';
 import { debounceTime, map, tap } from 'rxjs/operators';
 import { Repository, ApiService, Branch } from '../../api/api.service';
 import { State } from '../dashboard.reducer';
-import { update } from '../dashboard.actions';
+import { update, updateTeam } from '../dashboard.actions';
 import { selectRouteParams } from 'src/app/reducers';
 
 @Component({
@@ -30,14 +30,15 @@ export class AddWorkflowComponent implements OnInit, OnDestroy {
   private selectedRepositoryLocal: Repository;
   private searchSubjectSub: Subscription;
   private currentUserCardNameSub: Subscription;
+  private currentCardTypeSub: Subscription;
 
   private currentUserCardName = this.store.pipe(select(selectRouteParams)).pipe(
-    map((params) => {
-      if (params?.type === 'user') {
-        return params.id;
-      }
-      return null;
-    })
+    map((params) => params.id)
+  );
+
+  private type: string;
+  private currentCardType = this.store.pipe(select(selectRouteParams)).pipe(
+    map((params) => params.type)
   );
 
   get selectedRepository() {
@@ -83,6 +84,13 @@ export class AddWorkflowComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+    this.currentCardTypeSub = this.currentCardType
+      .pipe(
+        tap((type) => {
+          this.type = type;
+        })
+      )
+      .subscribe();
     this.searchSubjectSub = this.searchSubject
       .pipe(
         debounceTime(500),
@@ -104,6 +112,9 @@ export class AddWorkflowComponent implements OnInit, OnDestroy {
     if (this.searchSubjectSub) {
       this.searchSubjectSub.unsubscribe();
     }
+    if (this.currentCardTypeSub) {
+      this.currentCardTypeSub.unsubscribe();
+    }
   }
 
   onKey(value: string) {
@@ -115,28 +126,49 @@ export class AddWorkflowComponent implements OnInit, OnDestroy {
   }
 
   submit(): void {
-    this.store.dispatch(
-      update({
-        dashboard: {
-          name: this.dashboardName,
-          description: '',
-          repositories: [{
-            owner: this.selectedRepository.owner,
-            name: this.selectedRepository.name,
-            title: this.title,
-            url: this.selectedRepository.url,
-            branches: this.selectedBranches,
-            pullRequests: [],
-            dispatches: [],
-            errors: []
-          }],
-        },
-      })
-    );
+    if (this.type === 'user') {
+      this.store.dispatch(
+        update({
+          dashboard: {
+            name: this.dashboardName,
+            description: '',
+            repositories: [{
+              owner: this.selectedRepository.owner,
+              name: this.selectedRepository.name,
+              title: this.title,
+              url: this.selectedRepository.url,
+              branches: this.selectedBranches,
+              pullRequests: [],
+              dispatches: [],
+              errors: []
+            }],
+          },
+        })
+      );
+    } else if (this.type === 'team') {
+      this.store.dispatch(
+        updateTeam({
+          dashboard: {
+            name: this.dashboardName,
+            description: '',
+            repositories: [{
+              owner: this.selectedRepository.owner,
+              name: this.selectedRepository.name,
+              title: this.title,
+              url: this.selectedRepository.url,
+              branches: this.selectedBranches,
+              pullRequests: [],
+              dispatches: [],
+              errors: []
+            }],
+          },
+        })
+      );
+    }
     this.back();
   }
 
   back(): void {
-    this.router.navigate(['..'], {relativeTo: this.route, skipLocationChange: false});
+    this.router.navigate(['..'], {relativeTo: this.route, skipLocationChange: false, queryParamsHandling: 'merge'});
   }
 }

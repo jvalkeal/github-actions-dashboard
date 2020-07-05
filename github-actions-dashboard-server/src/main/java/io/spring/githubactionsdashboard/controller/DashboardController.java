@@ -37,6 +37,7 @@ import io.spring.githubactionsdashboard.domain.Repository;
 import io.spring.githubactionsdashboard.domain.RepositoryDispatch;
 import io.spring.githubactionsdashboard.entity.DashboardEntity;
 import io.spring.githubactionsdashboard.entity.RepositoryEntity;
+import io.spring.githubactionsdashboard.github.GithubApi;
 import io.spring.githubactionsdashboard.repository.DashboardRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -48,10 +49,12 @@ public class DashboardController {
 	private final static Logger log = LoggerFactory.getLogger(DashboardController.class);
 	private final DashboardRepository repository;
 	private final DashboardProperties properties;
+	private final GithubApi api;
 
-	public DashboardController(DashboardRepository repository, DashboardProperties properties) {
+	public DashboardController(DashboardRepository repository, DashboardProperties properties, GithubApi api) {
 		this.repository = repository;
 		this.properties = properties;
+		this.api = api;
 	}
 
 	/**
@@ -75,7 +78,7 @@ public class DashboardController {
 	@ResponseBody
 	public Flux<Dashboard> getUserDashboards(@AuthenticationPrincipal OAuth2User oauth2User) {
 		return Flux
-			.fromIterable(this.repository.findByUsername(oauth2User.getName()))
+			.fromIterable(this.repository.findByUsernameAndTeamIsNull(oauth2User.getName()))
 			.map(Dashboard::of);
 	}
 
@@ -91,13 +94,13 @@ public class DashboardController {
 		return Mono.just(dashboard)
 			.map(d -> {
 				DashboardEntity entity = this.repository.findByUsernameAndName(oauth2User.getName(), dashboard.getName());
-				log.debug("Existing entity {}", entity);
+				log.debug("Existing user dashboard entity {}", entity);
 				if (entity == null) {
 					entity = DashboardEntity.from(dashboard);
-					log.debug("Created new entity {}", entity);
+					log.debug("Created user dashboard new entity {}", entity);
 				} else {
 					entity.setRepositories(dashboard.getRepositories().stream().map(RepositoryEntity::from).collect(Collectors.toSet()));
-					log.debug("Updated entity {}", entity);
+					log.debug("Updated user dashboard entity {}", entity);
 				}
 				return entity;
 			})
@@ -120,18 +123,85 @@ public class DashboardController {
 			.then();
 	}
 
+	/**
+	 * Gets all teams {@link Dashboard}'s visible to a user.
+	 *
+	 * @param oauth2User the user
+	 * @return team dashboars
+	 */
+	@RequestMapping(path = "/team", method = RequestMethod.GET)
+	@ResponseBody
+	public Flux<Dashboard> getTeamDashboards(@AuthenticationPrincipal OAuth2User oauth2User) {
+		return this.api.teams()
+			.collectMap(team -> team.getCombinedSlug())
+			.flatMapMany(teamMap -> Flux.fromIterable(repository.findByTeamIn(teamMap.keySet())))
+			.map(Dashboard::of);
+	}
+
+	/**
+	 * Save a given team {@link Dashboard}.
+	 *
+	 * @param oauth2User the user
+	 * @param id the team id
+	 * @param dashboard the dashboard
+	 * @return Mono for completion
+	 */
+	@RequestMapping(path = "/team", method = RequestMethod.POST)
+	public Mono<Void> saveTeamDashboard(@AuthenticationPrincipal OAuth2User oauth2User,
+			@RequestParam("team") String team, @RequestBody Dashboard dashboard) {
+		return Mono.just(dashboard)
+			.map(d -> {
+				DashboardEntity entity = this.repository.findByTeamAndName(team, dashboard.getName());
+				log.debug("Existing team dashboard entity {}", entity);
+				if (entity == null) {
+					entity = DashboardEntity.from(dashboard);
+					log.debug("Created team dashboard new entity {}", entity);
+				} else {
+					entity.setRepositories(dashboard.getRepositories().stream().map(RepositoryEntity::from).collect(Collectors.toSet()));
+					log.debug("Updated team dashboard entity {}", entity);
+				}
+				return entity;
+			})
+			.doOnNext(e -> {
+				e.setUsername(oauth2User.getName());
+				this.repository.save(e);
+			})
+			.then();
+	}
+
+	/**
+	 * Delete a given team {@link Dashboard}.
+	 *
+	 * @param oauth2User the user
+	 * @param name the dashboard name
+	 * @return Mono for completion
+	 */
+	@RequestMapping(path = "/team", method = RequestMethod.DELETE)
+	public Mono<Void> deleteTeamDashboard(@AuthenticationPrincipal OAuth2User oauth2User,
+			@RequestParam("name") String name, @RequestParam("team") String team) {
+		log.debug("Deleting team dashboard {} {}", name, team);
+		return Mono.defer(() -> Mono.justOrEmpty(this.repository.findByTeamAndName(team, name)))
+			.doOnNext(e -> {
+				this.repository.delete(e);
+			})
+			.then();
+	}
+
 	private Flux<Dashboard> globals() {
 		return Flux.fromIterable(properties.getViews())
 			.map(view -> {
 				List<Repository> repositories = view.getWorkflows().stream()
 						.map(workFlow -> {
 							List<Branch> branches = workFlow.getBranches().stream().map(b -> Branch.of(b, null)).collect(Collectors.toList());
-							List<RepositoryDispatch> dispatches = workFlow.getDispatches().stream().map(d -> RepositoryDispatch.of(d.getName(), d.getEventType(), d.getClientPayload())).collect(Collectors.toList());
+							List<RepositoryDispatch> dispatches = workFlow.getDispatches().stream()
+									.map(d -> RepositoryDispatch.of(d.getName(), null, d.getEventType(),
+											d.getClientPayload()))
+									.collect(Collectors.toList());
 							return Repository.of(workFlow.getOwner(), workFlow.getName(), workFlow.getTitle(), repoUrl(workFlow), branches, null, dispatches, null);
 						})
 						.collect(Collectors.toList());
 
-				return new Dashboard(view.getName(), view.getDescription(), repositories);
+				return new Dashboard(view.getName(), view.getDescription(), null, repositories);
 			});
 	}
 

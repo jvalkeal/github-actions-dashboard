@@ -1,0 +1,20 @@
+<clr-datagrid *ngIf="teams" class="datagrid-compact" [(clrDgSingleSelected)]="selectedTeam" [clrDgLoading]="loading" >
+  <clr-dg-column>
+    Name
+    <clr-dg-string-filter [clrDgStringFilter]="teamNameFilter"></clr-dg-string-filter>
+  </clr-dg-column>
+  <clr-dg-column>
+    Id
+    <clr-dg-string-filter [clrDgStringFilter]="teamSlugFilter"></clr-dg-string-filter>
+  </clr-dg-column>
+  <clr-dg-row *clrDgItems="let team of teams|async" [clrDgItem]="team">
+    <clr-dg-cell>{{team.name}}</clr-dg-cell>
+    <clr-dg-cell>{{team.combinedSlug}}</clr-dg-cell>
+  </clr-dg-row>
+  <clr-dg-footer>
+    <clr-dg-pagination #pagination2 [clrDgPageSize]="10">
+        {{pagination2.firstItem + 1}} - {{pagination2.lastItem + 1}}
+        of {{pagination2.totalItems}} teams
+    </clr-dg-pagination>
+  </clr-dg-footer>
+</clr-datagrid>
