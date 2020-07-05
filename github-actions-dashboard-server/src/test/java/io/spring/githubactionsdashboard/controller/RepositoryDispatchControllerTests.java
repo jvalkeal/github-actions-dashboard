@@ -236,4 +236,64 @@ public class RepositoryDispatchControllerTests {
 			})
 			.verifyComplete();
 	}
+
+	@Test
+	public void testUpdateTeamDispatchesNoClientPayload() {
+		Mockito.when(api.teams()).thenReturn(Flux.just(Team.of("team1", "team1", 0)));
+		this.client
+			.mutateWith(mockOAuth2Login())
+			.post()
+			.uri(builder -> builder
+				.path("/user/dispatches")
+				.queryParam("name", "name1")
+				.queryParam("team", "team1")
+				.queryParam("eventType", "eventType1")
+				.build())
+			.bodyValue("{}")
+			.exchange()
+			.expectStatus().is2xxSuccessful();
+		FluxExchangeResult<RepositoryDispatch> result1 = this.client
+			.mutateWith(mockOAuth2Login())
+			.get()
+			.uri("/user/dispatches")
+			.exchange()
+			.expectStatus().is2xxSuccessful()
+			.returnResult(new ParameterizedTypeReference<RepositoryDispatch>(){});
+		StepVerifier.create(result1.getResponseBody())
+			.assertNext(rp -> {
+				assertThat(rp.getName()).isEqualTo("name1");
+				assertThat(rp.getEventType()).isEqualTo("eventType1");
+				assertThat(rp.getTeam()).isEqualTo("team1");
+				assertThat(rp.getClientPayload()).isEmpty();
+			})
+			.verifyComplete();
+
+		this.client
+			.mutateWith(mockOAuth2Login())
+			.patch()
+			.uri(builder -> builder
+				.path("/user/dispatches")
+				.queryParam("name", "name1")
+				.queryParam("team", "team1")
+				.queryParam("eventType", "eventType1")
+				.build())
+			.exchange()
+			.expectStatus().is2xxSuccessful();
+		FluxExchangeResult<RepositoryDispatch> result2 = this.client
+			.mutateWith(mockOAuth2Login())
+			.get()
+			.uri("/user/dispatches")
+			.exchange()
+			.expectStatus().is2xxSuccessful()
+			.returnResult(new ParameterizedTypeReference<RepositoryDispatch>(){});
+		StepVerifier.create(result2.getResponseBody())
+			.assertNext(rp -> {
+				assertThat(rp.getName()).isEqualTo("name1");
+				assertThat(rp.getEventType()).isEqualTo("eventType1");
+				assertThat(rp.getTeam()).isEqualTo("team1");
+				assertThat(rp.getClientPayload()).isNull();
+			})
+			.verifyComplete();
+	}
+
 }

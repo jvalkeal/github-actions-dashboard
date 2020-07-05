@@ -119,7 +119,10 @@ export class ApiService {
   }
 
   changeDispatch(dispatch: Dispatch): Observable<void> {
-    const params = new HttpParams().set('name', dispatch.name).set('eventType', dispatch.eventType);
+    let params = new HttpParams().set('name', dispatch.name).set('eventType', dispatch.eventType);
+    if (dispatch.team) {
+      params = params.set('team', dispatch.team);
+    }
     return this.http.patch<HttpResponse<string>>('/user/dispatches', dispatch.clientPayload, { params })
       .pipe(
         map(r => undefined),

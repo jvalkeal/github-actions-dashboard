@@ -73,7 +73,11 @@ public class RepositoryDispatchController {
 		Flux<RepositoryDispatch> teamDispatches = this.api.teams()
 			.collectMap(t -> t.getCombinedSlug())
 			.flatMapMany(teamMap -> Flux.fromIterable(repository.findByTeamIn(teamMap.keySet())))
-				.map(entity -> RepositoryDispatch.of(entity.getName(), entity.getTeam(), entity.getEventType(), mapClientPayload(entity.getClientPayload())));
+				.map(entity -> RepositoryDispatch.of(
+					entity.getName(),
+					entity.getTeam(),
+					entity.getEventType(),
+					mapClientPayload(entity.getClientPayload())));
 		Flux<RepositoryDispatch> userDispatches = Flux
 			.fromIterable(this.repository.findByUsernameAndTeamIsNull(oauth2User.getName()))
 			.map(dispatch -> RepositoryDispatch.of(
@@ -119,7 +123,7 @@ public class RepositoryDispatchController {
 		log.debug("Deleting dispatch request {} {}", name, team);
 		String username = oauth2User.getName();
 		return Mono.defer(() -> {
-			RepositoryDispatchEntity entity = team != null
+			RepositoryDispatchEntity entity = team == null
 				? repository.findByUsernameAndNameAndTeamIsNull(username, name)
 				: repository.findByTeamAndName(team, name);
 			return Mono.justOrEmpty(entity)
@@ -128,27 +132,27 @@ public class RepositoryDispatchController {
 				})
 				.then();
 		});
-		// return Mono.justOrEmpty(repository.findByUsernameAndNameAndTeamIsNull(username, name))
-		// 	.doOnNext(dispatch -> {
-		// 		repository.delete(dispatch);
-		// 	})
-		// 	.then();
 	}
 
 	@RequestMapping(method = RequestMethod.PATCH)
 	public Mono<Void> changeDispatch(@AuthenticationPrincipal OAuth2User oauth2User, @RequestParam("name") String name,
 			@RequestParam(name = "team", required = false) String team, @RequestParam("eventType") String eventType,
 			@RequestBody(required = false) String clientPayload) {
-		log.debug("Deleting dispatch request {} {}", name, team);
+		log.debug("Patch dispatch request {} {}", name, team);
 		String username = oauth2User.getName();
 
-		return Mono.justOrEmpty(repository.findByUsernameAndNameAndTeamIsNull(username, name))
-			.doOnNext(dispatch -> {
-				dispatch.setEventType(eventType);
-				dispatch.setClientPayload(clientPayload);
-				repository.save(dispatch);
-			})
-			.then();
+		return Mono.defer(() -> {
+			RepositoryDispatchEntity entity = team == null
+				? repository.findByUsernameAndNameAndTeamIsNull(username, name)
+				: repository.findByTeamAndName(team, name);
+			return Mono.justOrEmpty(entity)
+				.doOnNext(dispatch -> {
+					dispatch.setEventType(eventType);
+					dispatch.setClientPayload(clientPayload);
+					repository.save(dispatch);
+				})
+				.then();
+		});
 	}
 
 	private Map<String, Object> mapClientPayload(String payload) {

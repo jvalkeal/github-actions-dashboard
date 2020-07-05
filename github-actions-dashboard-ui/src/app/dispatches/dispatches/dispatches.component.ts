@@ -48,7 +48,7 @@ export class DispatchesComponent implements OnInit {
   }
 
   edit(dispatch: Dispatch): void {
-    this.modalEditDispatch.open(dispatch.name, dispatch.eventType, JSON.stringify(dispatch.clientPayload));
+    this.modalEditDispatch.open(dispatch.name, dispatch.team, dispatch.eventType, JSON.stringify(dispatch.clientPayload));
   }
 
   change(dispatch: Dispatch): void {
