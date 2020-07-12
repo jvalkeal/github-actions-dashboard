@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService, Dashboard, Team } from '../api/api.service';
-import { DashboardState } from './dashboard.reducer';
+import { State, getAllDashboards, Dashboards } from './dashboard.reducer';
 import { loadGlobal, loadUser, loadTeam } from './dashboard.actions';
 
 @Injectable({
@@ -13,7 +13,7 @@ export class DashboardService {
 
   constructor(
     private api: ApiService,
-    private store: Store<DashboardState>
+    private store: Store<State>
   ) { }
 
   loadGlobal(): Observable<Dashboard[]> {
@@ -35,6 +35,10 @@ export class DashboardService {
       tap(val => {
         this.store.dispatch(loadTeam({ dashboards: val }));
       }));
+  }
+
+  getDashboards(): Observable<Dashboards> {
+    return this.store.pipe(select(getAllDashboards));
   }
 
   save(dashboard: Dashboard): Observable<void> {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Store, select } from '@ngrx/store';
-import { getLoggedIn, State } from '../auth/auth.reducer';
+import { AuthService } from '../auth/auth.service';
+import { DashboardService } from '../dashboard/dashboard.service';
 
 @Component({
   selector: 'app-home',
@@ -9,10 +9,12 @@ import { getLoggedIn, State } from '../auth/auth.reducer';
 })
 export class HomeComponent implements OnInit {
 
-  loggedIn$ = this.store.pipe(select(getLoggedIn));
+  loggedIn$ = this.authService.loggedIn();
+  dashboards$ = this.dashboardService.getDashboards();
 
   constructor(
-    private store: Store<State>
+    private authService: AuthService,
+    private dashboardService: DashboardService
   ) { }
 
   ngOnInit() {

@@ -1,2 +1,19 @@
 <p>Welcome to Github Actions Dashboard</p>
 <p *ngIf="!(loggedIn$ | async)">You need to log in via Github</p>
+<div *ngIf="loggedIn$ | async">
+    <div *ngIf="(dashboards$ | async) as dashboards">
+        <div>Dashboards:</div>
+        <span class="label label-blue">
+            Global
+            <span class="badge badge-blue">{{dashboards.global.length}}</span>
+        </span>
+        <span class="label label-blue">
+            User
+            <span class="badge badge-blue">{{dashboards.user.length}}</span>
+        </span>
+        <span class="label label-blue">
+            Team
+            <span class="badge badge-blue">{{dashboards.team.length}}</span>
+        </span>
+    </div>
+</div>

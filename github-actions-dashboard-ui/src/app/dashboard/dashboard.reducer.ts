@@ -5,6 +5,12 @@ import { Dashboard, Card } from '../api/api.service';
 
 export const dashboardsFeatureKey = 'dashboards';
 
+export type Dashboards = {
+  global: Dashboard[];
+  user: Dashboard[];
+  team: Dashboard[];
+};
+
 export interface DashboardState {
   global: Dashboard[];
   user: Dashboard[];
@@ -27,6 +33,17 @@ export const getUserDashboards = (state: State) => {
 export const getTeamDashboards = (state: State) => {
   return state[dashboardsFeatureKey].team;
 };
+
+const getDashboards = (state: State) => {
+  return state[dashboardsFeatureKey];
+};
+
+export const getAllDashboards = createSelector(
+  getDashboards,
+  (state) => {
+    return { global: state.global, user: state.user, team: state.team } as Dashboards;
+  }
+);
 
 export const getUserDashboard = createSelector(
   getUserDashboards,
