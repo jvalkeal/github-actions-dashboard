@@ -229,19 +229,26 @@ export class ApiService {
     return this.http.post<void>('/user/settings', [setting]);
   }
 
+  isLoggedIn(): Observable<boolean> {
+    return this.http.get<OAuth2User>('/user/whoami')
+      .pipe(
+        map(() => true),
+        catchError(() => of(false))
+      );
+  }
+
   getUser(): Observable<User> {
-    const response = this.http.get<OAuth2User>('/user/whoami', {observe: 'response'});
-    const user = response.pipe(map(data => {
-      if (data.status === 401) {
-        return {};
-      } else {
+    return this.http.get<OAuth2User>('/user/whoami', {observe: 'response'}).pipe(
+      map(data => {
         return {
           name: data.body.attributes.login,
           avatar: data.body.attributes.avatar_url
         };
-      }
-    }));
-    return user;
+      }),
+      catchError(() => {
+        return of({});
+      })
+    );
   }
 
   logout(): Observable<boolean> {

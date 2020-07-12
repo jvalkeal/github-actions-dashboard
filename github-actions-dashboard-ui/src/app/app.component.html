@@ -1,4 +1,4 @@
-<clr-main-container>
+<clr-main-container *ngIf="(loggedIn$|async)">
   <app-alerts *ngIf="loggedIn$|async"></app-alerts>
   <clr-header class="header header-6">
     <div class="branding">
@@ -18,3 +18,18 @@
   </div>
 
 </clr-main-container>
+
+<div class="login-wrapper" *ngIf="!(loggedIn$|async)">
+  <form class="login">
+    <section class="title">
+      <h3 class="welcome">Welcome to</h3>
+      Github Actions Dashboard
+      <h5 class="hint">You have to log in via GitHub to access the application.</h5>
+    </section>
+    <div style="padding-bottom: 50px">
+      <a href="/oauth2/authorization/github" class="btn btn-primary">
+        Log In
+      </a>
+    </div>
+  </form>
+</div>

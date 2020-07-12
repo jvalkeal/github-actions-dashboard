@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService, User } from '../api/api.service';
 import { login, logout } from './auth.actions';
@@ -19,7 +19,9 @@ export class AuthService {
   login(): Observable<User> {
     return this.api.getUser().pipe(
       tap(val => {
-        this.store.dispatch(login({user: val}));
+        if (val && val.name) {
+          this.store.dispatch(login({user: val}));
+        }
       }));
   }
 
@@ -37,5 +39,9 @@ export class AuthService {
 
   loggedInUser(): Observable<User> {
     return this.store.pipe(select(getLoggedInUser));
+  }
+
+  isLoggedIn(): Observable<boolean> {
+    return this.api.isLoggedIn();
   }
 }

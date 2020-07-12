@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -29,6 +29,7 @@ import { ModalSendDispatchComponent } from './dispatches/modal-send-dispatch/mod
 import { AddWorkflowComponent } from './dashboard/add-workflow/add-workflow.component';
 import { AddDashboardComponent } from './dashboard/add-dashboard/add-dashboard.component';
 import { ChooseTeamComponent } from './shared/choose-team/choose-team.component';
+import { AuthService } from './auth/auth.service';
 
 @NgModule({
   declarations: [
@@ -72,7 +73,18 @@ import { ChooseTeamComponent } from './shared/choose-team/choose-team.component'
     }),
     StoreRouterConnectingModule.forRoot(),
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (authService: AuthService) => {
+        return () => {
+          return authService.login().toPromise();
+        };
+      },
+      deps: [AuthService],
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
