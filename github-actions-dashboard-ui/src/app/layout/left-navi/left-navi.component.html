@@ -1,4 +1,4 @@
-<clr-vertical-nav [clrVerticalNavCollapsible]="collapsible">
+<clr-vertical-nav [clrVerticalNavCollapsible]="collapsible" [clr-nav-level]="2">
 
   <clr-vertical-nav-group *ngIf="(globalDashboards | async)?.length > 0" routerLinkActive="active">
     <clr-icon shape="dashboard" clrVerticalNavIcon></clr-icon>
